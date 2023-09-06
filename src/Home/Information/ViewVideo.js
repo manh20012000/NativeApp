@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-
-const ViewVideo=()=>{
+// import { FlatGrid } from 'react-native-super-grid';
+const ViewVideo=(props)=>{
   return (
     <View>
       <Text>ViewVideo</Text>

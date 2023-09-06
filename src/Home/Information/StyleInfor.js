@@ -1,12 +1,11 @@
 import { View, Text,StyleSheet} from 'react-native'
 import React from 'react'
+
 const styles= StyleSheet.create({
     header:{
         backgroundColor:'#FF6600',
-        paddingTop:30,
          position:'relative',
-         width:'100%',
-         height:'40%'
+         paddingTop:30,
       },
       canhan:{
         flexDirection:'row',

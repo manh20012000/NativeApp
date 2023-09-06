@@ -175,7 +175,7 @@ const FlatItem = (props) => {
           <Text style={{ color: 'white' }} ><FontAwesome name="share" size={24} color="white" /></Text>
         </TouchableOpacity>
       </View>
-
+     
     </View>
   )
 }

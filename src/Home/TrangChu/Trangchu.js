@@ -89,6 +89,7 @@ const TrangChu = ({ navigation }) => {
   //  lam hien thi vooi story
   const [modalVisible, setModalVisible] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const video = useRef(null);
   const FlatStory = () => {
     return (
       <View>
@@ -155,13 +156,14 @@ const TrangChu = ({ navigation }) => {
                 }}
               >
                 <Video
-                  source={{ uri: user.StoryVideo }}// link tinht
+                  source={{ uri: user.videoStory }}// link tinht
                   // source={require('D:/laptrinhMobileClass/NativeAppp/src/Image/Download.mp4')}
                   style={{
                     width: "100%",
                     height: '100%',
                     borderRadius: 13,
                     position:'absolute',
+                    backgroundColor:'black'
                   }}
                   resizeMode="cover"
                   isLooping

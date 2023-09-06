@@ -12,53 +12,56 @@ import DataOjs from '../../Data/DataObj';// sau thay vào chỗ này là dữ li
 import Swiper from 'react-native-swiper';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { FontAwesome, EvilIcons, AntDesign } from '@expo/vector-icons';
- const ViewBaiViet=()=>{
-  const [data, setData] = useState(DataOjs);
-      
-  // dùng để thay đooi với bai viết image 
-  //  const numberLike = props.item.like;
-  //  const binhluan = props.item.comment;
-  //  const images = anh.map((url) => ({ url }));
-  // const [number, setNumber] = useState(0);
-  // const [nblike, setnblike] = useState(numberLike)
-   const [isLiked, setIsLiked] = useState(false);
- const handlePress = () => {
-  //  setIsLiked(!isLiked);
-  //  if (nblike === numberLike) {
-  //    setnblike(nblike + 1);
-  //  } else {
-  //    setnblike(nblike - 1);
-  //  }
- };
+ const ViewBaiViet=(props)=>{
+  
+  const numberLike = props.item.like;
+  const binhluan = props.item.comment;
+  
+  const [number, setNumber] = useState(0);
+   const [nblike, setnblike] = useState(numberLike)
+    const [isLiked, setIsLiked] = useState(false);
+  const handlePress = () => {
+    setIsLiked(!isLiked);
+    if (nblike === numberLike) {
+      setnblike(nblike + 1);
+    } else {
+      setnblike(nblike - 1);
+    }
+  };
+  // chuyển sang trang detail
+  const DetaiHandress = () => {
+    props.navigation.navigate('SeeDeTail', props.item);
+  }
+  // set phongd to màn hinhg 
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
- // set phongd to màn hinhg 
- const [isViewerOpen, setIsViewerOpen] = useState(false);
- const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  // const images = anh.map((url) => ({ url }));
+   const anh=props.item.image;
+   const images = anh.map((url) => ({ url }));
 
+// set thuoc tính cho modal
+  //  const [isComment, setIsViewerOpen] = useState(false);
+  //  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   return (
-  <FlatList
-  data={data}
-  renderItem={({ item, index }) => {
-    return (
-<View style={styles.contain}>
+    <View style={styles.contain}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flexDirection: 'row' }}>
-          <Image source={{ uri: item.avatar }}
+          <Image source={{ uri: props.item.avatar }}
             style={{
               width: 39,
               height: 44,
               borderRadius: 100, marginHorizontal: 6
             }} ></Image>
           <View >
-            <Text style={styles.title}>{item.titleNameName}</Text>
-            <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{item.Time}</Text>
+            <Text style={styles.title}>{props.item.titleNameName}</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{props.item.Time}</Text>
           </View>
+
         </View>
       </View>
-      <View style={{ marginBottom: 10, paddingHorizontal: 6 }}><Text>{item.status}</Text></View>
-      {/* <Swiper style={{ position: 'relative', height: 450 }} loop={true}>
-      {item.anh.map((image, index) => (
+      <View style={{ marginBottom: 10, paddingHorizontal: 6 }}><Text>{props.item.status}</Text></View>
+      <Swiper style={{ position: 'relative', height: 450 }} loop={true}>
+      {anh.map((image, index) => (
         <View key={index}>
           <View
             style={{
@@ -104,7 +107,7 @@ import { FontAwesome, EvilIcons, AntDesign } from '@expo/vector-icons';
           )}
         </View>
       ))}
-    </Swiper> */}
+    </Swiper>
 
       {/*       
       <View style={styles.bodyView}>
@@ -119,8 +122,8 @@ import { FontAwesome, EvilIcons, AntDesign } from '@expo/vector-icons';
       
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-        <Text style={{ fontSize: 20 }} > Like</Text>
-        <Text style={{ fontSize: 20 }}> Bình luận</Text>
+        <Text style={{ fontSize: 20 }} >{nblike} Like</Text>
+        <Text style={{ fontSize: 20 }}>{binhluan.length} Bình luận</Text>
       </View>
       <View style={{
         height: 50,
@@ -153,6 +156,17 @@ import { FontAwesome, EvilIcons, AntDesign } from '@expo/vector-icons';
          
             <EvilIcons name="comment" size={34} color="white" />
         </TouchableOpacity >
+          {isViewerOpen && (
+            <Modal visible={true} 
+            transparent={true}>
+              
+            </Modal>
+          )}
+
+
+
+
+
         <TouchableOpacity style={{
           backgroundColor: 'black',
           flex: 1,
@@ -163,10 +177,8 @@ import { FontAwesome, EvilIcons, AntDesign } from '@expo/vector-icons';
           <Text style={{ color: 'white' }} ><FontAwesome name="share" size={24} color="white" /></Text>
         </TouchableOpacity>
       </View>
+
     </View>
-    )
-  }}
-  />
   )
 }
 export default ViewBaiViet

@@ -1,22 +1,19 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity,  Image, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ScrollView , StatusBar} from 'react-native'
 import { React, useState, useEffect, useRef } from 'react'
 import styles from './StyleInfor'
-import { AntDesign } from '@expo/vector-icons';
+import ViewBaiViet from './ViewBaiViet';
+import ViewVideo from './ViewVideo';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import AddInfor from './AddInfor.js';
 import { firestore } from '../../../Confige.js'
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { collection, getDocs } from 'firebase/firestore';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import ViewBaiViet from './ViewBaiViet';
-import ViewVideo from './ViewVideo';
-
-const Tab = createMaterialTopTabNavigator();
-
+import DataOjs from '../../Data/DataObj';
+import { Tabs, CollapsibleTabView } from 'react-native-collapsible-tab-view'
+import { FontAwesome, EvilIcons, AntDesign } from '@expo/vector-icons';
 const Infor = ({ navigation }) => {
-
+  const [dataObj, setDataObj] = useState(DataOjs);
   // lấy dữ liệu databse  từ chương firebase 
   const [dataUser, setData] = useState({});
   useEffect(() => {
@@ -32,11 +29,21 @@ const Infor = ({ navigation }) => {
     }
     fectData();
   }, [])
-  // tao buttuon tab
-  return (
-    
-    <CollapsibleTabView style={{ flex: 1 }}>
+  
+  const [isLiked, setIsLiked] = useState(false);
+  const handlePress = () => {
+     setIsLiked(!isLiked);
+     if (nblike === numberLike) {
+       setnblike(nblike + 1);
+     } else {
+       setnblike(nblike - 1);
+     }
+  };
+
+  const InforHeader = () => {
+    return (
       <View style={styles.header}>
+         <StatusBar translucent={true} backgroundColor='transparent' barStyle='dark-content' />
         <Image
           source={{ uri: dataUser.userphoto }}
           style={{
@@ -52,7 +59,11 @@ const Infor = ({ navigation }) => {
         }}>
           <AntDesign name="setting" size={24} color="white" />
         </TouchableOpacity>
-        <View style={styles.canhan}>
+        <View style={{bottom:0,
+          flexDirection:'row',
+          justifyContent:'space-around',
+          alignItems:'center',
+          }}>
           <Image
             source={{ uri: dataUser.userphoto }}
             style={{
@@ -62,132 +73,64 @@ const Infor = ({ navigation }) => {
             }}
           >
           </Image>
-          <View style={{ marginLeft: 15 }}>
-            <Text style={{ fontSize: 25, color: 'white', fontWeight: '900' }}>{dataUser.taikhoan}</Text>
-          </View>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('ThemInfor');
-            }}
-            style={{
-              position: 'absolute',
-              width: 150,
-              height: 30,
-              borderRadius: 15,
-              backgroundColor: '#0066FF',
-              right: -180,
-              top: 50,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text>Chỉnh sửa cá nhân </Text>
-          </TouchableOpacity>
-        </View>
+          <Text style={{ fontSize: 20, color: 'white', fontWeight: '900' }}>{dataUser.taikhoan}</Text>
+       
+
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('ThemInfor');
+          }}
+          style={{
+            width: 150,
+            height: 30,
+            borderRadius: 15,
+            backgroundColor: '#0066FF',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text>Chỉnh sửa cá nhân </Text>
+        </TouchableOpacity>
+       </View>
       </View>
-      <View>
-      </View>
-      <Tab.Navigator>
-        <Tab.Screen name="ViewBaiViet" component={ViewBaiViet} />
-        <Tab.Screen name="ViewVideo" component={ViewVideo} />
-      </Tab.Navigator>
-    </CollapsibleTabView>
+
+    )
+  }
+  return (
+    
+    <Tabs.Container
+      renderHeader={InforHeader}
+    >
+      
+      <Tabs.Tab name="BaiViet">
+        <Tabs.FlatList
+          data={dataObj}
+          renderItem={({ item, index }) => {
+            return (
+             <ViewBaiViet item={item}/>
+            )}}
+        />  
+         </Tabs.Tab>
+    {/* //===========================Tbavidb================================================= */}
+   
+      <Tabs.Tab name="Video">
+        <Tabs.FlatList
+        data={dataObj}
+        renderItem={({ item, index }) => {
+          return (
+           <ViewVideo item={item}/>
+          )}}
+      />  
+      </Tabs.Tab>
+      <Tabs.Tab name="Like">
+        <Tabs.FlatList
+        data={dataObj}
+        renderItem={({ item, index }) => {
+          return (
+           <ViewVideo item={item}/>
+          )}}
+      />  
+      </Tabs.Tab>
+    </Tabs.Container>
   )
 }
 export default Infor;
-// const Infor = () => {
-
-//   const ThemInfor = ({ navigation }) => {
-//     return (
-//       <View style={{ flex: 1 }}>
-//         <View style={styles.header}>
-//           <View style={styles.headerBody}>
-//             <TouchableOpacity style={styles.shop}>
-//               <Text>Xem shop</Text>
-//             </TouchableOpacity>
-//             <View style={styles.setting}>
-//               <TouchableOpacity>
-//                 <AntDesign name="setting" size={24} color="white" />
-//               </TouchableOpacity>
-//               <TouchableOpacity>
-//                 <AntDesign name="shoppingcart" size={24} color="white" />
-
-//               </TouchableOpacity>
-//               <TouchableOpacity>
-
-//                 <FontAwesome5 name="facebook-messenger" size={24} color="black" />
-//               </TouchableOpacity>
-//             </View>
-//           </View>
-
-//           <View style={styles.canhan}>
-//             <View style={{ backgroundColor: 'white', width: 70, height: 70, borderRadius: 30, marginLeft: 20 }}></View>
-//             <View style={{ marginLeft: 15 }}>
-//               <Text style={{ fontSize: 20, color: 'black' }}>name</Text>
-//               <TouchableOpacity style={{ padding: 4, width: 92, backgroundColor: '#CFCFCF', alignItems: 'center', borderRadius: 5 }}>
-//                 <Text>thành viên </Text>
-//               </TouchableOpacity>
-//               <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: 200 }}>
-//                 <Text style={{ color: 'white' }}>0 theo dõi</Text>
-//                 <Text style={{ color: 'white' }}>|</Text>
-//                 <Text style={{ color: 'white' }}>1 nguoi theo dõi</Text></View>
-
-//             </View>
-//           </View>
-//         </View>
-
-
-//         <View style={styles.body}>
-//           <View style={{ justifyContent: 'space-around', flexDirection: 'row' }}>
-//             <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 4, flex: 1 }}>
-//               <View style={{ flexDirection: 'row', flex: 1 }}>
-//                 <FontAwesome name="newspaper-o" size={24} color="black" />
-//                 <Text>    đơn hàng</Text>
-//               </View>
-
-//             </TouchableOpacity>
-//             <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 4, flex: 1 }}>
-//               <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'flex-end' }}>
-//                 <Text>  lịch sư mua hàng</Text>
-//                 <AntDesign name="right" size={24} color="black" />
-//               </View>
-//             </TouchableOpacity>
-//           </View>
-
-//           <View style={styles.donhang}>
-//           </View>
-//           <TouchableOpacity
-//             onPress={() => {
-//               navigation.navigate('ThemInfor');
-//             }}
-//             style={styles.themThongTin}>
-//             <Ionicons name="add" size={24} color="black" />
-//             <Text>Thêm thông tin cá nhân </Text>
-//           </TouchableOpacity>
-//         </View>
-//       </View>
-//     )
-//   }
-
-//   return (
-//     <Stack.Navigator
-//       initialRouteName="ThemInfor"
-//       screenOptions={{ headerShown: false }}
-//     >
-//       <Stack.Screen
-//         name='ThemInfor'
-//         component={ThemInfor}
-
-//       />
-//       <Stack.Screen
-
-//         name='AddInfor'
-//         component={AddInfor}
-//       />
-
-
-//     </Stack.Navigator>
-
-//   )
-
-// }
-// export default Infor;
