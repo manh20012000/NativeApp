@@ -4,51 +4,71 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Trangchu from '../Home/TrangChu/Trangchu.js'
 import { FontAwesome5 } from '@expo/vector-icons';
-import VideoTikTok from '../Home/Video/Video.js';
+import VideoTikTok from '../Home/Video/VideoTiktok.js';
 import Infor from '../Home/Information/Infor.js';
 import { Feather } from '@expo/vector-icons';
 import Add from '../Home/Add/Add.js';
 import { MaterialIcons } from '@expo/vector-icons';
 import RecodViedeo from '../AddVideo/RecodVieao.js';
 import { SimpleLineIcons } from '@expo/vector-icons';
-const bottonTad = createBottomTabNavigator();
+import { Entypo } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 
+const Tab = createBottomTabNavigator();
 const BootonGate = (navigation) => {
   return (
-    <bottonTad.Navigator
-      screenOptions={{
-        tabBarStyle: { backgroundColor: 'black', },
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: 'red',
-      }}
+        tabBarStyle: { backgroundColor: 'black', },
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconComponent;
+
+          if (route.name === 'TrangChu') {
+            iconComponent = (
+              <Image
+                source={require('../Image/home.png')}
+                style={{
+                  width: focused ? 30 : 25,
+                  height: focused ? 30 : 25,
+                  tintColor: focused ? 'white' : '#888888',
+                }}
+              />
+            );
+          } else if (route.name === 'Watch') {
+            iconComponent = (
+              <Entypo
+                name="folder-video"
+                size={focused ? 28 : 24}
+                color={focused ? 'white' : '#888888'}
+              />
+            );
+          
+          } else if (route.name === 'Thông báo') {
+            iconComponent = (
+              <FontAwesome
+                name="bell"
+                size={focused ? 28 : 24}
+                color={focused ? 'white' : '#888888'}
+              />
+            );
+          } else if (route.name === 'Infor') {
+            iconComponent = (
+              <Feather
+                name="user"
+                size={focused ? 28 : 24}
+                color={focused ? 'white' : '#888888'}
+              />
+            );
+          }
+
+          return iconComponent;
+        },
+      })}
     >
-      <bottonTad.Screen
-        name='TrangChu'
-        component={Trangchu}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <Image
-              source={require('../Image/home.png')}
-              style={{
-                width: 25,
-                height: 25,
-              }}
-            />
-          )
-        }}
-
-      />
-      <bottonTad.Screen
-        name='Watch'
-        component={VideoTikTok}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <MaterialIcons name="ondemand-video" size={25} color="white" />
-
-          )
-        }}
-      />
-      <bottonTad.Screen
+      <Tab.Screen name="TrangChu" component={Trangchu} />
+      <Tab.Screen name="Watch" component={VideoTikTok} />
+      <Tab.Screen
         name='    '
         component={RecodViedeo}
         options={{
@@ -56,7 +76,7 @@ const BootonGate = (navigation) => {
             <Image
               source={require('../Image/new-video.png')}
               style={{
-                marginTop: 20,
+                marginTop: 18,
                 width: 45,
                 height: 35,
               }}
@@ -65,36 +85,9 @@ const BootonGate = (navigation) => {
         }}
 
       />
-      <bottonTad.Screen
-        name='Thông báo '
-        component={Add}
-        options={{
-          tabBarIcon: ({ focused }) => (
-
-            <SimpleLineIcons name="bell" size={25} color="white" />
-          )
-        }}
-      />
-      <bottonTad.Screen
-        name='Infor'
-        component={Infor}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <Image
-              source={require('../Image/user.png')}
-              style={{
-                width: 25,
-                height: 25,
-              }}
-            />
-          )
-        }}
-
-      />
-
-    </bottonTad.Navigator>
-
-
+      <Tab.Screen name="Thông báo" component={Add} />
+      <Tab.Screen name="Infor" component={Infor} />
+    </Tab.Navigator>
   );
-}
+};
 export default BootonGate;

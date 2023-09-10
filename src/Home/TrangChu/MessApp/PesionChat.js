@@ -1,5 +1,5 @@
 
-import { StyleSheet, Text, View, FlatList, KeyboardAvoidingView, Keyboard, Button, TouchableOpacity, Image, TextInput } from 'react-native'
+import { StyleSheet, Text, View, FlatList, KeyboardAvoidingView, Keyboard, Button, TouchableOpacity, Image, TextInput,StatusBar} from 'react-native'
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import DataOjs from '../../../Data/DataObj'
 import { Feather } from '@expo/vector-icons';
@@ -12,6 +12,7 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Bubble, GiftedChat, Send, InputToolbar } from 'react-native-gifted-chat';
+
 const PesionChat = ({ route, navigation }) => {
     const [data, setData] = useState(DataOjs);
     // console.log(JSON.stringify('bddb'+route.params.id))
@@ -28,7 +29,7 @@ const PesionChat = ({ route, navigation }) => {
                 user: {
                     _id: 2,
                     name: 'React Native',
-                    avatar: route.params.avatar,
+                    avatar: route.params.avata,
                 },
             },
         ])
@@ -87,7 +88,11 @@ const PesionChat = ({ route, navigation }) => {
     };
     // hien thi bàn phim len hay chuă
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1, backgroundColor: 'black', marginTop: 30 }}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1, backgroundColor: 'black', }}>
+             <StatusBar
+                backgroundColor="#CCCCCC"
+                animated={true}
+             />
             <View style={styles.head}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', flex: 0.6 }}>
                     <TouchableOpacity onPress={() => {
@@ -96,7 +101,7 @@ const PesionChat = ({ route, navigation }) => {
                         <Ionicons name="arrow-back-sharp" size={28} color="#6600FF" />
                         </TouchableOpacity>
                     <TouchableOpacity style={{ position: 'relative' }}>
-                        <Image source={{ uri: route.params.avatar }}
+                        <Image source={{ uri: route.params.avata}}
                             style={{
                                 width: 44,
                                 height: 44,
@@ -116,7 +121,7 @@ const PesionChat = ({ route, navigation }) => {
                         color: 'white',
                         fontWeight: '900'
                     }}>
-                        {route.params.titleNameName}
+                        {route.params.name}
                     </Text>
                 </View>
                 <View style={{

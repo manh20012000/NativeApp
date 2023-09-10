@@ -10,7 +10,7 @@ const Chat = ({ navigation }) => {
   const handlerSearch = (text) => {
     setSeach(text)
     const filterData = data2.filter(value =>
-      value.titleNameName.toLowerCase().includes(text.toLowerCase())
+      value.name.toLowerCase().includes(text.toLowerCase())
     )
     setFillter(filterData);
   }
@@ -84,7 +84,7 @@ const Chat = ({ navigation }) => {
                 }}
                 >
                   <View style={{ justifyContent: 'flex-end' }}>
-                    <Image source={{ uri: item.avatar }}
+                    <Image source={{ uri: item.avata }}
                       style={{
                         width: 34,
                         height: 34,
@@ -103,7 +103,7 @@ const Chat = ({ navigation }) => {
                       width: 40, fontSize: 10,
                       height: 25, marginLeft: 10,
                       textAlign: 'center'
-                    }}>{item.titleNameName}</Text>
+                    }}>{item.name}</Text>
                   </View>
 
                 </TouchableOpacity>
@@ -143,7 +143,7 @@ const Chat = ({ navigation }) => {
             >
               <View style={{ flex: 0.3 }}>
                 <View  style={{position: 'relative'}}>
-                  <Image source={{ uri: item.avatar }}
+                  <Image source={{ uri: item.avata }}
                     style={{
                       width: 64,
                       height: 64,
@@ -163,7 +163,7 @@ const Chat = ({ navigation }) => {
                   fontSize: 19, color: 'white',
                   fontWeight: '800',
                 }}>
-                  {item.titleNameName}</Text>
+                  {item.name}</Text>
                 <Text style={{ color: 'white', }}>{item.mess}</Text>
               </View>
             </TouchableOpacity>

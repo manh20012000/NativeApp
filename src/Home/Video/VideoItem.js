@@ -1,5 +1,5 @@
 import { StyleSheet,AppState, Text, Image, View, TouchableOpacity, FlatList, StatusBar, Animated, Easing } from 'react-native'
-import { React, useState, useEffect, useRef, useCallback } from 'react'
+import { React, useState, useEffect, useRef, useCallback,memo } from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -8,12 +8,10 @@ import VideoPlayer from 'expo-video-player';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 const VideoItem = ({item,action}) => {
- 
-  const {id,channelName, uri, caption, musicName, likes, comments, avatarUri} =item 
+  const {uri,avatarUri,caption,channelName , comments ,id, likes,musicName} =item 
   const discAnimatedValue = useRef(new Animated.Value(0)).current;
   const AnimatedMusicNodeValue1= useRef(new Animated.Value(0)).current;
   const AnimatedMusicNodeValue2= useRef(new Animated.Value(0)).current;
-  
   const discAnimation = {
     transform: [
       {
@@ -24,7 +22,7 @@ const VideoItem = ({item,action}) => {
       },
     ],
   };
-
+  
   const MusicNodeAnimation1 = {
     transform: [
       {
@@ -126,8 +124,7 @@ const VideoItem = ({item,action}) => {
       })
       ,])
       ).stop()
-      }
-      
+      }      
    },
   //  [discAnimatedValue,AnimatedMusicNodeValue1,AnimatedMusicNodeValue2]
    )
@@ -141,10 +138,9 @@ if (nblike === item.likes) {
 } else {
   setnblike(nblike - 1);
 }
-};
+}
+;
 // trang thai của của vide
- 
-
   return (
 
     <View style={styles.contain}>
@@ -153,7 +149,7 @@ if (nblike === item.likes) {
           shouldPlay:action,
           resizeMode:'cover',
           isLooping: true, 
-          // resizeMode: ResizeMode.CONTAIN,
+      
           source: { uri:uri }
 
         }}
@@ -164,7 +160,7 @@ if (nblike === item.likes) {
           visible: false,
         }}
         timeVisible={true}
-           style={{height:760}}
+           style={{height:758}}
       >
       </VideoPlayer>
 

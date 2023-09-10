@@ -1,5 +1,7 @@
-import { StyleSheet, Text, View, FlatList, Item, Image, TextInput, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Modal } from 'react-native'
-import { React, useState, useEffect, useRef } from 'react'
+import { StyleSheet, Text, View, FlatList, Item, Image, TextInput, ScrollView, TouchableOpacity, 
+  TouchableWithoutFeedback, 
+  Modal } from 'react-native'
+import { React, useState, useEffect, useRef,memo } from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import DataOjs from '../../Data/DataObj.js'
 import FlatItem from './FlatItem.js'
@@ -17,6 +19,9 @@ const TrangChu = ({ navigation }) => {
   const urlVideo = useRef('https://v.pinimg.com/videos/mc/720p/c9/22/d8/c922d8391146cc2fdbeb367e8da0d61f.mp4').current
   const [data, setData] = useState(DataOjs);
   const [userStory, setUserStory] = useState({})// danh cho story
+  //su dung ref cho video
+  const videoe = useRef(true);
+       
   // console.log(userStory)
   const [user, setUser] = useState({})// dnah cho lấy dữ liệu từ dâtbase
   useEffect(() => {
@@ -64,8 +69,8 @@ const TrangChu = ({ navigation }) => {
         >
         </Image>
         <View style={{
-          width: 30
-          , height: 30,
+          width: 30, 
+          height: 30,
           borderRadius: 30,
           backgroundColor: 'white',
           position: 'absolute',
@@ -90,7 +95,7 @@ const TrangChu = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const video = useRef(null);
-  const FlatStory = () => {
+  const FlatStory = memo(() => {
     return (
       <View>
         <View style={{
@@ -134,16 +139,16 @@ const TrangChu = ({ navigation }) => {
           horizontal
           data={data}
           ListHeaderComponent={str}
-          keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => {
             return (
+              <View  >
               <TouchableOpacity
                 onPress={() => {
                   setIsViewerOpen(true);
                   setUserStory({
-                    name: item.titleNameName,
+                    name: item.name,
                     video: urlVideo,
-                    avatar: item.avatar
+                    avata: item.avata
                   });
                 }}
                 style={{
@@ -156,6 +161,7 @@ const TrangChu = ({ navigation }) => {
                 }}
               >
                 <Video
+                  
                   source={{ uri: user.videoStory }}// link tinht
                   // source={require('D:/laptrinhMobileClass/NativeAppp/src/Image/Download.mp4')}
                   style={{
@@ -168,7 +174,7 @@ const TrangChu = ({ navigation }) => {
                   resizeMode="cover"
                   isLooping
                 />
-                <Image source={{ uri: item.avatar }}
+                <Image source={{ uri: item.avata}}
                   style={{
                     width: 34,
                     height: 34,
@@ -183,15 +189,16 @@ const TrangChu = ({ navigation }) => {
                   marginHorizontal: 5,
                   color: 'white',
                   position: 'absolute',
-                }}>{item.titleNameName}</Text>
+                }}>{item.name}</Text>
 
               </TouchableOpacity>
+              </View>
             )
           }
           }
         />
       </View>)
-  }
+  })
   return (
     <View style={styles.container}>
       <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}>
@@ -216,8 +223,10 @@ const TrangChu = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={data}
-        ListHeaderComponent={FlatStory}
+        data={data}  
+         ListHeaderComponent={FlatStory}
+        keyExtractor={item => item.id.toString()}
+        removeClippedSubviews={true}
         renderItem={({ item, index }) => {
           return (
             <FlatItem item={item} index={index} navigation={navigation}
@@ -231,32 +240,17 @@ const TrangChu = ({ navigation }) => {
         <Modal
           visible={true}
           transparent={true}>
-          <View style={{ flex: 1, backgroundColor: 'white', position: 'relative', paddingVertical: 30 }}>
-            <Video
-              source={{ uri: userStory.video }}// link tinht
-              style={{
-                width: "100%",
-                height: '100%',
-                borderRadius: 13,
-                position: 'absolute',
-                top:40
-              }}
-               rate={1.0}
-             volume={1.0}
-               isMuted={false}
-             resizeMode="cover"
-              shouldPlay
-               isLooping
-            />
-            <View style={{
+          <View style={{ flex: 1, backgroundColor: 'white',}}>
+           <View style={{
               borderRadius: 34,
-              marginHorizontal: 6,
-              marginLeft: 10,
-              position: 'absolute',
-              top: 5,
               flexDirection: 'row',
+              justifyContent:'space-between',
+              alignItems:'center',
+              marginHorizontal:15
+                
             }}>
-              <Image source={{ uri: userStory.avatar }}
+              <View style={{flexDirection:"row"}}>
+                 <Image source={{ uri: userStory.avata }}
                 style={{
                   width: 64,
                   height: 64,
@@ -270,23 +264,36 @@ const TrangChu = ({ navigation }) => {
                 margin: 15,
 
               }}>{userStory.name}</Text> 
+              </View>
+             
               <TouchableOpacity
               onPress={() => {
                 setIsViewerOpen(false)
               }}
               style={{
                 width: 30,
-                height: 30,
-                backgroundColor: 'blue',
-                borderRadius:40,
-                alignItems: 'center',
-                justifyContent: 'center',
-                left:150,
-                
+                height: 33,
+                borderRadius:40,  
+                marginLeft:4              
               }} >
-              <Text style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>x</Text>
+              <Text style={{ fontSize: 25, color: 'black', textAlign: 'center', }}>x</Text>
             </TouchableOpacity>
+            </View> 
+            <View style={{ marginTop:10}}>
+             <Video
+              ref={videoe}
+              source={{ uri: userStory.video}}// link tinht
+              style={{
+                width: "100%",
+                height: '95%',
+              }}
+              shouldPlay
+               isLooping
+               resizeMode={ResizeMode.COVER}
+            />
             </View>
+           
+           
           </View>
         </Modal>
       )}

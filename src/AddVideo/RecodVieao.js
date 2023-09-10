@@ -54,7 +54,6 @@ const RecodViedeo = () => {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 30,
         backgroundColor: 'pink',
         position: 'relative',
       }}>

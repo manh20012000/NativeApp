@@ -13,7 +13,7 @@ const bottonTad = createBottomTabNavigator();
 const Message = ({navigation}) => {
 navigation
   return (
-    <View style={{ flex: 1, marginTop: 30,backgroundColor:'black'}}>
+    <View style={{ flex: 1,backgroundColor:'black'}}>
       <View style={styles.header} >
         <View style={{ flex: 0.25, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
           <TouchableOpacity onPress={()=>{
