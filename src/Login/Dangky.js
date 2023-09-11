@@ -21,13 +21,9 @@ const Dangky = ({ navigation }) => {
      const [matkhau, setPass] = useState('');
      const [passC, setPassC] = useState('');
      const Sigin=async()=>{
-
          if(matkhau===passC){
-  
        try {
-        const data = await axios.post('https://muddy-teddy-fawn.cyclic.app/api/sigin', {taikhoan:taikhoan,matkhau:matkhau,email: email})
-          
-       
+        const data = await axios.post('https://nativeapp.onrender.com/api/sigin', {taikhoan:taikhoan,matkhau:matkhau,email: email})
         if(data.status===200){
             navigation.navigate('Login');
             setMail(''),

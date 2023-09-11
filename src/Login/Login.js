@@ -17,18 +17,18 @@ const Login = ({ navigation }) => {
   const [matkhau, setPass] = useState('');
   const [loading, setLoading] = useState(false);
   const login = async () => {
-    // try {
-    //   const { data } = await axios.post('https://muddy-teddy-fawn.cyclic.app/api/login', { taikhoan: taikhoan, matkhau: matkhau })
+   // try {
+    //   const { data } = await axios.post('https://nativeapp.onrender.com/api/login', { taikhoan: taikhoan, matkhau: matkhau })
     //   if (data.status == 200) {
     //     console.log(typeof (data.status)+'')
     //     setLoading(true);
     //     // Giả sử rằng việc đăng nhập mất 2 giây
     //     setTimeout(() => {
     //       setLoading(false);
-    //   console.log('=============================================================')
-      // try{  
-      //   const users = await firebase.firestore().collection('login');
-      //    console.log(users+'')
+    // //   console.log('=============================================================')
+    // //   // try{  
+    // //   //   const users = await firebase.firestore().collection('login');
+    // //   //    console.log(users+'')
           navigation.navigate('BootonGate');
     //       setPass('');
     //       setName('');
@@ -39,13 +39,11 @@ const Login = ({ navigation }) => {
     //     alert('dang nhập thất bại')
     //   }
     // } catch (eror) {
-    // alert('đăng nhập thất bại')
-    // }}
-      
-  // } catch(error){
-  //      console.log(error+ 'slslooio loi matw')
-  // } 
+    //     alert('đăng nhập thất bại'+eror)
+    // }
   }
+      
+ 
 
   const [hienthi, setHienthi] = useState(true);
 

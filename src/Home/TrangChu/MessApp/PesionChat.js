@@ -41,6 +41,9 @@ const PesionChat = ({ route, navigation }) => {
         )
     }, [])
     //change buutobsen
+    const troveCanhan = () => {
+        navigation.navigate('SeeDeTail',dataRoute)
+    }
     const renderSend = (props) => {
         return (
             <Send {...props}>
@@ -88,48 +91,69 @@ const PesionChat = ({ route, navigation }) => {
     };
     // hien thi bàn phim len hay chuă
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1, backgroundColor: 'black', }}>
+        <View style={{ flex: 1, backgroundColor: 'black', }}>
              <StatusBar
                 backgroundColor="#CCCCCC"
                 animated={true}
              />
             <View style={styles.head}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', flex: 0.6 }}>
-                    <TouchableOpacity onPress={() => {
+                <View
+                    style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    flex: 0.6
+                    }}
+                >
+                    <TouchableOpacity
+                        onPress={() => {
                         navigation.navigate('Mess')
-                    }}>
+                        }}
+                    >
                         <Ionicons name="arrow-back-sharp" size={28} color="#6600FF" />
                         </TouchableOpacity>
-                    <TouchableOpacity style={{ position: 'relative' }}>
-                        <Image source={{ uri: route.params.avata}}
+                    <TouchableOpacity
+                         onPress={()=>troveCanhan()}
+                        style={{
+                        position: 'relative',
+                        flexDirection: 'row',
+                        alignItems:'center',
+                        }}
+                    >
+                        <Image
+                            source={{ uri: route.params.avata }}
                             style={{
                                 width: 44,
                                 height: 44,
                                 borderRadius: 44,
                                 marginHorizontal: 6,
-                            }} >
+                            }}
+                        >
                         </Image >
-                        <Text style={{
+                        <Text
+                            style={{
                             color: '#00FF00', fontSize: 64,
                             position: 'absolute',
-                            right: 0,
+                            right:92,
                             top:-35,
-                        }}>{route.params.trangthai}</Text>
-                    </TouchableOpacity>
-                    <Text style={{
+                            }}
+                        >
+                            {route.params.trangthai}
+                        </Text>
+                        <Text style={{
                         fontSize: 18,
                         color: 'white',
                         fontWeight: '900'
                     }}>
                         {route.params.name}
                     </Text>
+                    </TouchableOpacity>
+                    
                 </View>
                 <View style={{
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-around',
                     flex: 0.5,
-                  
                 }}>
                     <TouchableOpacity>
                         <Ionicons name="call" size={26} color="#6600FF" />
@@ -145,7 +169,6 @@ const PesionChat = ({ route, navigation }) => {
             </View>
             <GiftedChat
             style={{backgroundColor:'pink'}}
-
                 messages={messages}
                 onSend={newMessages => onSend(newMessages, setVisible(!isVisible))}
                 user={{
@@ -217,7 +240,7 @@ const PesionChat = ({ route, navigation }) => {
                 </View>
             }
 
-        </KeyboardAvoidingView>
+        </View>
     )
 
 }

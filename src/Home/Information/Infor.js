@@ -49,14 +49,17 @@ const Infor = ({ navigation }) => {
   };
   const InforHeader = () => {
     return (
-      <View style={{backgroundColor:'orange',paddingVertical:10}}>
+      <View style={{
+        backgroundColor: 'orange',
+        paddingVertical: 10
+      }}>
         <View style={{bottom:0,
           flexDirection:'row',
           justifyContent:'space-around',
           alignItems:'center',
           }}>
           <Image
-            source={{ uri: dataUser.userphoto }}
+            source={{uri: dataUser.userphoto}}
             style={{
               width: 80,
               height: 80,
@@ -64,7 +67,11 @@ const Infor = ({ navigation }) => {
             }}
           >
           </Image>
-          <Text style={{ fontSize: 20, color: 'white', fontWeight: '900' }}>{dataUser.taikhoan}</Text>
+          <Text style={{
+            fontSize: 20,
+            color: 'white',
+            fontWeight: '900'
+          }}>{dataUser.taikhoan}</Text>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('ThemInfor');
@@ -117,7 +124,6 @@ const Infor = ({ navigation }) => {
             )}}
         />  
          </Tabs.Tab>
-    {/* //===========================Tbavidb================================================= */}
       <Tabs.Tab name="Video">
         <Tabs.FlatList
         removeClippedSubviews={true}

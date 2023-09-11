@@ -10,8 +10,7 @@ import { FontAwesome } from '@expo/vector-icons';
 const VideoItem = ({item,action}) => {
   const {uri,avatarUri,caption,channelName , comments ,id, likes,musicName} =item 
   const discAnimatedValue = useRef(new Animated.Value(0)).current;
-  const AnimatedMusicNodeValue1= useRef(new Animated.Value(0)).current;
-  const AnimatedMusicNodeValue2= useRef(new Animated.Value(0)).current;
+ 
   const discAnimation = {
     transform: [
       {
@@ -21,57 +20,6 @@ const VideoItem = ({item,action}) => {
         }),
       },
     ],
-  };
-  
-  const MusicNodeAnimation1 = {
-    transform: [
-      {
-        translateX: AnimatedMusicNodeValue1.interpolate({
-          inputRange: [0, 1],
-          outputRange: [8,-16],
-        }),
-      },
-      {
-        translateY: AnimatedMusicNodeValue1.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0,-32],
-        }),
-      },{
-        rotate: AnimatedMusicNodeValue1.interpolate({
-          inputRange: [0, 1],
-          outputRange: ['0deg', '45deg'],
-        }),
-      },
-    ],
-    opacity:AnimatedMusicNodeValue1.interpolate({
-      inputRange: [0,0.8,1],
-      outputRange: [0,1,0],
-    })
-  };
-  const MusicNodeAnimation2= {
-    transform: [
-      {
-        translateX: AnimatedMusicNodeValue2.interpolate({
-          inputRange: [0, 1],
-          outputRange: [8,-16],
-        }),
-      },
-      {
-        translateY: AnimatedMusicNodeValue2.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0,-32],
-        }),
-      },{
-        rotate: AnimatedMusicNodeValue2.interpolate({
-          inputRange: [0, 1],
-          outputRange: ['0deg', '-45deg'],
-        }),
-      },
-    ],
-    opacity:AnimatedMusicNodeValue2.interpolate({
-      inputRange: [0,0.8,1],
-      outputRange: [0,1,0],
-    })
   };
    useEffect(()=>{
       if(action){ 
@@ -83,22 +31,7 @@ const VideoItem = ({item,action}) => {
           useNativeDriver: true,
         }),
        ).start();
-       Animated.loop(  
-          Animated.sequence([
-       Animated.timing(AnimatedMusicNodeValue1, {
-        toValue: 1,
-        duration: 2000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-      Animated.timing(AnimatedMusicNodeValue2, {
-        toValue: 1,
-        duration: 2000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      })
-      ,])
-      ).start()
+     
       }else{
         Animated.loop(
           Animated.timing(discAnimatedValue, {
@@ -108,22 +41,6 @@ const VideoItem = ({item,action}) => {
           useNativeDriver: true,
         }),
        ).stop();
-       Animated.loop(  
-          Animated.sequence([
-       Animated.timing(AnimatedMusicNodeValue1, {
-        toValue: 1,
-        duration: 2000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-      Animated.timing(AnimatedMusicNodeValue2, {
-        toValue: 1,
-        duration: 2000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      })
-      ,])
-      ).stop()
       }      
    },
   //  [discAnimatedValue,AnimatedMusicNodeValue1,AnimatedMusicNodeValue2]
@@ -177,14 +94,6 @@ if (nblike === item.likes) {
           <Text style={styles.musicName}>{musicName}</Text>
         </View>
         <View style={styles.bottomRightSelection}>
-          <Animated.Image
-            style={[styles.floatMusicNote,MusicNodeAnimation1]}
-            source={require('D:/laptrinhMobileClass/NativeAppp/src/Image/music-note.png')}
-          />
-          <Animated.Image
-            style={styles.floatMusicNote}
-            source={require('D:/laptrinhMobileClass/NativeAppp/src/Image/music-note.png')}
-          />
           <Animated.View style={[styles.MusicDisc,discAnimation]}>
             <MaterialCommunityIcons name="music-circle" size={40} color="white" />
           </Animated.View>

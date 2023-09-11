@@ -41,7 +41,6 @@ const VideoTikTok = () => {
               data={data}
             />
           )
-
         }}
         onScroll={e => {
           const index = Math.round(e.nativeEvent.contentOffset.y / (810 - bottomTabHight))

@@ -2,7 +2,6 @@
 import { StyleSheet, Text, View,SafeAreaView,StatusBar,} from 'react-native';
 import Navigete from './src/navigate/Navigate'
 import React, { Component, useState, useEffect } from 'react'
-import { collection, getDocs } from 'firebase/firestore';
 import  { firestore } from './Confige.js'
 const STYLES = ['default', 'dark-content', 'light-content'];
 const TRANSITIONS = ['fade', 'slide', 'none'];

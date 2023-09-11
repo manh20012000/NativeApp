@@ -21,7 +21,6 @@ const TrangChu = ({ navigation }) => {
   const [userStory, setUserStory] = useState({})// danh cho story
   //su dung ref cho video
   const videoe = useRef(true);
-       
   // console.log(userStory)
   const [user, setUser] = useState({})// dnah cho lấy dữ liệu từ dâtbase
   useEffect(() => {
@@ -262,10 +261,8 @@ const TrangChu = ({ navigation }) => {
               <Text style={{
                 fontSize: 20,
                 margin: 15,
-
               }}>{userStory.name}</Text> 
               </View>
-             
               <TouchableOpacity
               onPress={() => {
                 setIsViewerOpen(false)
@@ -292,8 +289,6 @@ const TrangChu = ({ navigation }) => {
                resizeMode={ResizeMode.COVER}
             />
             </View>
-           
-           
           </View>
         </Modal>
       )}
