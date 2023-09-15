@@ -1,5 +1,5 @@
-import React from 'react';
-import { Text, View, StyleSheet, Image } from 'react-native';
+import React, {useEffect} from 'react';
+import { Text, View, StyleSheet, Image, BackHandler,Alert} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Trangchu from '../Home/TrangChu/Trangchu.js'
@@ -16,6 +16,7 @@ import { FontAwesome } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 const BootonGate = (navigation) => {
+ 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({

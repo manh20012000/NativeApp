@@ -13,6 +13,8 @@ import BootonGate from './BootonGate.js';
 import Message from '../Home/TrangChu/MessApp/Message.js';
 import PesionChat from '../Home/TrangChu/MessApp/PesionChat.js';
 import UserThink from '../Home/TrangChu/UserThink.js';
+import InforUser from '../Login/InforUser.js';
+import PostWithCamera from '../Home/TrangChu/PostWithCamera.js';
 export const NameScreen = {
   SCREEN_Home: 'Home',
   SCREEN_Login: 'Login',
@@ -44,7 +46,7 @@ const Navigete = () => {
           component={SeeDeTail}
         />
         <Stack.Screen
-          name='dangky'
+          name='Dangky'
           component={Dangky}
         />
         <Stack.Screen
@@ -71,6 +73,14 @@ const Navigete = () => {
           name='UserThink'
           component={UserThink}
         />
+        <Stack.Screen
+        name='InforUser'
+        component={InforUser}
+      />
+          {/* <Stack.Screen
+        name='PostWithCamera'
+        component={PostWithCamera}
+      /> */}
       </Stack.Navigator>
     </NavigationContainer>
   )

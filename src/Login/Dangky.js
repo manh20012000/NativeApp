@@ -1,11 +1,11 @@
 import {
   StyleSheet, Text, View, SafeAreaView, TouchableOpacity,
-  TextInput, Form, Button, ScrollView,
+ Form, Button, ScrollView,
 } from 'react-native'
 import React, { Component, useState, useEffect } from 'react'
 import axios from 'axios';
 import styles from './StyleSigin.js'
-
+import { TextInput } from 'react-native-paper';
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -16,10 +16,10 @@ import { RadioButton } from 'react-native-paper';
 const Dangky = ({ navigation }) => {   
 
   // lấy gtri cua cac o text;
-     const [email, setMail] = useState('');
-     const [taikhoan, setName] = useState('');
-     const [matkhau, setPass] = useState('');
-     const [passC, setPassC] = useState('');
+     const [email, setMail] = useState();
+     const [taikhoan, setName] = useState();
+     const [matkhau, setPass] = useState();
+     const [passC, setPassC] = useState();
      const Sigin=async()=>{
          if(matkhau===passC){
        try {
@@ -61,7 +61,8 @@ const Dangky = ({ navigation }) => {
     //back   
        const back=()=>{
         navigation.navigate('Login');
-       }
+  }
+  const [isEnabled, setIsEnabled] = React.useState(true);
   return (
 
     <View style={styles.container}>
@@ -79,37 +80,43 @@ const Dangky = ({ navigation }) => {
 
       </View>
           
-      <View style={styles.body}>
-       
-          <TextInput
-            placeholder="nhap Email"
-            style={[styles.textinput, styles.txt1]}
-            keyboardType="email-address"
-            value={email}
+     <View style={styles.body}>
+        <TextInput
+           style={[styles.textinput, styles.txt1]}
+          label="Your email address"
+          disabled={!isEnabled}
+          mode="outlined" 
+          value={email}
             onChangeText={setMail}
-          />
+          ></TextInput>
+       
+       <TextInput
+           style={[styles.textinput, styles.txt1]}
+          label="Nhập tài khoản"
+          disabled={!isEnabled}
+          mode="outlined" 
+          value={taikhoan}
+          onChangeText={setName}
+          ></TextInput>
           <TextInput
-            placeholder="nhap tai khoan"
-            style={[styles.textinput, styles.txt1]}
-             value={taikhoan}
-            onChangeText={setName}
-
-          />
+           style={[styles.textinput, styles.txt1]}
+          label="Nhập mật khẩu"
+          disabled={!isEnabled}
+          mode="outlined" 
+          value={matkhau}
+          onChangeText={setPass}
+          secureTextEntry={hienthi}
+          ></TextInput>
           <TextInput
-            placeholder="nhap matkhau"
-            secureTextEntry={hienthi}
-            style={[styles.textinput, styles.txt1]}
-            value={matkhau}
-            onChangeText={setPass}
-          />
-          <TextInput
-            placeholder="confilm matkhau"
-            secureTextEntry={hienthi}
-            style={[styles.textinput, styles.txt1]}
-            value={passC}
-            onChangeText={setPassC}
-
-          />
+           style={[styles.textinput, styles.txt1]}
+          label="conform mật khẩu"
+          disabled={!isEnabled}
+          mode="outlined" 
+          value={passC}
+          secureTextEntry={hienthi}
+          onChangeText={setPassC}
+          ></TextInput>
+          
           <View style={{flexDirection:'row',}}> 
             <RadioButton 
             value=" option1" 

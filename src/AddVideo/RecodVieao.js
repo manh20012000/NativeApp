@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button, Image, View, Platform, StyleSheet, Video, TouchableOpacity, Text } from 'react-native';
+import { Button, Image, View, Platform, StyleSheet, Video, TouchableOpacity,   PermissionsAndroid,Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { AntDesign } from '@expo/vector-icons';
 import NewRecode from './NewRecode';
@@ -33,19 +33,32 @@ const RecodViedeo = () => {
   const cameraRef = useRef();
   const [startCamera, setStartCamera] = useState(true)
   const StartCamera = async () => {
-    setTrangThai(1)
-    const { status } = await Camera.requestCameraPermissionsAsync()
-    if (status === 'granted') {
-      setStartCamera(true)
-    } else {
-      Alert.alert('Access denied')
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Cool Photo App Camera Permission',
+          message:
+            'Cool Photo App needs access to your camera ' +
+            'so you can take awesome pictures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the camera');
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
     }
+  
   }
   const [type, setType] = useState(CameraType.front);
   const toggleCameraType = () => {
-    setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
-
-    
+    setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));    
   }
   // take phôto 
   return (
@@ -100,7 +113,7 @@ const RecodViedeo = () => {
       {trangThai ==1 && startCamera &&
         <Camera
           type={type}
-          style={{ flex: 0.95, width: "100%", marginTop: 50 }}
+          style={{ flex: 0.9, width: "100%", marginTop: 50 }}
           ref={(cameraRef) => {
             camera = cameraRef
           }}
@@ -152,12 +165,12 @@ const RecodViedeo = () => {
           loop={true}
         >
           {selectedImages.map((image, index) => (
+            
             <View key={index}
               style={{}}
             >
               <Image key={index} source={{ uri: image }}
                 style={{ width: 400, height: 400 }} />
-
             </View>
           ))}
         </Swiper>

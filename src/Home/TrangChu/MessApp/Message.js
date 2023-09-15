@@ -13,20 +13,47 @@ const bottonTad = createBottomTabNavigator();
 const Message = ({navigation}) => {
 navigation
   return (
-    <View style={{ flex: 1,backgroundColor:'black'}}>
-      <View style={styles.header} >
-        <View style={{ flex: 0.25, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
+    <View
+      style={{ flex: 1, backgroundColor: 'black' }}
+    >
+      <View
+        style={styles.header}
+      >
+        <View
+          style={{
+          flex: 0.25,
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          }}
+        >
           <TouchableOpacity onPress={()=>{
                navigation.navigate('BootonGate')
-          }}>
+          }}
+          >
             <Ionicons name="ios-arrow-back" size={24} color="white" 
           /></TouchableOpacity>
-          <Text style={{ fontSize: 20, color: 'white',fontWeight:'800'}}>Chats</Text>
+          <Text
+            style={{ fontSize: 20, color: 'white', fontWeight: '800' }}
+          >Chats</Text>
         </View>
-        <View style={{ flex: 0.5, flexDirection: 'row', alignItems: 'center' }}>
+        <View
+          style={{
+            flex: 0.5,
+            flexDirection: 'row',
+            alignItems: 'center'
+          }}
+        >
           <Text style={{ fontSize: 20, color: 'white' }}></Text>
         </View>
-        <View style={{ flex: 0.25, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
+        <View
+          style={{
+          flex: 0.25,
+          flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+          }}
+        >
           <TouchableOpacity><Ionicons name="pencil" size={24} color="white" /></TouchableOpacity>
           <TouchableOpacity><MaterialCommunityIcons name="camera-outline" size={30} color="white" /></TouchableOpacity>
         </View>

@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
   Modal,
   Button,
-  PanResponder,
+  PanResponder, Share
 } from "react-native";
 import { React, useState, useRef, useEffect, memo } from "react";
 import styles from "./StyleFlatItem.js";
@@ -19,6 +19,7 @@ import SeeDeTail from "./SeeDeTail.js";
 import ImageViewer from "react-native-image-zoom-viewer";
 import { BottomSheet } from "react-native-btr";
 import BinhLuan from "./BinhLuan.js";
+
 const FlatItem = memo((props) => {
   const numberLike = props.item.like;
   const binhluan = props.item.commen;
@@ -43,13 +44,27 @@ const FlatItem = memo((props) => {
   const anh = props.item.anh;
   const images = anh.map((url) => ({ url }));
   //tao bootom sheet cho n thanh phan share
-  const [visible, setVisible] = useState(false);
-  const bootomShetShare = () => {
-    setVisible(!visible);
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          'React Native | A framework for building native apps using React',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
   };
   // su ly modal cho  binh luan
   const [isVisible, setIsVisible] = useState(false);
-
   const toggleModal = () => {
     setIsVisible(!isVisible);
   };
@@ -138,16 +153,6 @@ const FlatItem = memo((props) => {
           </View>
         ))}
       </Swiper>
-      {/*       
-      <View style={styles.bodyView}>
-        <Image
-          source={{ uri: props.item.image }}
-          style={{
-            width: 390,
-            height: 440,
-          }}
-        ></Image>
-      </View> */}
       <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
         <Text style={{ fontSize: 20 }}>{nblike} Like</Text>
         <Text style={{ fontSize: 20 }}>{binhluan.length} Bình luận</Text>
@@ -225,7 +230,7 @@ const FlatItem = memo((props) => {
         </Modal>
         <TouchableOpacity
           onPress={() => {
-            bootomShetShare();
+            onShare();
           }}
           style={{
             backgroundColor: "black",
@@ -236,42 +241,7 @@ const FlatItem = memo((props) => {
             borderWidth: 2,
           }}
         >
-         
-            <BottomSheet
-              visible={visible}
-              //setting the visibility state of the bottom shee
-              onBackButtonPress={bootomShetShare}
-              //Toggling the visibility state on the click of the back botton
-              onBackdropPress={bootomShetShare}
-              //Toggling the visibility state on the clicking out side of the sheet
-            >
-              {/*Bottom Sheet inner View*/}
-              <View style={{ flex: 0.4, backgroundColor: "white" }}>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Text
-                    style={{
-                      textAlign: "center",
-                      padding: 20,
-                      fontSize: 20,
-                    }}
-                  >
-                    Share Using
-                  </Text>
-                  <View style={{ flex: 1, flexDirection: "row" }}>
-                    <Text>cbbdbbd</Text>
-                  </View>
-                  <View style={{ flex: 1, flexDirection: "row" }}>
-                    <Text>hihi</Text>
-                  </View>
-                </View>
-              </View>
-            </BottomSheet>
+           
           <Text style={{ color: "white" }}>
             <FontAwesome name="share" size={24} color="white" />
           </Text>

@@ -52,7 +52,7 @@ const Login = ({ navigation }) => {
   }
 // nhap form ddnag kys 
    const sigin=()=>{
-    navigation.navigate('dangky');
+    navigation.navigate('InforUser');
    }
   return (
     <View style={styles.container}>

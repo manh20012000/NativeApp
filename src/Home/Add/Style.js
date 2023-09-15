@@ -4,7 +4,6 @@ import React from 'react'
       container:{
         flex:1,
         marginTop:40,
-     
         backgroundColor:'pink',
     },
     themanh:{

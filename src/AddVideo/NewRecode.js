@@ -36,7 +36,6 @@ const NewRecode = () => {
                             <Text style={{ fontSize: 13, color: 'white', marginTop: 3 }}>Fitter</Text>
                         </TouchableOpacity>
                     </View>
-
                     <View style={{ flex: 0.33, justifyContent: 'center', alignItems: 'center' }}>
                         <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}>
                             <View style={{ width: 80, height: 80, backgroundColor: 'white', borderRadius: 80, justifyContent: 'center', alignItems: 'center' }}>

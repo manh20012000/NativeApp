@@ -21,8 +21,6 @@ const Add = ({ navigation }) => {
         {img != '' ? <Image source={{ uri: img }}
           style={{ width: 160, height: 160 }}></Image> : ''
         }
-
-
       </View>
       <TouchableOpacity style={styles.themanh}
        

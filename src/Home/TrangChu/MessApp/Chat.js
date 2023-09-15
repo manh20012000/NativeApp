@@ -78,12 +78,14 @@ const Chat = ({ navigation }) => {
             data={data2}
             renderItem={({ item, index }) => {
               return (
-                <TouchableOpacity style={{
+                <TouchableOpacity
+                  style={{
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
                 >
-                  <View style={{ justifyContent: 'flex-end' }}>
+                  <View
+                    style={{ justifyContent: 'flex-end' }}>
                     <Image source={{ uri: item.avata }}
                       style={{
                         width: 34,

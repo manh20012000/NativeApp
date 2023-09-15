@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View, FlatList, Item, Image, TextInput, ScrollView, TouchableOpacity, 
   TouchableWithoutFeedback, 
-  Modal } from 'react-native'
+  Modal, BackHandler,Alert } from 'react-native'
 import { React, useState, useEffect, useRef,memo } from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import DataOjs from '../../Data/DataObj.js'
-import FlatItem from './FlatItem.js'
-import styles from './StyleTrangchu.js'
-import SeeDeTail from './SeeDeTail.js'
+import FlatItem from './FlatItem.js';
+import styles from './StyleTrangchu.js';
+import SeeDeTail from './SeeDeTail.js';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { collection, getDocs } from 'firebase/firestore';
@@ -16,6 +16,26 @@ import { Video, ResizeMode } from 'expo-av';
 import screenfull from 'screenfull';
 import VideoPlayer from 'expo-video-player';
 const TrangChu = ({ navigation }) => {
+    useEffect(() => {
+    const backAction = () => {
+      Alert.alert('Hold on!', 'ban co chac muon thoat', [
+        {
+          text: 'Cancel',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {text: 'YES', onPress: () => BackHandler.exitApp()},
+      ]);
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, []);
+//ste trang thai thai cuar no tai vi tri thioat voi dong ben tren 
+  
   const urlVideo = useRef('https://v.pinimg.com/videos/mc/720p/c9/22/d8/c922d8391146cc2fdbeb367e8da0d61f.mp4').current
   const [data, setData] = useState(DataOjs);
   const [userStory, setUserStory] = useState({})// danh cho story
@@ -23,13 +43,15 @@ const TrangChu = ({ navigation }) => {
   const videoe = useRef(true);
   // console.log(userStory)
   const [user, setUser] = useState({})// dnah cho lấy dữ liệu từ dâtbase
+
   useEffect(() => {
     const fetchDataFromFirestore = async () => {
       try {
         const querySnapshot = await getDocs(collection(firestore, 'user'));
-        querySnapshot.forEach((doc) => {
+        await querySnapshot.forEach((doc) => {
           // console.log(doc.id, '=>', doc.data()); 
           setUser(doc.data())
+        
         });
       } catch (error) {
         console.log(error);
@@ -107,16 +129,26 @@ const TrangChu = ({ navigation }) => {
           justifyContent: 'space-between',
           marginBottom: 5,
         }}>
-          <Image style={{
-            width: 45,
-            height: 45,
-            borderRadius: 30,
-          }}
+          <View
+            style={{
+              width: 45,
+              height: 45,
+              borderRadius: 30,
+              backgroundColor:'#999999',
+            }}
+          >
+            <Image
+              style={{
+                width: 45,
+                height: 45,
+                borderRadius: 30,
+             }}
             source={{ uri: user.userphoto }}
-          ></Image>
+            />
+          </View>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('UserThink')
+              navigation.navigate('UserThink',user)
             }}
             style={{
               width: 230,
@@ -338,4 +370,23 @@ export default TrangChu;
 //                                       />
 //                                 </View>
 //                   </Modal>
-//                 )}
+//                 )}//set trang thai thoat cho trang chu 
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     Alert.alert('Hold on!', 'ban co chac muon thoat', [
+  //       {
+  //         text: 'Cancel',
+  //         onPress: () => null,
+  //         style: 'cancel',
+  //       },
+  //       {text: 'YES', onPress: () => BackHandler.exitApp()},
+  //     ]);
+  //     return true;
+  //   };
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
+  //   return () => backHandler.remove();
+  // }, []);
+// ste trang thai thai cuar no tai vi tri thioat voi dong ben tren 
