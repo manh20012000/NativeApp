@@ -12,31 +12,13 @@ import { Tabs, CollapsibleTabView } from 'react-native-collapsible-tab-view'
 import { FontAwesome, EvilIcons, AntDesign } from '@expo/vector-icons';
 import VideoData from '../../Data/VideoData';
 import FlatItem from '../TrangChu/FlatItem';
-const Infor = ({ navigation }) => {
+const Infor = ({ navigation,route }) => {
   const [dataObj, setDataObj] = useState(DataOjs);
   const [dataVideo,setDataVideo]=useState(VideoData)
   // lấy dữ liệu databse  từ chương firebase 
-  const [dataUser, setData] = useState({});
+  const [dataUser, setData] = useState(route.params.data);
   const [databaiviet, setDataBaiviet]=useState([])
-  useEffect(() => {
-    const fectData = async () => {
-      try {
-      const querySnapshot = await getDocs(collection(firestore, 'user'));
-        querySnapshot.forEach((doc) => {
-          setData(doc.data());
-        });
-         const baiviet=await getDocs(collection(firestore, 'BaiVietCaNhan'))
-          const array=[]
-          baiviet.forEach((doc) => {
-            array.push(doc.data())
-          });
-          setDataBaiviet(array)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fectData();
-  }, [])
+ 
    
   const [isLiked, setIsLiked] = useState(false);
   const handlePress = () => {
@@ -59,7 +41,7 @@ const Infor = ({ navigation }) => {
           alignItems:'center',
           }}>
           <Image
-            source={{uri: dataUser.userphoto}}
+            source={{uri: dataUser.avata}}
             style={{
               width: 80,
               height: 80,
@@ -71,7 +53,7 @@ const Infor = ({ navigation }) => {
             fontSize: 20,
             color: 'white',
             fontWeight: '900'
-          }}>{dataUser.taikhoan}</Text>
+          }}>{dataUser.hoten}</Text>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('ThemInfor');
@@ -159,3 +141,22 @@ export default Infor;
 //   querySnapshot.forEach((doc) => {
 //     data.push(doc.data());
 //   });
+//useEffect(() => {
+  //   const fectData = async () => {
+  //     try {
+  //     const querySnapshot = await getDocs(collection(firestore, 'user'));
+  //       querySnapshot.forEach((doc) => {
+  //         setData(doc.data());
+  //       });
+  //        const baiviet=await getDocs(collection(firestore, 'BaiVietCaNhan'))
+  //         const array=[]
+  //         baiviet.forEach((doc) => {
+  //           array.push(doc.data())
+  //         });
+  //         setDataBaiviet(array)
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
+  //   fectData();
+  // }, [])

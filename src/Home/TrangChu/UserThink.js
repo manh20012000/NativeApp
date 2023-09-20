@@ -12,8 +12,8 @@ import {
   Modal,
   BackHandler,
   Alert,
-  ImageBackground,
   PermissionsAndroid,
+  ImageBackground,
 } from "react-native";
 import { React, useState, useEffect, useRef, memo } from "react";
 import SelectDropdown from "react-native-select-dropdown";
@@ -27,7 +27,10 @@ import { Camera, CameraType } from "expo-camera";
 import Swiper from "react-native-swiper";
 import * as MediaLibrary from "expo-media-library";
 import { MaterialIcons } from "@expo/vector-icons";
-
+import axios from "axios";
+import * as Location from "expo-location";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { Constants } from "expo";
 const UserThink = ({ navigation, route }) => {
   const [Hienthi, setHienthi] = useState(true);
   const HandeHienthi = () => {
@@ -41,7 +44,8 @@ const UserThink = ({ navigation, route }) => {
   // lấy data cua use
   const [data, setData] = useState(route.params);
   // thuc hien select Share option
-
+  //  console.log(data)
+  const [permission, setPermission] = useState("public");
   const countries = [
     {
       title: "Private",
@@ -65,38 +69,18 @@ const UserThink = ({ navigation, route }) => {
     },
   ];
   // botomsheeet cho phần lựa chon keier bà
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const bootomShetShare = () => {
     setVisible(!visible);
   };
+  const [visible2, setVisible2] = useState(false);
   // set trang thai để cho thẻ view text và view ảnh được hiển thị
   const [viewHienthi, setView] = useState(1);
   // cho phép chọn post ânr hoặc hiển thị
   const [isSelectable, setIsSelectable] = useState(false);
   // mục nhấn chon ảnh  câps quyền cho ảnh
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
-  // useEffect(() => {
-  //   const Granted = async () => {
-  //     try {
-  //       const granted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.ACCESS_MEDIA_LOCATION,
-  //         {
-  //           title: "Acess LiBrary",
-  //           message:
-  //             "Cool Photo App needs access to your library" +
-  //             "so you can take awesome pictures.",
-  //           buttonNeutral: "Ask Me Later",
-  //           buttonNegative: "Cancel",
-  //           buttonPositive: "OK",
-  //         }
-  //       );
 
-  //     } catch (err) {
-  //       console.warn(err);
-  //     }
-  //   }
-  //   Granted();
-  //  },[])
   const [selectedImages, setSelectedImages] = useState([]);
   const pickImages = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -121,16 +105,16 @@ const UserThink = ({ navigation, route }) => {
     };
     postImage();
   }, [selectedImages]);
+
   // set trang thai cho text thay đoi
   const [isText, setIsText] = useState();
   const onchangerTexT = (value) => {
     setIsText(value);
-    if (value == "" &&selectedImages.length==0) {
+    if (value == "" && selectedImages.length == 0) {
       setIsSelectable(false);
-    } else if(value == ""&&selectedImages.length>0){
+    } else if (value == "" && selectedImages.length > 0) {
       setIsSelectable(true);
-    }
-    else {
+    } else {
       setIsSelectable(true);
     }
   };
@@ -161,7 +145,6 @@ const UserThink = ({ navigation, route }) => {
   const [flast, setFlast] = useState("off");
   const [startCamera, setStartCamera] = useState(true);
   const [isView, setIsView] = useState(true);
-
   __startCamera = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status === "granted") {
@@ -171,7 +154,6 @@ const UserThink = ({ navigation, route }) => {
       Alert.alert("Access denied");
     }
   };
-
   // cho phép bạn chọn vaof thựo tính nào
 
   const [selectedOption, setSelectedOption] = useState("16:9");
@@ -203,32 +185,79 @@ const UserThink = ({ navigation, route }) => {
     setHienthi(true);
     setIsSelectable(true);
   };
- 
-  // cho phép nhấn xóa khi khoong ưng cái ảnh này 
+
+  // cho phép nhấn xóa khi khoong ưng cái ảnh này
   const __retakePicture = () => {
-    setCapturedImage(null)
-    setIsView(true)
-    __startCamera()
-  }
+    setCapturedImage(null);
+    setIsView(true);
+    __startCamera();
+  };
   // useEffect(() => {
   //   const set = () => {
   //     setIsView(true)
   //     }
   //  }, [capturedImage]);
   // flat mode
-  
-  const [flashMode, setFlashMode] =useState('off')
-  const __handleFlashMode = () => {
-       console.log(flashMode)
-    if (flashMode === 'on') {
-      setFlashMode('off')
-    } else if (flashMode === 'off') {
-      setFlashMode('on')
-    } else {
-      setFlashMode('auto')
-    }
 
-  }
+  const [flashMode, setFlashMode] = useState("off");
+  const __handleFlashMode = () => {
+    console.log(flashMode);
+    if (flashMode === "on") {
+      setFlashMode("off");
+    } else if (flashMode === "off") {
+      setFlashMode("on");
+    } else {
+      setFlashMode("auto");
+    }
+  };
+  //set vơi bản đò để lấy vị gtris của nó
+  const LocationMap = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === "granted") {
+      // Xử lý khi người dùng không cấp quyền
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      setVisible2(!visible2);
+    } else{
+      return;
+    }
+  };
+  const bootomShetShare2 = () => {
+    LocationMap();
+  };
+  // thưc hien lay du lieu gui len axios
+  const [feel, setFell] = useState(null);
+  const HanderAxios = async () => {
+    if (viewHienthi == 1) {
+      console.log("batdau  " + isText);
+      try {
+        let datetime = new Date();
+        let datePostTimstemp = datetime.slice(0, -5);
+        const senStatus = await axios.post(
+          "https://nativeapp.onrender.com/uploads/tao_bai_viet",
+          {
+            trangThai: isText + feel,
+            datePost: datePostTimstemp,
+            idLogin: data.idLogin,
+            feel: feel,
+            permission: permission,
+          }
+        );
+        if (data.status == 200) {
+          alert("thành công");
+        }
+        console.log("nhay tai day");
+      } catch (erro) {
+        console.log(erro + "loi da xinh ra ");
+      }
+    } else {
+      console.log("thatbai");
+      // let datePost=new Date()
+      // const senStatus=await axios.post('https://nativeapp.onrender.com/uploads/tao_bai_viet', {idLogin:data.idLogin,isText: isText,datePost:datePost})
+      // const semImage =await axios.post('https://nativeapp.onrender.com/uploads/postImage', {idLogin:data.idLogin,image: selectedImages,datePost:datePost})
+    }
+  };
+  // console.log(selectedImages)
   return (
     <View style={{ flex: 1 }}>
       {Hienthi && (
@@ -260,7 +289,7 @@ const UserThink = ({ navigation, route }) => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              // onPress={handlePress}
+              onPress={HanderAxios}
               disabled={!isSelectable}
             >
               <Text style={{ color: "white" }}>POST</Text>
@@ -290,7 +319,7 @@ const UserThink = ({ navigation, route }) => {
                   height: 80,
                   borderRadius: 80,
                 }}
-                source={{ uri: data.userphoto }}
+                source={{ uri: data.avata }}
               />
             </View>
             <View
@@ -306,7 +335,7 @@ const UserThink = ({ navigation, route }) => {
                   fontWeight: "600",
                 }}
               >
-                {data.taikhoan}
+                {data.hoten}
               </Text>
               <View
                 style={{
@@ -319,6 +348,7 @@ const UserThink = ({ navigation, route }) => {
                 <SelectDropdown
                   data={countries}
                   onSelect={(selectedItem, index) => {
+                    setPermission(selectedItem.title);
                     console.log(selectedItem, index);
                   }}
                   buttonStyle={{
@@ -400,36 +430,163 @@ const UserThink = ({ navigation, route }) => {
                 <BottomSheet
                   visible={visible}
                   //setting the visibility state of the bottom shee
-                  onBackButtonPress={bootomShetShare}
                   //Toggling the visibility state on the click of the back botton
                   onBackdropPress={bootomShetShare}
                   //Toggling the visibility state on the clicking out side of the sheet
                 >
                   {/*Bottom Sheet inner View*/}
-                  <View style={{ flex: 0.4, backgroundColor: "white" }}>
-                    <View
+                  <View style={{ flex: 0.6, backgroundColor: "white" }}>
+                    <Text
                       style={{
-                        flexDirection: "column",
-                        justifyContent: "space-between",
+                        textAlign: "center",
+                        padding: 20,
+                        fontSize: 20,
                       }}
                     >
-                      <Text
-                        style={{
-                          textAlign: "center",
-                          padding: 20,
-                          fontSize: 20,
-                        }}
-                      >
-                        Share Using
-                      </Text>
-                      <View style={{ flex: 1, flexDirection: "row" }}>
-                        <Text>cbbdbbd</Text>
-                      </View>
-                      <View style={{ flex: 1, flexDirection: "row" }}>
-                        <Text>hihi</Text>
-                      </View>
-                    </View>
+                      Cảm xúc
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => setFell(" -Đang cảm thấy vui vẻ")}
+                      style={{
+                        width: "100%",
+                        height: "10%",
+                        backgroundColor: "pink",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <Text>Đang cảm thấy vui vẻ</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={() => setFell(" -Đang cảm thấy buồn")}
+                      style={{
+                        width: "100%",
+                        height: "10%",
+                        backgroundColor: "pink",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <Text>Đang cảm thấy buồn</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => setFell(" -Đang cảm thấy may mắn")}
+                      style={{
+                        width: "100%",
+                        height: "10%",
+                        backgroundColor: "pink",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <Text>Đang cảm thấy may mắn</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => setFell(" -Đang cảm thấy hạnh phúc")}
+                      style={{
+                        width: "100%",
+                        height: "10%",
+                        backgroundColor: "pink",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <Text>Đang cảm thấy hạnh phúc</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => setFell(" -Đang cảm thấy bực mình")}
+                      style={{
+                        width: "100%",
+                        height: "10%",
+                        backgroundColor: "pink",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <Text>Đang cảm thấy bực mình</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => setFell(" -Đang cảm thấy đáng yêu 😊😊")}
+                      style={{
+                        width: "100%",
+                        height: "10%",
+                        backgroundColor: "pink",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <Text>Đang cảm thấy bực mình😊😊</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => setFell(" -Đang cảm thấy nhớ nhà")}
+                      style={{
+                        width: "100%",
+                        height: "10%",
+                        backgroundColor: "pink",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <Text>Đang cảm thấy nhớ nhà</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => setFell(" -Đang cảm thấy đáng ❤️😍")}
+                      style={{
+                        width: "100%",
+                        height: "10%",
+                        backgroundColor: "pink",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <Text>Đang cảm thấy đáng yêu❤️💕</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => setFell(" -Đang cảm thấy đáng cute ❤️😍")}
+                      style={{
+                        width: "100%",
+                        height: "10%",
+                        backgroundColor: "pink",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <Text>Đang cảm thấy đáng cute❤️💕</Text>
+                    </TouchableOpacity>
                   </View>
+                </BottomSheet>
+                <BottomSheet
+                  visible={visible2}
+                  //setting the visibility state of the bottom shee
+                  //Toggling the visibility state on the click of the back botton
+                  onBackdropPress={bootomShetShare2}
+                  //Toggling the visibility state on the clicking out side of the sheet
+                >
+                  <MapView
+                    style={{ flex: 0.94 }}
+                    showsUserLocation={true}
+                    followsUserLocation={true}
+                    provider={PROVIDER_GOOGLE}
+                  
+                  >
+                    {/* <Marker
+                      coordinate={{
+                        // latitude: this.state.latitude,
+                        longitude: this.state.longitude,
+                      }}
+                      onPress={this.handleMarkerPress}
+                    /> */}
+                  </MapView>
                 </BottomSheet>
               </View>
             )}
@@ -476,7 +633,7 @@ const UserThink = ({ navigation, route }) => {
                           style={{
                             fontSize: 30,
                             fontWeight: "300",
-                            color: "#00FF00",
+                            color: "white",
                           }}
                         >
                           x
@@ -548,10 +705,10 @@ const UserThink = ({ navigation, route }) => {
               <TouchableOpacity style={{}}>
                 <Entypo name="add-user" size={24} color="blue" />
               </TouchableOpacity>
-              <TouchableOpacity style={{}}>
+              <TouchableOpacity onPress={bootomShetShare} style={{}}>
                 <Entypo name="emoji-happy" size={25} color="orange" />
               </TouchableOpacity>
-              <TouchableOpacity style={{}}>
+              <TouchableOpacity onPress={bootomShetShare2} style={{}}>
                 <FontAwesome5 name="map-marker-alt" size={24} color="red" />
               </TouchableOpacity>
               <TouchableOpacity
@@ -585,23 +742,26 @@ const UserThink = ({ navigation, route }) => {
               paddingHorizontal: 10,
             }}
           >
-            {isView&&<TouchableOpacity
-              onPress={HandeHienthi}
-              style={{ flexDirection: "row" }}
-            >
-              <Ionicons name="arrow-back" size={26} color="white" />
-              <Text style={{ color: "white" }}> Back</Text>
-            </TouchableOpacity>}
-            {!isView&&<TouchableOpacity
-              onPress={__retakePicture}
-              style={{ flexDirection: "row" }}
-            >
-              <Text style={{ color: "white" }}> Back</Text>
-            </TouchableOpacity>}
+            {isView && (
+              <TouchableOpacity
+                onPress={HandeHienthi}
+                style={{ flexDirection: "row" }}
+              >
+                <Ionicons name="arrow-back" size={26} color="white" />
+                <Text style={{ color: "white" }}> Back</Text>
+              </TouchableOpacity>
+            )}
             {!isView && (
               <TouchableOpacity
-                onPress={SaveImage
-                      }
+                onPress={__retakePicture}
+                style={{ flexDirection: "row" }}
+              >
+                <Text style={{ color: "white" }}> Back</Text>
+              </TouchableOpacity>
+            )}
+            {!isView && (
+              <TouchableOpacity
+                onPress={SaveImage}
                 style={{ flexDirection: "row" }}
               >
                 <Text style={{ color: "white" }}> Save</Text>
@@ -635,10 +795,12 @@ const UserThink = ({ navigation, route }) => {
                     color="red"
                   />
                 </TouchableOpacity>
-                <TouchableOpacity
-                   onPress={__handleFlashMode}
-                >
-                  <Entypo name="flash" size={25} color={flashMode === 'off' ? '#000' : '#fff'} />
+                <TouchableOpacity onPress={__handleFlashMode}>
+                  <Entypo
+                    name="flash"
+                    size={25}
+                    color={flashMode === "off" ? "#000" : "#fff"}
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity>
                   <Ionicons
@@ -781,3 +943,25 @@ const UserThink = ({ navigation, route }) => {
 };
 export default UserThink;
 const styles = StyleSheet.create({});
+// useEffect(() => {
+//   const Granted = async () => {
+//     try {
+//       const granted = await PermissionsAndroid.request(
+//         PermissionsAndroid.PERMISSIONS.ACCESS_MEDIA_LOCATION,
+//         {
+//           title: "Acess LiBrary",
+//           message:
+//             "Cool Photo App needs access to your library" +
+//             "so you can take awesome pictures.",
+//           buttonNeutral: "Ask Me Later",
+//           buttonNegative: "Cancel",
+//           buttonPositive: "OK",
+//         }
+//       );
+
+//     } catch (err) {
+//       console.warn(err);
+//     }
+//   }
+//   Granted();
+//  },[])

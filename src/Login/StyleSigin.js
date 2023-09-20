@@ -18,13 +18,13 @@ const styles = StyleSheet.create({
         marginTop:'15%',
     margin: 10,
     paddingLeft: 25,
+    marginTop:40,
   },
   textinput: {
     fontSize: 20,
-    paddingVertical: 0,
     width: 310,
-    height: 50,
-    marginTop: 4,
+    height: 60,
+    marginTop: 10,
   },
   ViewIcon: {
     flexDirection: "row",

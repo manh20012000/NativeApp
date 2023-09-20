@@ -4,7 +4,7 @@ let DataOjs =
     [
         {
             id: '1',
-            name: 'Ngọc Diệp',
+            name: 'Diệp Chi❤️',
             avata: 'https://i.pinimg.com/originals/8b/f5/68/8bf5689456b68cd8af836c943c3754f2.png',
             anh: ['https://www.ldg.com.vn/media/uploads/uploads/21204723-hinh-anh-gai-xinh-2.jpg',
                 'https://i.pinimg.com/originals/8b/f5/68/8bf5689456b68cd8af836c943c3754f2.png'],

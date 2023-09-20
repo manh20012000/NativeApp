@@ -1,64 +1,71 @@
-import React, {useEffect} from 'react';
-import { Text, View, StyleSheet, Image, BackHandler,Alert} from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Trangchu from '../Home/TrangChu/Trangchu.js'
-import { FontAwesome5 } from '@expo/vector-icons';
-import VideoTikTok from '../Home/Video/VideoTiktok.js';
-import Infor from '../Home/Information/Infor.js';
-import { Feather } from '@expo/vector-icons';
-import Add from '../Home/Add/Add.js';
-import { MaterialIcons } from '@expo/vector-icons';
-import RecodViedeo from '../AddVideo/RecodVieao.js';
-import { SimpleLineIcons } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
+import React, { useEffect } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  BackHandler,
+  Alert,
+} from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Trangchu from "../Home/TrangChu/Trangchu.js";
+import { FontAwesome5 } from "@expo/vector-icons";
+import VideoTikTok from "../Home/Video/VideoTiktok.js";
+import Infor from "../Home/Information/Infor.js";
+import { Feather } from "@expo/vector-icons";
+import Add from "../Home/Add/Add.js";
+import { MaterialIcons } from "@expo/vector-icons";
+import RecodViedeo from "../AddVideo/RecodVieao.js";
+import { SimpleLineIcons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
-const BootonGate = (navigation) => {
- 
+const BootonGate = ({ navigation, route }) => {
+  // console.log(route.params)
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: { backgroundColor: 'black', },
+        tabBarStyle: { backgroundColor: "black" },
         tabBarIcon: ({ focused, color, size }) => {
           let iconComponent;
 
-          if (route.name === 'TrangChu') {
+          if (route.name === "TrangChu") {
             iconComponent = (
               <Image
-                source={require('../Image/home.png')}
+                source={require("../Image/home.png")}
                 style={{
                   width: focused ? 30 : 25,
                   height: focused ? 30 : 25,
-                  tintColor: focused ? 'white' : '#888888',
+                  tintColor: focused ? "white" : "#888888",
                 }}
               />
             );
-          } else if (route.name === 'Watch') {
+          } else if (route.name === "Watch") {
             iconComponent = (
               <Entypo
                 name="folder-video"
                 size={focused ? 28 : 24}
-                color={focused ? 'white' : '#888888'}
+                color={focused ? "white" : "#888888"}
               />
             );
-          
-          } else if (route.name === 'Thông báo') {
+          } else if (route.name === "Thông báo") {
             iconComponent = (
               <FontAwesome
                 name="bell"
                 size={focused ? 28 : 24}
-                color={focused ? 'white' : '#888888'}
+                color={focused ? "white" : "#888888"}
               />
             );
-          } else if (route.name === 'Infor') {
+          } else if (route.name === "Infor") {
             iconComponent = (
               <Feather
                 name="user"
                 size={focused ? 28 : 24}
-                color={focused ? 'white' : '#888888'}
+                color={focused ? "white" : "#888888"}
               />
             );
           }
@@ -67,27 +74,32 @@ const BootonGate = (navigation) => {
         },
       })}
     >
-      <Tab.Screen name="TrangChu" component={Trangchu} />
+      <Tab.Screen
+        name="TrangChu"
+        component={Trangchu}
+        initialParams={{ data: route.params }}
+      />
       <Tab.Screen name="Watch" component={VideoTikTok} />
       <Tab.Screen
-        name='    '
+        name="    "
         component={RecodViedeo}
         options={{
           tabBarIcon: ({ focused }) => (
             <Image
-              source={require('../Image/new-video.png')}
+              source={require("../Image/new-video.png")}
               style={{
                 marginTop: 18,
                 width: 45,
                 height: 35,
               }}
             />
-          )
+          ),
         }}
-
       />
       <Tab.Screen name="Thông báo" component={Add} />
-      <Tab.Screen name="Infor" component={Infor} />
+      <Tab.Screen name="Infor"
+    initialParams={{ data: route.params }}
+        component={Infor} />
     </Tab.Navigator>
   );
 };

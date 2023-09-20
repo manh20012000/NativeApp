@@ -3,13 +3,11 @@
  const styles = StyleSheet.create({
       container:{
         flex:1,
-        paddingTop:'7%'
       },
       header:{
-           flex:0.25,
+           flex:0.2,
             justifyContent:'center',
             alignItems:'center',
-            marginTop:'17%',
       },
       font:{
            fontSize:40,
