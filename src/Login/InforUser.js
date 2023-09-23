@@ -11,6 +11,8 @@ import {
   ImageBackground,
   DatePickerAndroid,
   Modal,
+  Keyboard,
+  TouchableWithoutFeedback, KeyboardAvoidingView,
 } from "react-native";
 import React, { Component, useState, useEffect } from "react";
 import axios from "axios";
@@ -21,6 +23,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { AntDesign, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { set } from "lodash";
 const InforUser = ({ navigation }) => {
   const back = () => {
@@ -91,6 +94,7 @@ const InforUser = ({ navigation }) => {
   };
 
   return (
+    
     <ImageBackground
       source={{
         uri: "https://i.pinimg.com/originals/90/c7/1b/90c71b954a7e0a34bf0c0e2b558d5171.jpg",
@@ -114,6 +118,7 @@ const InforUser = ({ navigation }) => {
           <Text style={{ fontSize: 20 }}>Back</Text>
         </TouchableOpacity>
       </View>
+      <KeyboardAwareScrollView>
       <View
         style={{
           justifyContent: "center",
@@ -292,7 +297,8 @@ const InforUser = ({ navigation }) => {
         >
           <AntDesign name="twitter" size={34} color="black" />
         </TouchableOpacity>
-      </View>
+        </View>
+        </KeyboardAwareScrollView>
     </ImageBackground>
   );
 };

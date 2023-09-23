@@ -33,6 +33,7 @@ const VideoTikTok = () => {
       <FlatList
         data={data}
         pagingEnabled
+        keyExtractor={(item, index) =>index.toString()}
         renderItem={({ item, index }) => {
           return (
             <VideoItem item={item}

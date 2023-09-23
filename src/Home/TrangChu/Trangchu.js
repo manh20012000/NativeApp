@@ -11,9 +11,9 @@ import {
   TouchableWithoutFeedback,
   Modal,
   BackHandler,
-  Alert,
+  Alert, RefreshControl,
 } from "react-native";
-import { React, useState, useEffect, useRef, memo } from "react";
+import { React, useState, useEffect, useRef, memo,useCallback } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import DataOjs from "../../Data/DataObj.js";
 import FlatItem from "./FlatItem.js";
@@ -120,6 +120,15 @@ const TrangChu = ({ navigation, route }) => {
   //  lam hien thi vooi story
   const [modalVisible, setModalVisible] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
+  // refres control
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   const video = useRef(null);
   const FlatStory = memo(() => {
     return (
@@ -230,6 +239,7 @@ const TrangChu = ({ navigation, route }) => {
         <FlatList
           horizontal
           data={data}
+          keyExtractor={(item) => item.id.toString()}
           ListHeaderComponent={str}
           renderItem={({ item }) => {
             return (
@@ -300,7 +310,7 @@ const TrangChu = ({ navigation, route }) => {
       <FlatList
         data={data}
         ListHeaderComponent={FlatStory}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) =>index.toString()}
         removeClippedSubviews={true}
         renderItem={({ item, index }) => {
           return (
@@ -313,7 +323,11 @@ const TrangChu = ({ navigation, route }) => {
             />
           );
         }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       ></FlatList>
+
       {isViewerOpen && (
         <Modal visible={true} transparent={true}>
           <View style={{ flex: 1, backgroundColor: "white" }}>

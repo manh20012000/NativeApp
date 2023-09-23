@@ -1,6 +1,6 @@
 import {
-  StyleSheet, Text, View, SafeAreaView, TouchableOpacity,ImageBackground,
- Form, Button, ScrollView,
+  StyleSheet, Text, View, SafeAreaView, TouchableOpacity,ImageBackground, TouchableWithoutFeedback,
+ Form, Button, ScrollView,Keyboard
 } from 'react-native'
 import React, { Component, useState, useEffect } from 'react'
 import axios from 'axios';
@@ -96,7 +96,7 @@ const Dangky = ({ navigation,route }) => {
        <Text style={{fontSize:40,textAlign:'center'}}> {'<'} </Text>
        
   </TouchableOpacity>
- 
+  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.header}>
        
         <Text style={styles.textSig}>Sigin</Text>
@@ -176,10 +176,8 @@ const Dangky = ({ navigation,route }) => {
               textStyle={{ color: '#FFF' }}
             />
           </TouchableOpacity>
-       
-  
       </View>
-   
+   </TouchableWithoutFeedback>
     </ImageBackground>
   )
 }

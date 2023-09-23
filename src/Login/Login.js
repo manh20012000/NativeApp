@@ -22,15 +22,16 @@ const Login = ({ navigation }) => {
   const [taikhoan, setName] = useState("");
   const [matkhau, setPass] = useState("");
   const [loading, setLoading] = useState(false);
-  const login = async () => {
-    // console.log("taikhoan mat khau la :  " + taikhoan, matkhau);
-    try {
-      setLoading(true);
-       const { data } = await axios.post(
-        "https://nativeapp.onrender.com/api/login",
-        { taikhoan: taikhoan, matkhau: matkhau }
+  const login = async () => {  
+    try { 
+      if (taikhoan == "" || matkhau == "") {
+        alert("vui lòng nhập tài khoản hoặc mật khẩu ");
+        return;
+      }
+     setLoading(true);
+      const { data } = await axios.post( "https://nativeapp-vwvi.onrender.com/api/login",{ taikhoan: taikhoan, matkhau: matkhau }
       );
-      if (data.status == 200) { 
+      if (data.status == 200) {
         // console.log(data[0]);
         const response = data;
         const datas = response.data[0];
@@ -39,14 +40,15 @@ const Login = ({ navigation }) => {
         navigation.navigate("BootonGate", datas);
         setPass("");
         setName("");
-      } else if (data.status == 400) {
+      } else if(data.status==404){
         setLoading(false);
-        alert("dang nhập thất bại");
+        alert("nhập sai mật khẩu vui lòng nhập lại");
       }
     } catch (eror) {
-      setLoading(false);
-      alert("đăng nhập thất bại" + eror);
-    }
+        console.log(eror);
+        setLoading(false);
+        alert("catch->>>  " + eror);
+      }
   };
   const [hienthi, setHienthi] = useState(true);
   const anhien = () => {
