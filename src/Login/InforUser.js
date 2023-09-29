@@ -12,7 +12,8 @@ import {
   DatePickerAndroid,
   Modal,
   Keyboard,
-  TouchableWithoutFeedback, KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
 } from "react-native";
 import React, { Component, useState, useEffect } from "react";
 import axios from "axios";
@@ -23,7 +24,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { AntDesign, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { set } from "lodash";
 const InforUser = ({ navigation }) => {
   const back = () => {
@@ -49,7 +50,6 @@ const InforUser = ({ navigation }) => {
   };
   // thực hiện chọn với ngày tháng nam sinh
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -64,7 +64,7 @@ const InforUser = ({ navigation }) => {
     const year = date.getFullYear();
     const formattedDate = `${year}-${month}-${day}`;
     setSelectedDate(formattedDate);
-    setBirth(formattedDate)
+    setBirth(formattedDate);
     hideDatePicker();
   };
   // chon nam hay nữ với ảnh đại đien
@@ -81,225 +81,233 @@ const InforUser = ({ navigation }) => {
     ) {
       alert("vui lòng nhập đủ thông tin");
     } else {
-
-      console.log(data)
+      console.log(data + "daadta");
       navigation.navigate("Dangky", data);
       setAvatar("");
       setBirth("");
       setGender("");
       setPhone("");
       setName("");
-      setSelectedDate('')
+      setSelectedDate("");
     }
   };
 
   return (
-    
-    <ImageBackground
-      source={{
-        uri: "https://i.pinimg.com/originals/90/c7/1b/90c71b954a7e0a34bf0c0e2b558d5171.jpg",
-      }}
-      style={{
-        flex: 1,
-        resizeMode: "cover",
-      }}
+    <ScrollView
+    contentContainerStyle={{ flexGrow: 1 }}
     >
-      <View
+      <ImageBackground
+        source={{
+          uri: "https://i.pinimg.com/originals/90/c7/1b/90c71b954a7e0a34bf0c0e2b558d5171.jpg",
+        }}
         style={{
-          width: "100%",
-          marginLeft: 20,
+          resizeMode: "cover",
+          height:'100%',
         }}
       >
-        <TouchableOpacity
-          style={{ flexDirection: "row", alignItems: "center" }}
-          onPress={back}
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
-          <Text style={{ fontSize: 20 }}>Back</Text>
-        </TouchableOpacity>
-      </View>
-      <KeyboardAwareScrollView>
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100%",
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 30,
-            color: "white",
-            fontWeight: "800",
-            opacity: 0.7,
-            marginTop: 30,
-          }}
-        >
-          Thông Tin Cá Nhân
-        </Text>
-      </View>
-      <View
-        style={{
-          width: "100%",
-          alignItems: "center",
-          flexDirection: "column",
-          height: "60%",
-          justifyContent: "space-around",
-        }}
-      >
-        <TextInput
-          style={{
-            width: "80%",
-            height: "10%",
-            backgroundColor: "white",
-            paddingHorizontal: 14,
-            borderRadius: 20,
-          }}
-          value={Name}
-          onChangeText={setName}
-          placeholder="Họ và tên"
-        ></TextInput>
-        <TextInput
-          style={{
-            width: "80%",
-            height: "10%",
-            backgroundColor: "white",
-            paddingHorizontal: 14,
-            borderRadius: 20,
-          }}
-          placeholder="nhập số phone"
-          value={phone}
-          onChangeText={setPhone}
-        ></TextInput>
         <View
           style={{
-            width: "80%",
-            height: "13%",
-            backgroundColor: "white",
-            paddingHorizontal: 14,
-            borderRadius: 20,
+            width: "100%",
+            marginLeft: 20,
+          }}
+        >
+          <TouchableOpacity
+            style={{ flexDirection: "row", alignItems: "center" }}
+            onPress={back}
+          >
+            <Ionicons name="arrow-back" size={24} color="white" />
+            <Text style={{ fontSize: 20 }}>Back</Text>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+           
             alignItems: "center",
-            flexDirection: "row",
+            width: "100%",
+            marginVertical:20,
+            flexDirection: 'column',
+            justifyContent: "space-around",
+          
           }}
         >
           <Text
             style={{
-              fontSize: 20,
-              color: "black",
+              fontSize: 30,
+              color: "white",
+              fontWeight: "800",
+              opacity: 0.7,
+              marginTop: 30,
             }}
           >
-            {" "}
-            Chọn giới tính: {gender}
+            Thông Tin Cá Nhân
           </Text>
-          <RadioButton.Group onValueChange={handleGenderChange} value={gender}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <RadioButton value="male" />
-              <Text style={{ fontSize: 18, color: "red" }}>Male</Text>
-            </View>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <RadioButton value="female" />
-              <Text style={{ fontSize: 18, color: "red" }}>Female</Text>
-            </View>
-          </RadioButton.Group>
         </View>
         <View
           style={{
-            width: "80%",
-            height: "10%",
-            backgroundColor: "white",
-            paddingHorizontal: 14,
-            borderRadius: 20,
-            flexDirection: "row",
-            justifyContent: "space-between",
+            width: "100%",
             alignItems: "center",
+            flexDirection: "column",
+            justifyContent: "space-around",
+           
+            height:500,
           }}
         >
-          <Text style={{ alignItems: "center", fontSize: 20 }}>
-            {selectedDate}
-          </Text>
-          <TouchableOpacity
-            onPress={showDatePicker}
+          <TextInput
             style={{
-              justifyContent: "center",
-              backgroundColor: "pink",
-              width: "20%",
+              width: "80%",
+              height:60,
+              backgroundColor: "white",
+              paddingHorizontal: 14,
+              borderRadius: 20,
+            }}
+            value={Name}
+            onChangeText={setName}
+            placeholder="Họ và tên"
+          ></TextInput>
+          <TextInput
+            style={{
+              width: "80%",
+              height:60,
+              backgroundColor: "white",
+              paddingHorizontal: 14,
+              borderRadius: 20,
+            }}
+            placeholder="nhập số phone"
+            value={phone}
+            onChangeText={setPhone}
+          ></TextInput>
+          <View
+            style={{
+              width: "80%",
+              height:80,
+              backgroundColor: "white",
+              paddingHorizontal: 14,
+              borderRadius: 20,
               alignItems: "center",
-              height: "100%",
+              flexDirection: "row",
             }}
           >
-            <Text>Lich</Text>
-          </TouchableOpacity>
-          <DateTimePickerModal
-            isVisible={isDatePickerVisible}
-            mode="date"
-            onConfirm={handleConfirm}
-            onCancel={hideDatePicker}
-          />
-        </View>
+            <Text
+              style={{
+                fontSize: 20,
+                color: "black",
+              }}
+            >
+              {" "}
+              Chọn giới tính
+            </Text>
+            <RadioButton.Group
+              onValueChange={handleGenderChange}
+              value={gender}
+            >
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <RadioButton value="male" />
+                <Text style={{ fontSize: 18, color: "red" }}>Male</Text>
+              </View>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <RadioButton value="female" />
+                <Text style={{ fontSize: 18, color: "red" }}>Female</Text>
+              </View>
+            </RadioButton.Group>
+          </View>
+          <View
+            style={{
+              width: "80%",
+              height:60,
+              backgroundColor: "white",
+              paddingHorizontal: 14,
+              borderRadius: 20,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ alignItems: "center", fontSize: 20 }}>
+              {selectedDate}
+            </Text>
+            <TouchableOpacity
+              onPress={showDatePicker}
+              style={{
+                justifyContent: "center",
+                backgroundColor: "pink",
+                width: "20%",
+                alignItems: "center",
+                height:40
+              }}
+            >
+              <Text>Lich</Text>
+            </TouchableOpacity>
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+            />
+          </View>
 
-        <TouchableOpacity
-          onPress={handpressNext}
-          style={{
-            width: "20%",
-            height: "10%",
-            backgroundColor: "blue",
-            borderRadius: 10,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ fontSize: 20, color: "white" }}>Tiếp</Text>
-        </TouchableOpacity>
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <TouchableOpacity
-          style={{
-            width: 54,
-            height: 54,
-            borderRadius: 40,
-            backgroundColor: "pink",
-            justifyContent: "center",
-            alignItems: "center",
-            marginHorizontal: 5,
-          }}
-        >
-          <FontAwesome5 name="facebook-f" size={34} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            width: 54,
-            height: 54,
-            borderRadius: 40,
-            backgroundColor: "pink",
-            justifyContent: "center",
-            alignItems: "center",
-            marginHorizontal: 5,
-          }}
-        >
-          <AntDesign name="google" size={34} color="red" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            width: 54,
-            height: 54,
-            borderRadius: 40,
-            backgroundColor: "pink",
-            justifyContent: "center",
-            alignItems: "center",
-            marginHorizontal: 5,
-          }}
-        >
-          <AntDesign name="twitter" size={34} color="black" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handpressNext}
+            style={{
+              width: "40%",
+              height:50,
+              backgroundColor: "blue",
+              borderRadius: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontSize: 20, color: "white" }}>Tiếp</Text>
+          </TouchableOpacity>
         </View>
-        </KeyboardAwareScrollView>
-    </ImageBackground>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              width: 54,
+              height: 54,
+              borderRadius: 40,
+              backgroundColor: "pink",
+              justifyContent: "center",
+              alignItems: "center",
+              marginHorizontal: 5,
+            }}
+          >
+            <FontAwesome5 name="facebook-f" size={34} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              width: 54,
+              height: 54,
+              borderRadius: 40,
+              backgroundColor: "pink",
+              justifyContent: "center",
+              alignItems: "center",
+              marginHorizontal: 5,
+            }}
+          >
+            <AntDesign name="google" size={34} color="red" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              width: 54,
+              height: 54,
+              borderRadius: 40,
+              backgroundColor: "pink",
+              justifyContent: "center",
+              alignItems: "center",
+              marginHorizontal: 5,
+            }}
+          >
+            <AntDesign name="twitter" size={34} color="black" />
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+      </ScrollView>
   );
 };
 export default InforUser;

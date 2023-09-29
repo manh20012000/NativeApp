@@ -10,7 +10,6 @@ import { FontAwesome } from '@expo/vector-icons';
 const VideoItem = ({item,action}) => {
   const {uri,avatarUri,caption,channelName , comments ,id, likes,musicName} =item 
   const discAnimatedValue = useRef(new Animated.Value(0)).current;
- 
   const discAnimation = {
     transform: [
       {
@@ -21,6 +20,7 @@ const VideoItem = ({item,action}) => {
       },
     ],
   };
+  // console.log(action)
    useEffect(()=>{
       if(action){ 
         Animated.loop(
@@ -66,7 +66,6 @@ if (nblike === item.likes) {
           shouldPlay:action,
           resizeMode:'cover',
           isLooping: true, 
-      
           source: { uri:uri }
 
         }}

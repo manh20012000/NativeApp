@@ -4,8 +4,7 @@ import {
   View,
   SafeAreaView,
   StatusBar,
-  Image, KeyboardAvoidingView,
-  Keyboard
+  Image,
 } from "react-native";
 import Navigete from "./src/navigate/Navigate";
 import React, { Component, useState, useEffect } from "react";
@@ -60,14 +59,12 @@ export default function App() {
     //   />
     // </View>
     <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAvoidingView>
         <Image source={{uri:datas}}/>
            <StatusBar
             animated={true}
             backgroundColor="black"
             hidden={hidden}
-        />
-      </KeyboardAvoidingView>
+           />
          <Navigete/>
           </SafeAreaView>
   );

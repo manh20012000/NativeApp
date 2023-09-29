@@ -1,12 +1,5 @@
 import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  ActivityIndicator,
+  StyleSheet,Text, View, Image,TextInput,TouchableOpacity,KeyboardAvoidingView,ActivityIndicator,
 } from "react-native";
 import React, { Component, useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
@@ -29,25 +22,21 @@ const Login = ({ navigation }) => {
         return;
       }
      setLoading(true);
-      const { data } = await axios.post( "https://nativeapp-vwvi.onrender.com/api/login",{ taikhoan: taikhoan, matkhau: matkhau }
+      const {data} = await axios.post( "https://nativeapp-vwvi.onrender.com/login",{ taikhoan: taikhoan, matkhau: matkhau }
       );
       if (data.status == 200) {
-        // console.log(data[0]);
-        const response = data;
-        const datas = response.data[0];
-        // Giả sử rằng việc đăng nhập mất 2 giây
+        const datas = data;
+        const userData = datas.data;
         setLoading(false);
-        navigation.navigate("BootonGate", datas);
+        navigation.navigate("BootonGate", userData );
         setPass("");
         setName("");
-      } else if(data.status==404){
-        setLoading(false);
-        alert("nhập sai mật khẩu vui lòng nhập lại");
+      } else{
+         alert(data.msg)
       }
     } catch (eror) {
-        console.log(eror);
         setLoading(false);
-        alert("catch->>>  " + eror);
+        alert("tai khoan sai");
       }
   };
   const [hienthi, setHienthi] = useState(true);
@@ -61,7 +50,7 @@ const Login = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.font}> Dang Nhap</Text>
+        <Text style={styles.font}>Đăng Nhập</Text>
       </View>
       <View style={styles.body}>
         <View style={styles.bodycon}>

@@ -1,6 +1,16 @@
-let VideoData=[
+let VideoData = [
   {
-      id: 1,
+    id: 1,
+    channelName: 'cutedog',
+    uri: 'https://v.pinimg.com/videos/mc/720p/f6/88/88/f68888290d70aca3cbd4ad9cd3aa732f.mp4',
+    caption: 'Cute dog shaking hands #cute #puppy',
+    musicName: 'Song #1',
+    likes: 4321,
+    comments: 2841,
+    avatarUri: 'https://wallpaperaccess.com/full/1669289.jpg',
+  },
+  {
+      id: 5,
       channelName: 'cutedog',
       uri: 'https://v.pinimg.com/videos/mc/720p/f6/88/88/f68888290d70aca3cbd4ad9cd3aa732f.mp4',
       caption: 'Cute dog shaking hands #cute #puppy',

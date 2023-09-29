@@ -29,24 +29,24 @@ import screenfull from "screenfull";
 import VideoPlayer from "expo-video-player";
 const TrangChu = ({ navigation, route }) => {
   // console.log('trangchu'+JSON.stringify(route.params))
-  // useEffect(() => {
-  // const backAction = () => {
-  //   Alert.alert('Hold on!', 'ban co chac muon thoat', [
-  //     {
-  //       text: 'Cancel',
-  //       onPress: () => null,
-  //       style: 'cancel',
-  //     },
-  //     {text: 'YES', onPress: () => BackHandler.exitApp()},
-  //   ]);
-  //   return true;
-  // };
-  //   const backHandler = BackHandler.addEventListener(
-  //     'hardwareBackPress',
-  //     backAction,
-  //   );
-  //   return () => backHandler.remove();
-  // }, []);
+  useEffect(() => {
+  const backAction = () => {
+    Alert.alert('Hold on!', 'ban co chac muon thoat', [
+      {
+        text: 'Cancel',
+        onPress: () => null,
+        style: 'cancel',
+      },
+      {text: 'YES', onPress: () => BackHandler.exitApp()},
+    ]);
+    return true;
+  };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, []);
   //ste trang thai thai cuar no tai vi tri thioat voi dong ben tren
 
   const urlVideo = useRef(
@@ -58,8 +58,6 @@ const TrangChu = ({ navigation, route }) => {
   const videoe = useRef(true);
   // console.log(userStory)
   const [user, setUser] = useState(route.params.data); // dnah cho lấy dữ liệu từ dâtbase
-  //  console.log('trangthai'+JSON.stringify(user.idLogin))
-
   const [isLoading, setIsLoading] = useState(true);
   const [fullscreen, setfullscreen] = useState(true);
   const handleFullscreen = () => {
@@ -88,7 +86,7 @@ const TrangChu = ({ navigation, route }) => {
             flex: 0.7,
             height: "70%",
           }}
-          source={{ uri: user.avata }}
+          source={{ uri: user.Avatar }}
         ></Image>
         <View
           style={{
@@ -212,7 +210,7 @@ const TrangChu = ({ navigation, route }) => {
                 height: 45,
                 borderRadius: 30,
               }}
-              source={{ uri: user.avata }}
+              source={{ uri:user.Avatar }}
             />
           </View>
           <TouchableOpacity

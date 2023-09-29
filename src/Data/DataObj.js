@@ -4,7 +4,7 @@ let DataOjs =
     [
         {
             id: '1',
-            name: 'Diệp Chi❤️',
+            name: 'Lê Mạnh❤️',
             avata: 'https://i.pinimg.com/originals/8b/f5/68/8bf5689456b68cd8af836c943c3754f2.png',
             anh: ['https://scontent.fhan3-4.fna.fbcdn.net/v/t39.30808-6/316668300_662146898890669_5002528130459639752_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=52f669&_nc_ohc=fgUbE_OQj9YAX8-miD1&_nc_ht=scontent.fhan3-4.fna&oh=00_AfCS_yPyea_jreZC-47Sg3_jImmc21vINdVDGmfDVYcsYA&oe=651370A5',
                 'https://i.pinimg.com/originals/8b/f5/68/8bf5689456b68cd8af836c943c3754f2.png'],
