@@ -228,15 +228,15 @@ const UserThink = ({ navigation, route }) => {
   const formData = new FormData();
 
   const HanderAxios = async () => {
-    // setLoading(true);
-    // let datetime = new Date();
-    // let datePostTimstemp = await datetime.toISOString().slice(0, -5);
-    // formData.append('trangThai', isText);
-    // formData.append('datePost', datePostTimstemp);
-    // formData.append('idLogin', data._id);
-    // formData.append('feel', feel);
-    // formData.append('permission', permission);
-    // formData.append('vitri', vitri);
+    setLoading(true);
+    let datetime = new Date();
+    let datePostTimstemp = await datetime.toISOString().slice(0, -5);
+    formData.append("trangThai", isText);
+    formData.append("datePost", datePostTimstemp);
+    formData.append("feel", feel);
+    formData.append("permission", permission);
+    formData.append("vitri", vitri);
+    formData.append("idLogin", data._id);
     for (let i = 0; i < selectedImages.length; i++) {
       formData.append("ArayImages", {
         uri: selectedImages[i],
@@ -244,12 +244,11 @@ const UserThink = ({ navigation, route }) => {
         type: "image/jpeg", // Loại tệp
       });
     }
-    // console.log(selectedImages);
-    console.log(JSON.stringify(formData._parts) + "fotm fataa");
+    // console.log(JSON.stringify(formData._parts) + "fotm fataa");
     try {
-      console.log("cao dyydhd");
-      const { status } = await axios.post(
-        "https://nativeapp-vwvi.onrender.com/file",
+      const { status, msg } = await axios.post(
+        "https://nativeapp-vwvi.onrender.com/uploadAnh",
+        // "http://192.168.0.101:8080/uploadAnh",
         formData,
         {
           headers: {
@@ -264,7 +263,7 @@ const UserThink = ({ navigation, route }) => {
       if (status == 200) {
         navigation.navigate("TrangChu");
         setLoading(false);
-        alert("thành công");
+        alert(msg);
       }
     } catch (erro) {
       setLoading(false);
@@ -472,7 +471,7 @@ const UserThink = ({ navigation, route }) => {
                 style={{
                   backgroundColor: "#444444",
                   width: "100%",
-                  height:'74%',
+                  height: "74%",
                   paddingTop: 10,
                 }}
               >
@@ -524,7 +523,7 @@ const UserThink = ({ navigation, route }) => {
                         <Image
                           key={index}
                           source={{ uri: image }}
-                          style={{ width: "100%", height:"100%"}}
+                          style={{ width: "100%", height: "100%" }}
                         />
                       </View>
                     ))}
@@ -849,153 +848,154 @@ const UserThink = ({ navigation, route }) => {
             Cảm xúc
           </Text>
           <ScrollView
-              contentContainerStyle={{ flexGrow: 1 }}
-            style={{ backgroundColor: "red" }}>
-          <TouchableOpacity
-            onPress={() => {
-              setFell(" -Đang cảm thấy vui vẻ");
-              setVisible(!visible);
-            }}
-            style={{
-              width: "100%",
-              height: 50,
-              backgroundColor: "pink",
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 1,
-            }}
+            contentContainerStyle={{ flexGrow: 1 }}
+            style={{ backgroundColor: "red" }}
           >
-            <Text>Đang cảm thấy vui vẻ</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setFell(" -Đang cảm thấy vui vẻ");
+                setVisible(!visible);
+              }}
+              style={{
+                width: "100%",
+                height: 50,
+                backgroundColor: "pink",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 1,
+              }}
+            >
+              <Text>Đang cảm thấy vui vẻ</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => {
-              setFell(" -Đang cảm thấy buồn😒😒");
-              setVisible(!visible);
-            }}
-            style={{
-              width: "100%",
-              height: 50,
-              backgroundColor: "pink",
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 1,
-            }}
-          >
-            <Text>Đang cảm thấy buồn</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setFell(" -Đang cảm thấy may mắn😂😂");
-              setVisible(!visible);
-            }}
-            style={{
-              width: "100%",
-              height: 50,
-              backgroundColor: "pink",
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 1,
-            }}
-          >
-            <Text>Đang cảm thấy may mắn</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setFell(" -Đang cảm thấy hạnh phúc😍😍");
-              setVisible(!visible);
-            }}
-            style={{
-              width: "100%",
-              height: 50,
-              backgroundColor: "pink",
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 1,
-            }}
-          >
-            <Text>Đang cảm thấy hạnh phúc</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setFell(" -Đang cảm thấy bực mình😒😒");
-              setVisible(!visible);
-            }}
-            style={{
-              width: "100%",
-              height: 50,
-              backgroundColor: "pink",
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 1,
-            }}
-          >
-            <Text>Đang cảm thấy bực mình</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setFell(" -Đang cảm thấy đáng yêu 😊😊");
-              setVisible(!visible);
-            }}
-            style={{
-              width: "100%",
-              height: 50,
-              backgroundColor: "pink",
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 1,
-            }}
-          >
-            <Text>Đang cảm thấy bực mình😊😊</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setFell(" -Đang cảm thấy nhớ nhà");
-              setVisible(!visible);
-            }}
-            style={{
-              width: "100%",
-              height: 50,
-              backgroundColor: "pink",
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 1,
-            }}
-          >
-            <Text>Đang cảm thấy nhớ nhà</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setFell(" -Đang cảm thấy đáng ❤️😍");
-              setVisible(!visible);
-            }}
-            style={{
-              width: "100%",
-              height: 50,
-              backgroundColor: "pink",
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 1,
-            }}
-          >
-            <Text>Đang cảm thấy đáng yêu❤️💕</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setFell(" -Đang cảm thấy đáng cute ❤️😍");
-              setVisible(!visible);
-            }}
-            style={{
-              width: "100%",
-              height: 50,
-              backgroundColor: "pink",
-              justifyContent: "center",
-              alignItems: "center",
-              borderWidth: 1,
-            }}
-          >
-            <Text>Đang cảm thấy đáng cute❤️💕</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setFell(" -Đang cảm thấy buồn😒😒");
+                setVisible(!visible);
+              }}
+              style={{
+                width: "100%",
+                height: 50,
+                backgroundColor: "pink",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 1,
+              }}
+            >
+              <Text>Đang cảm thấy buồn</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setFell(" -Đang cảm thấy may mắn😂😂");
+                setVisible(!visible);
+              }}
+              style={{
+                width: "100%",
+                height: 50,
+                backgroundColor: "pink",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 1,
+              }}
+            >
+              <Text>Đang cảm thấy may mắn</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setFell(" -Đang cảm thấy hạnh phúc😍😍");
+                setVisible(!visible);
+              }}
+              style={{
+                width: "100%",
+                height: 50,
+                backgroundColor: "pink",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 1,
+              }}
+            >
+              <Text>Đang cảm thấy hạnh phúc</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setFell(" -Đang cảm thấy bực mình😒😒");
+                setVisible(!visible);
+              }}
+              style={{
+                width: "100%",
+                height: 50,
+                backgroundColor: "pink",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 1,
+              }}
+            >
+              <Text>Đang cảm thấy bực mình</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setFell(" -Đang cảm thấy đáng yêu 😊😊");
+                setVisible(!visible);
+              }}
+              style={{
+                width: "100%",
+                height: 50,
+                backgroundColor: "pink",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 1,
+              }}
+            >
+              <Text>Đang cảm thấy bực mình😊😊</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setFell(" -Đang cảm thấy nhớ nhà");
+                setVisible(!visible);
+              }}
+              style={{
+                width: "100%",
+                height: 50,
+                backgroundColor: "pink",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 1,
+              }}
+            >
+              <Text>Đang cảm thấy nhớ nhà</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setFell(" -Đang cảm thấy đáng ❤️😍");
+                setVisible(!visible);
+              }}
+              style={{
+                width: "100%",
+                height: 50,
+                backgroundColor: "pink",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 1,
+              }}
+            >
+              <Text>Đang cảm thấy đáng yêu❤️💕</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setFell(" -Đang cảm thấy đáng cute ❤️😍");
+                setVisible(!visible);
+              }}
+              style={{
+                width: "100%",
+                height: 50,
+                backgroundColor: "pink",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 1,
+              }}
+            >
+              <Text>Đang cảm thấy đáng cute❤️💕</Text>
+            </TouchableOpacity>
           </ScrollView>
         </View>
       </BottomSheet>

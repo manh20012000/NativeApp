@@ -36,7 +36,7 @@ const Login = ({ navigation }) => {
       }
     } catch (eror) {
         setLoading(false);
-        alert("tai khoan sai");
+        alert(eror);
       }
   };
   const [hienthi, setHienthi] = useState(true);
@@ -97,12 +97,10 @@ const Login = ({ navigation }) => {
             <TouchableOpacity style={styles.foget}>
               <Text style={{ fontSize: 15 }}>Fot paswwod?</Text>
             </TouchableOpacity>
-
             <TouchableOpacity onPress={sigin}>
               <Text style={{ fontSize: 20, fontWeight: "500" }}>Sigin</Text>
             </TouchableOpacity>
           </View>
-
           <TouchableOpacity style={styles.button} onPress={login}>
             <LinearGradient
               colors={["#faf", "#3b5998", "#192f6a"]}

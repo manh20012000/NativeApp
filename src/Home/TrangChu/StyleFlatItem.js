@@ -3,7 +3,7 @@ import React from 'react'
 
 const styles = StyleSheet.create({
     contain:{
-        backgroundColor:'pink',
+        backgroundColor:'#DDDDDD',
         flex:1,
         width:'100%',
         height:"100%",

@@ -1,25 +1,18 @@
-import { StyleSheet, Text, View, FlatList, Item, TextInput, ScrollView, TouchableOpacity, } from 'react-native'
+import { StyleSheet, Text, View, FlatList,Image, Item, TextInput, ScrollView, TouchableOpacity, } from 'react-native'
 import React from 'react'
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-
-
-
-
 const Timkiem=({  navigation})=>{
   return (
     <View style={styles.contain}>
-
        <View style={{flexDirection:'row',alignItems:'center',marginHorizontal:5}}> 
        <TouchableOpacity
          onPress={()=>{
             navigation.navigate('BootonGate')
    }}
        >
-        
         <Ionicons name="arrow-back-sharp" size={24} color="black" />
         </TouchableOpacity>
-       
         <View   style={{
         width: 340, backgroundColor: 'white', margin: 10, borderRadius: 40,
         padding: 8, flexDirection: 'row',
@@ -30,8 +23,12 @@ const Timkiem=({  navigation})=>{
                  placeholder='Nhập tìm kiếm'
             />
              <Feather name="search" size={24} color="black" />
-        </View></View>
-       
+        </View>
+        <Image
+             source={{ uri:'https://nativeapp-vwvi.onrender.com/uploads/ArayImages-fba0365f.jpeg'}}
+        >
+         </Image>
+      </View>
     </View>
   )
 }
