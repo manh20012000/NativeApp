@@ -15,6 +15,7 @@ const Login = ({ navigation }) => {
   const [taikhoan, setName] = useState("");
   const [matkhau, setPass] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hienthi, setHienthi] = useState(true);
   const login = async () => {  
     try { 
       if (taikhoan == "" || matkhau == "") {
@@ -24,6 +25,7 @@ const Login = ({ navigation }) => {
      setLoading(true);
       const {data} = await axios.post( "https://nativeapp-vwvi.onrender.com/login",{ taikhoan: taikhoan, matkhau: matkhau }
       );
+    
       if (data.status == 200) {
         const datas = data;
         const userData = datas.data;
@@ -31,15 +33,21 @@ const Login = ({ navigation }) => {
         navigation.navigate("BootonGate", userData );
         setPass("");
         setName("");
-      } else{
-         alert(data.msg)
-      }
+      } else {
+        alert("tai khaone hoặc mật khẩu không chính xác");
+      } 
     } catch (eror) {
-        setLoading(false);
-        alert(eror);
+      setLoading(false);
+      if (eror == 403) {
+        alert('tai khoan mât khẩu không chình xác');
+      } else {
+          alert(eror+'alert');
+      }
+   
+      
       }
   };
-  const [hienthi, setHienthi] = useState(true);
+ 
   const anhien = () => {
     setHienthi(!hienthi);
   };

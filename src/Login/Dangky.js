@@ -70,7 +70,6 @@ const Dangky = ({ navigation, route }) => {
 
   // tao check hien thi với radio button
   const [text, setxt] = useState("ẩn");
-
   const [hienthi, setHienthi] = useState(true);
   const anhien = () => {
     setHienthi(!hienthi);

@@ -11,10 +11,11 @@ import {
   } from "react-native";
   import { React, useState, useRef, useEffect, memo } from "react";
 
-export default BinhLuan = (props) => {
+const Binhluan = (props) => {
+  console.log(props.visible)
      // su ly modal cho  binh luan
-    const [isVisible, setIsVisible] = useState(props.isVisible);
-   console.log(isVisible)
+    const [isVisible, setIsVisible] = useState(props.visible);
+  //  console.log(isVisible)
     const toggleModal = () => {
         setIsVisible(!isVisible);
       };
@@ -52,5 +53,5 @@ export default BinhLuan = (props) => {
   </Modal>
   )
 }
-
+export default Binhluan
 const styles = StyleSheet.create({})

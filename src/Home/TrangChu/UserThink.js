@@ -114,6 +114,7 @@ const UserThink = ({ navigation, route }) => {
       setView(1);
     }
   };
+
   // nêu mà loai bor chọn ảnh thì quay vè trang status
   useEffect(() => {
     const setTrangThai = () => {
@@ -123,9 +124,11 @@ const UserThink = ({ navigation, route }) => {
     };
     setTrangThai();
   }, [selectedImages]);
+
   // thưc hien su ly với camera=========================================================
   const cameraRef = useRef();
   const [pickedImagePath, setPickedImagePath] = useState("");
+
   // const [permission, requestPermission] = Camera.useCameraPermissions();
   const [image, setImage] = useState(null);
   const [flast, setFlast] = useState("off");
@@ -244,7 +247,6 @@ const UserThink = ({ navigation, route }) => {
         type: "image/jpeg", // Loại tệp
       });
     }
-    // console.log(JSON.stringify(formData._parts) + "fotm fataa");
     try {
       const { status, msg } = await axios.post(
         "https://nativeapp-vwvi.onrender.com/uploadAnh",

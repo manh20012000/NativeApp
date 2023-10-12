@@ -11,9 +11,10 @@ import {
   TouchableWithoutFeedback,
   Modal,
   BackHandler,
-  Alert, RefreshControl,
+  Alert,
+  RefreshControl,
 } from "react-native";
-import { React, useState, useEffect, useRef, memo,useCallback } from "react";
+import { React, useState, useEffect, useRef, memo, useCallback } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import DataOjs from "../../Data/DataObj.js";
 import FlatItem from "./FlatItem.js";
@@ -27,39 +28,53 @@ import { useNavigation } from "@react-navigation/native";
 import { Video, ResizeMode } from "expo-av";
 import screenfull from "screenfull";
 import VideoPlayer from "expo-video-player";
+import axios from "axios";
 const TrangChu = ({ navigation, route }) => {
-  // console.log('trangchu'+JSON.stringify(route.params))
+  const [userStory, setUserStory] = useState({}); // danh cho story
+  const [data, setData] = useState(null);
+  const [user, setUser] = useState(route.params.data); // dnah cho lấy dữ liệu từ dâtbase
+  const [isLoading, setIsLoading] = useState(true);
+  const [fullscreen, setfullscreen] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  // refres control
+  const [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
-  const backAction = () => {
-    Alert.alert('Hold on!', 'ban co chac muon thoat', [
-      {
-        text: 'Cancel',
-        onPress: () => null,
-        style: 'cancel',
-      },
-      {text: 'YES', onPress: () => BackHandler.exitApp()},
-    ]);
-    return true;
-  };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, []);
-  //ste trang thai thai cuar no tai vi tri thioat voi dong ben tren
+    const fetchdata = async () => {
+      try {
+        const { data } = await axios.get(
+          "https://nativeapp-vwvi.onrender.com/selectBaiViet"
+        );
+        setData(data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchdata();
+  },[]);
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     Alert.alert("Hold on!", "ban co chac muon thoat", [
+  //       {
+  //         text: "Cancel",
+  //         onPress: () => null,
+  //         style: "cancel",
+  //       },
+  //       { text: "YES", onPress: () => BackHandler.exitApp() },
+  //     ]);
+  //     return true;
+  //   };
+  //   const backHandler = BackHandler.addEventListener(
+  //     "hardwareBackPress",
+  //     backAction
+  //   );
+  //   return () => backHandler.remove();
+  // }, []);
 
   const urlVideo = useRef(
     "https://v.pinimg.com/videos/mc/720p/c9/22/d8/c922d8391146cc2fdbeb367e8da0d61f.mp4"
   ).current;
-  const [data, setData] = useState(DataOjs);
-  const [userStory, setUserStory] = useState({}); // danh cho story
-  //su dung ref cho video
   const videoe = useRef(true);
-  // console.log(userStory)
-  const [user, setUser] = useState(route.params.data); // dnah cho lấy dữ liệu từ dâtbase
-  const [isLoading, setIsLoading] = useState(true);
-  const [fullscreen, setfullscreen] = useState(true);
   const handleFullscreen = () => {
     setIsLoading(true);
     setfullscreen(true);
@@ -116,17 +131,12 @@ const TrangChu = ({ navigation, route }) => {
     );
   };
   //  lam hien thi vooi story
-  const [modalVisible, setModalVisible] = useState(false);
-  const [isViewerOpen, setIsViewerOpen] = useState(false);
-  // refres control
-  const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
-
   const video = useRef(null);
   const FlatStory = memo(() => {
     return (
@@ -145,7 +155,7 @@ const TrangChu = ({ navigation, route }) => {
                 color: "white",
                 fontSize: 30,
                 fontWeight: "800",
-                marginLeft:30,
+                marginLeft: 30,
               }}
             >
               MisMix
@@ -210,7 +220,7 @@ const TrangChu = ({ navigation, route }) => {
                 height: 45,
                 borderRadius: 30,
               }}
-              source={{ uri:user.Avatar }}
+              source={{ uri: user.Avatar }}
             />
           </View>
           <TouchableOpacity
@@ -237,7 +247,7 @@ const TrangChu = ({ navigation, route }) => {
         <FlatList
           horizontal
           data={data}
-          keyExtractor={(item) => item.id.toString()}
+          // keyExtractor={(item) => item.id.toString()}
           ListHeaderComponent={str}
           renderItem={({ item }) => {
             return (
@@ -261,7 +271,7 @@ const TrangChu = ({ navigation, route }) => {
                   }}
                 >
                   <Video
-                    source={{ uri: user.videoStory }} // link tinht
+                    source={{ uri:urlVideo }} // link tinht
                     // source={require('D:/laptrinhMobileClass/NativeAppp/src/Image/Download.mp4')}
                     style={{
                       width: "100%",
@@ -308,24 +318,15 @@ const TrangChu = ({ navigation, route }) => {
       <FlatList
         data={data}
         ListHeaderComponent={FlatStory}
-        keyExtractor={(item, index) =>index.toString()}
+        // keyExtractor={(item, index) =>index.toString()}
         removeClippedSubviews={true}
         renderItem={({ item, index }) => {
-          return (
-            <FlatItem
-              item={item}
-              index={index}
-              navigation={navigation}
-              setData={setData}
-              data={data}
-            />
-          );
+          return <FlatItem item={item} index={index} navigation={navigation} userDn={user._id} />;
         }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       ></FlatList>
-
       {isViewerOpen && (
         <Modal visible={true} transparent={true}>
           <View style={{ flex: 1, backgroundColor: "white" }}>

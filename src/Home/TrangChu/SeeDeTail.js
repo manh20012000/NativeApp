@@ -23,7 +23,6 @@ import { Entypo } from "@expo/vector-icons";
 import { Tabs, CollapsibleTabView } from 'react-native-collapsible-tab-view'
 import { firestore } from "../../../Confige.js";
 const SeeDeTail = ({ route,navigation }) => {
-  // console.log(route.params)  
   const trove = () => {
       navigation.navigate('TrangChu')
   }
@@ -31,24 +30,6 @@ const SeeDeTail = ({ route,navigation }) => {
 
     // ket noi firebase
     const [baiviet, setBaiviet] = useState([]);
-    useEffect(() => {
-      let mangArr = [];
-        const fetchDataFromFirestore = async (name) => {
-          try {
-            const q = query(collection(firestore, 'BaiVietCaNhan'), where('name', '==', name));
-            const querySnapshot = await getDocs(q);
-            querySnapshot.forEach((doc) => {
-              // console.log(doc.id, '=>', doc.data());
-              mangArr.push(doc.data());   
-            });
-            setBaiviet(mangArr)
-          } catch (error) {
-            console.log(error);
-          }
-        };
-      // Sử dụng hàm để lấy danh sách tên trùng nhau
-      fetchDataFromFirestore('manh')
-    }, [])
   
   // onpressmes
   const NavigateMess = () => {
@@ -103,7 +84,7 @@ const SeeDeTail = ({ route,navigation }) => {
         <View>
           <View style={{}}>
             <Image
-              source={{ uri: dataRoute.avata }}
+              source={{ uri: dataRoute.Avatar }}
               style={{
                 width: "100%",
                 height: 250,
@@ -120,7 +101,7 @@ const SeeDeTail = ({ route,navigation }) => {
                 color: "white",
               }}
             >
-              {dataRoute.name}
+              {dataRoute.Hoten}
             </Text>
           </View>
         </View>
@@ -241,3 +222,21 @@ const SeeDeTail = ({ route,navigation }) => {
   );
 };
 export default SeeDeTail;
+  // useEffect(() => {
+    //   let mangArr = [];
+    //     const fetchDataFromFirestore = async (name) => {
+    //       try {
+    //         const q = query(collection(firestore, 'BaiVietCaNhan'), where('name', '==', name));
+    //         const querySnapshot = await getDocs(q);
+    //         querySnapshot.forEach((doc) => {
+    //           // console.log(doc.id, '=>', doc.data());
+    //           mangArr.push(doc.data());   
+    //         });
+    //         setBaiviet(mangArr)
+    //       } catch (error) {
+    //         console.log(error);
+    //       }
+    //     };
+    //   // Sử dụng hàm để lấy danh sách tên trùng nhau
+    //   fetchDataFromFirestore('manh')
+    // }, [])
