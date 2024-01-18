@@ -37,12 +37,9 @@ const Comment = ({
 }) => {
   const [user, setUser] = useState(item.User);
   const [Data, setData] = useState(item);
-  //  console.log(Data)
   const [Content, setContent] = useState(Data.Content);
-  const [soluongCmt, setSoluongcmt] = useState(Data.SoluongcomemtChidrent);
-  const [qualityCommetShow, setQualitycomemtShow] = useState(
-    Data.SoluongCommentChildrent
-  );
+  const [soluongCmt, setSoluongcmt] = useState(Data.SoluongCommentChildrent);
+  const [qualityCommetShow, setQualitycomemtShow] = useState(Data.SoluongCommentChildrent);
   const [ChidrenCpnent, setComponent] = useState(true);
   const [XemThem, setXemThem] = useState(false);
 
@@ -59,13 +56,13 @@ const Comment = ({
   // const showComent = () => {};
   useEffect(() => {
     if (soluongCmt == 0) {
-      console.log('nhayd vào đya ')
+      console.log('nhayd vào đya ',soluongCmt)
       setComponent(true);
       setXemThem(false);
     } else {
-      console.log('hihiih')
+      console.log('hihiih',soluongCmt)
       setComponent(true);
-      setXemThem(false);
+      setXemThem(true);
     }
   }, []);
   const itemsPerPage = 3;

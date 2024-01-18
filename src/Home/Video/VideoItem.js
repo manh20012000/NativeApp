@@ -280,10 +280,11 @@ const VideoItem = ({ item, action, navigation }) => {
           idVideo: datavideo._id,
           Content: contens,
           Soluongcmt: soluong,
-          SoluongcomemtChidrent: 0,
+          SoluongCommentChildrent:0,
           User: dataUser,
           createdAt: new Date(),
         };
+        // console.log(newComment)
         setComment((prevComments) => [newComment, ...prevComments]);
       } else if (parentId != null) {
   
@@ -293,7 +294,6 @@ const VideoItem = ({ item, action, navigation }) => {
           Content: contens,
           Soluongcmt: soluong,
           parentId: parentId,
-          SoluongcomemtChidrent: soluongcomemtChidrent,
           User: dataUser,
           createdAt: new Date(),
         };
@@ -312,6 +312,7 @@ const VideoItem = ({ item, action, navigation }) => {
     } catch (err) {
       console.log(err);
     } finally {
+  
       //  console.log(comment)
     }
   };
