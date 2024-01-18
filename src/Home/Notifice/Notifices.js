@@ -1,12 +1,12 @@
 import { Platform, StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ScrollView, PermissionsAndroid } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import styles from './Style';
+import styles from './Style.js';
 import Constants from 'expo-constants'
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import DropdownComponent from './DropDow.js';
 import PhanLoai from './Phanloai.js';
-const Add = ({ navigation }) => {
+const Notifices = ({ navigation }) => {
   const [img, setImage] = useState('')
   return (
 
@@ -65,6 +65,6 @@ const Add = ({ navigation }) => {
     </ScrollView >
   )
 }
-export default Add;
+export default Notifices;
 
 

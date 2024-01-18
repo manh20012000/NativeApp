@@ -1,5 +1,12 @@
 import {
-  StyleSheet,Text, View, Image,TextInput,TouchableOpacity,KeyboardAvoidingView,ActivityIndicator,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  ActivityIndicator,
 } from "react-native";
 import React, { Component, useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
@@ -10,44 +17,50 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { AntDesign, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Spinner from "react-native-loading-spinner-overlay";
+import { useDispatch } from 'react-redux'
+import { login } from "../Redex/auth.slice";
+import path from "../config";
 import axios from "axios";
 const Login = ({ navigation }) => {
-  const [taikhoan, setName] = useState("");
+  const [emailphone, setName] = useState("");
   const [matkhau, setPass] = useState("");
   const [loading, setLoading] = useState(false);
   const [hienthi, setHienthi] = useState(true);
-  const login = async () => {  
-    try { 
-      if (taikhoan == "" || matkhau == "") {
+  const dispath = useDispatch();
+  const hanlderlogin = async () => {
+    try {
+      if (emailphone == "" || matkhau == "") {
         alert("vui lòng nhập tài khoản hoặc mật khẩu ");
         return;
       }
-     setLoading(true);
-      const {data} = await axios.post( "https://nativeapp-vwvi.onrender.com/login",{ taikhoan: taikhoan, matkhau: matkhau }
+      setLoading(true);
+      const { data } = await axios.post(
+            `${path}/login`,
+        //  "https://nativeapp-vwvi.onrender.com/login",
+        { taikhoan: emailphone, matkhau: matkhau }
       );
-    
+
       if (data.status == 200) {
         const datas = data;
         const userData = datas.data;
+          dispath(login(userData))
         setLoading(false);
-        navigation.navigate("BootonGate", userData );
+        navigation.navigate("BootonGate", userData);
         setPass("");
         setName("");
       } else {
         alert("tai khaone hoặc mật khẩu không chính xác");
-      } 
+      }
     } catch (eror) {
       setLoading(false);
       if (eror == 403) {
-        alert('tai khoan mât khẩu không chình xác');
+        alert("tai khoan mât khẩu không chình xác");
       } else {
-          alert(eror+'alert');
+        alert(eror + "tai khoan mât khẩu không chình xác");
       }
-   
-      
-      }
+    }
   };
- 
+  const [eye, setEys] = useState(false);
   const anhien = () => {
     setHienthi(!hienthi);
   };
@@ -66,25 +79,32 @@ const Login = ({ navigation }) => {
           <View style={styles.IuserName}>
             <FontAwesome name="user" size={24} color="black" />
             <TextInput
-              placeholder="nhap user name"
+              placeholder="Enter email or phone"
               style={styles.textinput}
-              value={taikhoan}
-              onChangeText={(taikhoan) => setName(taikhoan)}
+              value={emailphone}
+              onChangeText={(emailphone) => setName(emailphone)}
+              keyboardType="email-address"
             />
           </View>
           <Text tyle={styles.Txt}>PassWord</Text>
           <View style={[styles.IPass, styles.IuserName]}>
             <Ionicons name="key-sharp" size={24} color="black" />
             <TextInput
-              placeholder="nhap pass word"
+              placeholder="Enter password"
               style={styles.textinput}
               secureTextEntry={hienthi}
               titleAler="vui long nhap thong tin chnh sac"
               value={matkhau}
               onChangeText={(matkhau) => {
                 setPass(matkhau);
+                 if (matkhau != "") {
+                setEys(true);
+              } else {
+                setEys(false);
+              }
               }}
             />
+            {eye == true && (
             <TouchableOpacity onPress={anhien}>
               <Ionicons
                 name={hienthi ? "eye-off" : "eye"}
@@ -93,6 +113,7 @@ const Login = ({ navigation }) => {
                 style={styles.eye}
               />
             </TouchableOpacity>
+          )}
           </View>
           <View
             style={{
@@ -106,10 +127,10 @@ const Login = ({ navigation }) => {
               <Text style={{ fontSize: 15 }}>Fot paswwod?</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={sigin}>
-              <Text style={{ fontSize: 20, fontWeight: "500" }}>Sigin</Text>
+              <Text style={{ fontSize: 20, fontWeight: "500" }}>Register</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.button} onPress={login}>
+          <TouchableOpacity style={styles.button} onPress={hanlderlogin}>
             <LinearGradient
               colors={["#faf", "#3b5998", "#192f6a"]}
               style={styles.linagradine}

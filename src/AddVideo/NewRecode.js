@@ -13,7 +13,6 @@ const NewRecode = () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             quality: 1,
             allowsMultipleSelection: true,
-
         });
         if (!result.canceled) {
             setSelectedImages(result.assets.map(asset => asset.uri));

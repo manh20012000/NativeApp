@@ -11,16 +11,16 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Trangchu from "../Home/TrangChu/Trangchu.js";
 import { FontAwesome5 } from "@expo/vector-icons";
-import VideoTikTok from "../Home/Video/VideoTiktok.js";
+
 import Infor from "../Home/Information/Infor.js";
 import { Feather } from "@expo/vector-icons";
-import Add from "../Home/Add/Add.js";
+import Notifices from "../Home/Notifice/Notifices.js";
 import { MaterialIcons } from "@expo/vector-icons";
 import RecodViedeo from "../AddVideo/RecodVieao.js";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-
+import VideoHomePage from "../Home/Video/VideoHomePage.js";
 const Tab = createBottomTabNavigator();
 const BootonGate = ({ navigation, route }) => {
   // console.log(route.params)
@@ -44,7 +44,7 @@ const BootonGate = ({ navigation, route }) => {
                 }}
               />
             );
-          } else if (route.name === "Watch") {
+          } else if (route.name === "Video") {
             iconComponent = (
               <Entypo
                 name="folder-video"
@@ -79,16 +79,16 @@ const BootonGate = ({ navigation, route }) => {
         component={Trangchu}
         initialParams={{ data: route.params }}
       />
-      <Tab.Screen name="Watch" component={VideoTikTok} />
+      <Tab.Screen name="Video" component={VideoHomePage} />
       <Tab.Screen
-        name="    "
+        name=" "
         component={RecodViedeo}
         options={{
           tabBarIcon: ({ focused }) => (
             <Image
               source={require("../Image/new-video.png")}
               style={{
-                marginTop: 18,
+                marginTop: 10,
                 width: 45,
                 height: 35,
               }}
@@ -96,10 +96,12 @@ const BootonGate = ({ navigation, route }) => {
           ),
         }}
       />
-      <Tab.Screen name="Thông báo" component={Add} />
-      <Tab.Screen name="Infor"
-    initialParams={{ data: route.params }}
-        component={Infor} />
+      <Tab.Screen name="Thông báo" component={Notifices} />
+      <Tab.Screen
+        name="Infor"
+        initialParams={{ data: route.params }}
+        component={Infor}
+      />
     </Tab.Navigator>
   );
 };

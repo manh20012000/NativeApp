@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-
+import { LinearGradient } from "expo-linear-gradient";
 const styles = StyleSheet.create({
      container:{
-       flex:1,
+    flex: 1,
      },
      body:{
        maginTop:15,

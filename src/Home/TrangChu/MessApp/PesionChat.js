@@ -205,7 +205,7 @@ const PesionChat = ({ route, navigation }) => {
                 }}>
                     <TouchableOpacity>
                         <Image
-                            source={require('D:/laptrinhMobileClass/NativeAppp/src/Image/Shot.png')}
+                            source={require('D:/laptrinhMobile/NativeApp/src/Image/Shot.png')}
                             style={{ width: 33, height: 33 }}
                         >
                         </Image>

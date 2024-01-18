@@ -14,6 +14,7 @@ import {
   Alert,
   RefreshControl,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { React, useState, useEffect, useRef, memo, useCallback } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import DataOjs from "../../Data/DataObj.js";
@@ -29,7 +30,7 @@ import { Video, ResizeMode } from "expo-av";
 import screenfull from "screenfull";
 import VideoPlayer from "expo-video-player";
 import axios from "axios";
-const TrangChu = ({ navigation, route }) => {
+const TrangChu = ({ navigation, route}) => {
   const [userStory, setUserStory] = useState({}); // danh cho story
   const [data, setData] = useState(null);
   const [user, setUser] = useState(route.params.data); // dnah cho lấy dữ liệu từ dâtbase
@@ -37,21 +38,22 @@ const TrangChu = ({ navigation, route }) => {
   const [fullscreen, setfullscreen] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
-  // refres control
+
   const [refreshing, setRefreshing] = useState(false);
-  useEffect(() => {
-    const fetchdata = async () => {
+  const fetchdata = async () => {
       try {
         const { data } = await axios.get(
           "https://nativeapp-vwvi.onrender.com/selectBaiViet"
         );
         setData(data.data);
+  
       } catch (err) {
         console.log(err);
       }
     };
+  useEffect(() => {
     fetchdata();
-  },[]);
+  }, []);
   // useEffect(() => {
   //   const backAction = () => {
   //     Alert.alert("Hold on!", "ban co chac muon thoat", [
@@ -131,12 +133,13 @@ const TrangChu = ({ navigation, route }) => {
     );
   };
   //  lam hien thi vooi story
-  const onRefresh = useCallback(() => {
+  const onRefresh = () => {
     setRefreshing(true);
+    fetchdata();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
-  }, []);
+  };
   const video = useRef(null);
   const FlatStory = memo(() => {
     return (
@@ -271,8 +274,8 @@ const TrangChu = ({ navigation, route }) => {
                   }}
                 >
                   <Video
-                    source={{ uri:urlVideo }} // link tinht
-                    // source={require('D:/laptrinhMobileClass/NativeAppp/src/Image/Download.mp4')}
+                    source={{ uri: urlVideo }} // link tinht
+                  
                     style={{
                       width: "100%",
                       height: "100%",
@@ -315,18 +318,32 @@ const TrangChu = ({ navigation, route }) => {
   });
   return (
     <View style={styles.container}>
-      <FlatList
-        data={data}
-        ListHeaderComponent={FlatStory}
-        // keyExtractor={(item, index) =>index.toString()}
-        removeClippedSubviews={true}
-        renderItem={({ item, index }) => {
-          return <FlatItem item={item} index={index} navigation={navigation} userDn={user._id} />;
-        }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      ></FlatList>
+      <LinearGradient
+        colors={["red", "white", "purple"]}
+        style={styles.linagradine}
+      >
+        <FlatList
+          data={data}
+          ListHeaderComponent={FlatStory}
+           keyExtractor={(item, index) =>index.toString()}
+          removeClippedSubviews={true}
+          renderItem={({ item, index }) => {
+            return (
+              
+              item.Pemission === 'public' && (
+                <FlatItem
+                item={item}
+                index={index}
+                userDn={user._id}
+                navigation={navigation}
+              />)
+            );
+          }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        ></FlatList>
+      </LinearGradient>
       {isViewerOpen && (
         <Modal visible={true} transparent={true}>
           <View style={{ flex: 1, backgroundColor: "white" }}>

@@ -22,12 +22,13 @@ import FlatItem from "./FlatItem.js";
 import { Entypo } from "@expo/vector-icons";
 import { Tabs, CollapsibleTabView } from 'react-native-collapsible-tab-view'
 import { firestore } from "../../../Confige.js";
+import axios from "axios";
 const SeeDeTail = ({ route,navigation }) => {
-  const trove = () => {
+  const BackTrangHome = () => {
       navigation.navigate('TrangChu')
   }
   const [dataRoute, setDataRote] = useState(route.params);
-
+  console.log(dataRoute)
     // ket noi firebase
     const [baiviet, setBaiviet] = useState([]);
   
@@ -39,7 +40,24 @@ const SeeDeTail = ({ route,navigation }) => {
   const [isFriend, setIsFriend] = useState(false);
   let handlePress = () => {
       setIsFriend((prevState) => !prevState);
-   }
+  }
+  useEffect(() => {
+    const selectPostUser = async () => {
+   
+      try {
+        const { data } = await axios.post(
+          "https://nativeapp-vwvi.onrender.com/selectPost_inUser",{
+            userId:dataRoute._id}  
+        );
+         
+        setBaiviet(data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    selectPostUser();
+  },[])
+
  const InforHeader = () => {
     return (
       <View
@@ -61,7 +79,7 @@ const SeeDeTail = ({ route,navigation }) => {
           }}
         >
           <TouchableOpacity
-            onPress={()=>trove()}
+            onPress={BackTrangHome}
           >
             <Ionicons name="md-arrow-back-sharp" size={24} color="black" />
           </TouchableOpacity>

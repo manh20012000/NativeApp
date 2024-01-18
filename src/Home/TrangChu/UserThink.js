@@ -36,10 +36,13 @@ import axios from "axios";
 import * as Location from "expo-location";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Constants } from "expo";
-import DistrictScreen from "./DistricScreen";
+import DistrictScreen from "./DistricScreen.js";
 import Spinner from "react-native-loading-spinner-overlay";
 import Countries from "../../public/selectTed.js";
+import { useSelector, useDispatch } from 'react-redux'
+
 const UserThink = ({ navigation, route }) => {
+  const count = useSelector((state) => state.auth.value)
   const [Hienthi, setHienthi] = useState(true);
   const HandeHienthi = () => {
     setHienthi(true);
@@ -49,7 +52,7 @@ const UserThink = ({ navigation, route }) => {
     navigation.navigate("TrangChu");
   };
   // lấy data cua use
-  const [data, setData] = useState(route.params);
+  const [data, setData] = useState(count);
   //  console.log(data._id)
   // thuc hien select Share option
   const [permission, setPermission] = useState("public");
@@ -95,7 +98,7 @@ const UserThink = ({ navigation, route }) => {
   // set trang thai cho text thay đoi
   const [isText, setIsText] = useState();
   const onchangerTexT = (value) => {
-    setIsText(value);
+      setIsText(value);
     if (value == "" && selectedImages.length == 0) {
       setIsSelectable(false);
     } else if (value == "" && selectedImages.length > 0) {
@@ -104,7 +107,7 @@ const UserThink = ({ navigation, route }) => {
       setIsSelectable(true);
     }
   };
-  // set lai khi xoa di 1 cai anh
+ 
   const XoaAnh = (image, index) => {
     // console.log(image,index)
     const newImages = [...selectedImages];
@@ -135,7 +138,7 @@ const UserThink = ({ navigation, route }) => {
   const [startCamera, setStartCamera] = useState(true);
   const [isView, setIsView] = useState(true);
 
-  __startCamera = async () => {
+  const __startCamera = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status === "granted") {
       // start the camera
@@ -230,7 +233,8 @@ const UserThink = ({ navigation, route }) => {
   // tạo  1 đôis tượng form đa ta
   const formData = new FormData();
 
-  const HanderAxios = async () => {
+  const HanderUpload = async () => {
+    
     setLoading(true);
     let datetime = new Date();
     let datePostTimstemp = await datetime.toISOString().slice(0, -5);
@@ -240,17 +244,18 @@ const UserThink = ({ navigation, route }) => {
     formData.append("permission", permission);
     formData.append("vitri", vitri);
     formData.append("idLogin", data._id);
+    
     for (let i = 0; i < selectedImages.length; i++) {
+      console.log(selectedImages[i])
       formData.append("ArayImages", {
         uri: selectedImages[i],
-        name: `image_${i}.jpeg`, // Tên tệp
-        type: "image/jpeg", // Loại tệp
+        name: `image_${i}.jpeg`, 
+        type: "image/jpeg",
       });
     }
     try {
       const { status, msg } = await axios.post(
-        "https://nativeapp-vwvi.onrender.com/uploadAnh",
-        // "http://192.168.0.101:8080/uploadAnh",
+        "http://192.168.188.136:8080/uploadAnh",
         formData,
         {
           headers: {
@@ -279,7 +284,7 @@ const UserThink = ({ navigation, route }) => {
         <View style={{ flex: 1 }}>
           <View
             style={{
-              backgroundColor: "#222222",
+              backgroundColor: "#333333",
               width: "100%",
               height: 50,
               justifyContent: "space-between",
@@ -304,7 +309,7 @@ const UserThink = ({ navigation, route }) => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              onPress={HanderAxios}
+              onPress={HanderUpload}
               disabled={!isSelectable}
             >
               <Text style={{ color: "white" }}>POST</Text>
@@ -317,7 +322,7 @@ const UserThink = ({ navigation, route }) => {
           </View>
           <View
             style={{
-              backgroundColor: "pink",
+              backgroundColor: "#999999",
               width: "100%",
               height: 90,
               alignItems: "center",
@@ -358,7 +363,7 @@ const UserThink = ({ navigation, route }) => {
                 <Text
                   style={{
                     fontSize: 30,
-                    color: "white",
+                    color: "black",
                     fontWeight: "600",
                   }}
                 >
@@ -366,7 +371,7 @@ const UserThink = ({ navigation, route }) => {
                 </Text>
                 <Text
                   style={{
-                    color: "white",
+                    color: "black",
                     fontSize: 17,
                   }}
                 >
@@ -589,7 +594,8 @@ const UserThink = ({ navigation, route }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  setHienthi(false);
+                  setHienthi(false); 
+                  __startCamera();
                 }}
                 style={{}}
               >
@@ -679,6 +685,7 @@ const UserThink = ({ navigation, route }) => {
                   alignItems: "center",
                   paddingHorizontal: 10,
                   flexDirection: "row",
+                   marginTop:'50'
                 }}
               >
                 <TouchableOpacity onPress={toggleCameraType}>
@@ -710,8 +717,7 @@ const UserThink = ({ navigation, route }) => {
                 <Camera
                   flashMode={flashMode}
                   style={{
-                    flex: 0.9,
-                    width: "100%",
+                    flex: 0.8,
                   }}
                   ref={cameraRef}
                   type={type}
@@ -721,8 +727,9 @@ const UserThink = ({ navigation, route }) => {
               <View
                 style={{
                   width: "100%",
-                  height: "30%",
-                  backgroundColor: "rgba(52, 52, 52, 0.2)",
+                  height: "20%",
+                  backgroundColor: "black",
+                  // backgroundColor: "rgba(52, 52, 52, 0.2)",
                   position: "absolute",
                   bottom: 0,
                   zIndex: 1,
@@ -799,6 +806,7 @@ const UserThink = ({ navigation, route }) => {
                     height: 70,
                     borderRadius: 50,
                     backgroundColor: "#fff",
+                  marginTop:20
                   }}
                 />
               </View>
@@ -1037,7 +1045,7 @@ const styles = StyleSheet.create({});
 //   }
 //   Granted();
 //  },[])
-// const HanderAxios = async () => {
+// const HanderUpload = async () => {
 //     setLoading(true);
 //     if (viewHienthi == 1) {
 //       try {

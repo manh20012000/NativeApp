@@ -35,10 +35,10 @@
         marginTop:20
       },
       textinput:{
-          
          marginLeft:'3%',
-         fontSize:20,
-         width: 200
+         fontSize:18,
+        width:200,
+       
       },
       eye:{
           marginLeft:50

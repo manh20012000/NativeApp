@@ -174,6 +174,7 @@ const InforUser = ({ navigation }) => {
             }}
             placeholder="nhập số phone"
             value={phone}
+              keyboardType="number-pad"
             onChangeText={setPhone}
           ></TextInput>
           <View
