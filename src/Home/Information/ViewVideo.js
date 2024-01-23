@@ -18,29 +18,36 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { Tabs, CollapsibleTabView } from "react-native-collapsible-tab-view";
 import { FontAwesome, EvilIcons, AntDesign } from "@expo/vector-icons";
 import { Video, ResizeMode } from "expo-av";
-import VideoTikTok from "../Video/Foryou.js";
-// import { FlatGrid } from 'react-native-super-grid';
-const ViewVideo = (props) => {
+import { firestore } from "../../../Confige.js";
+import path from "../../config.js";
+import { useFocusEffect } from "@react-navigation/native";
+import axios from "axios";
+import {
+  createBottomTabNavigator,
+  useBottomTabBarHeight,
+} from "@react-navigation/bottom-tabs";
+const ViewVideo = ({ item,navigation,index,dataVideo}) => {
+
+
   const [modalVisible, setModalVisible] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
-
   return (
     <View>
       <TouchableOpacity
         onPress={() => {
           setIsViewerOpen(true);
+          navigation.navigate("SeemVideo",{ selectedVideo: item, dataVideo,index:index });
         }}
         style={{
-          width: 125,
+          width: 130,
           height: 150,
           borderWidth: 1,
-
           position: "relative",
-          margin: 1,
+
         }}
       >
         <Video
-          source={{ uri: props.item.uri }} // link tinht
+          source={{ uri:item.Video }} // link tinht
           // source={require('D:/laptrinhMobileClass/NativeAppp/src/Image/Download.mp4')}
           style={{
             width: "100%",

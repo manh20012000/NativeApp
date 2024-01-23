@@ -32,7 +32,7 @@ import TimeAgo from "react-native-timeago";
 import { LinearGradient } from "expo-linear-gradient";
 import RenderHtml from "react-native-render-html";
 import { Octicons } from "@expo/vector-icons";
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+// import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 const FlatItem = memo((props) => {
   const user = props.item.User; //
   const [databaiviet, setdatabaiviet] = useState(props.item);
@@ -246,11 +246,8 @@ const FlatItem = memo((props) => {
   };
 
   return (
-    <LinearGradient
-      start={{ x: 0.4, y: 0.2 }}
-      end={{ x: 0.5, y: 1.0 }}
-      locations={[0, 0.5, 0.6]}
-      colors={["silver", "red", "white"]}
+    <View
+    
       style={styles.contain}
     >
       <View style={styles.bottomgradien}>
@@ -612,13 +609,13 @@ const FlatItem = memo((props) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-    </LinearGradient>
+    </View>
   );
 });
 export default FlatItem;
 const styles = StyleSheet.create({
   contain: {
-    backgroundColor: "#333333",
+    backgroundColor: "white",
     flex: 1,
     width: "100%",
     height: "100%",

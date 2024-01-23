@@ -20,67 +20,122 @@ import { Tabs, CollapsibleTabView } from "react-native-collapsible-tab-view";
 import Foryou from "./Foryou";
 import Folowing from "./Folowing";
 import Friender from "./Friender.js";
-import Detail from "./Detail.js";
+import VideoLocation from "./VideoLocation.js";
+
 const Tab = createMaterialTopTabNavigator();
-const VideoHomePage=()=>{
+const VideoHomePage = () => {
+  const [isFocused, setIsFocused] = useState(false);
+
+  useFocusEffect(
+  useCallback(() => {
+      setIsFocused(true);
+      return () => {
+        setIsFocused(false);
+      };
+    }, [])
+  );
+  const [isPlaying, setIsPlaying] = useState(false);
   return (
-   
-    <Tab.Navigator
+    <View style={{ flex: 1, position: "relative" }}>
+      <View
+        style={{
+          position: "absolute",
+          top: 7,
 
-    // Use the initialRouteName prop to specify the component to show first
-    initialRouteName="Foryou"
-    // Use the screenOptions prop to customize the tab bar
-      screenOptions={{
-        tabBarActiveTintColor: '#e91e63',
-      tabBarAndroidRipple: { borderless: false },
-      tabBarLabelStyle: {
-        fontSize: 12,
-        color: "white",
-        fontWeight: "400",
-      },
-      tabBarStyle: {
-        backgroundColor: "transparent", // Màu nền trong suốt
-        position: "absolute",
-        top: -10,
-        left: 50,
-        right: 0,
-       
-      },
-      tabBarGap: 1,
-      tabBarShowLabel: true,
-      tabBarItemStyle: {
-        width: 100,
-        justifyContent: "center",
-        alignItems: "center",
-        alignContent: "center",
-        height: 50,
-      },
-    }}
+          width: "100%",
+          flexDirection: "row",
+          zIndex: 1,
 
-  >
-    <Tab.Screen
-      name="Friender"
-      component={Friender}
-      options={{ tabBarLabel: 'Friender' }}
-      />
-      
-    <Tab.Screen
-      name="Folowing"
-      component={Folowing}
-      options={{ tabBarLabel: 'Folowing' }}
-      />
-      <Tab.Screen
-      name="Foryou"
-      component={Foryou}
-      options={{ tabBarLabel: 'For you' }}
-      />
-         <Tab.Screen
-      name="Detail"
-      component={Detail}
-      options={{ tabBarLabel: '' }}
-    />
-  </Tab.Navigator>
-  )
-}
-export default VideoHomePage
-const styles = StyleSheet.create({})
+          justifyContent: "space-between",
+          paddingHorizontal: 10,
+        }}
+      >
+        <TouchableOpacity onPress={() => console.log("Pressed Live")}>
+          <Text style={{ color: "white", fontSize: 15, fontWeight: "bold" }}>
+            Live
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{ marginTop: 3, marginLeft: 2 }}
+          onPress={() => console.log("Pressed Search")}
+        >
+          <FontAwesome name="search" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+
+      <Tab.Navigator
+        initialRouteName="Foryou"
+        screenOptions={{
+          tabBarActiveTintColor: 'white',
+           tabBarInactiveTintColor: '#777777',
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: "bold",
+            textTransform: "none",
+          },
+          tabBarStyle: {
+            backgroundColor: "transparent",
+            position: "absolute",
+            top: -5,
+            left: 33,
+            right: 0,
+            margin: 0,
+          },
+          tabBarGap: 1,
+          tabBarShowLabel: true,
+          tabBarItemStyle: {
+            width: 80,
+            justifyContent: "center",
+            alignItems: "center",
+            alignContent: "center",
+            height: 50,
+          },
+          tabBarIndicatorStyle: {
+            backgroundColor: "white",
+            width: 23,
+            borderRadius: 10,
+            marginLeft: 30,
+            height: 2,
+            alignItems: "center",
+            top:40
+          },
+        }}
+     
+      >
+        <Tab.Screen
+          name="VideoLocation"
+          component={VideoLocation}
+          options={{
+            tabBarLabel: "Ha noi",
+            
+          }}
+        />
+        <Tab.Screen
+          name="Friender"
+          component={Friender}
+          options={{
+            tabBarLabel: "Friend",
+          }}
+        />
+        <Tab.Screen
+          name="Folowing"
+          component={Folowing}
+          options={{
+            tabBarLabel: "Follow",
+           
+          }}
+        />
+        <Tab.Screen
+          name="Foryou"
+          component={Foryou}
+          options={{
+            tabBarLabel: "For you",
+           
+          }}
+        />
+      </Tab.Navigator>
+    </View>
+  );
+};
+export default VideoHomePage;
+const styles = StyleSheet.create({});

@@ -103,11 +103,10 @@ const PostVideo = ({ navigation, route }) => {
   const formData = new FormData();
 
   const HanderUploadVideo = async () => {
-
     let datetime = new Date();
     let datePostTimstemp = await datetime.toISOString().slice(0, -5);
     setLoading(true);
-    console.log(data.fileselect)
+    console.log(data.fileselect,data.resizeMode)
     formData.append("Height", data.heightV);
     formData.append("widthV",data.widthV);
     formData.append("datePost", datePostTimstemp);
@@ -118,6 +117,7 @@ const PostVideo = ({ navigation, route }) => {
       name: `Video${datePostTimstemp}.mp4`, 
       type: "video/mp4",
     });
+    formData.append("resizeMode", data.resizeMode);
     formData.append("userId", dataUser._id);
     formData.append("located", located);
     formData.append("textinLocation", data.inputText);
@@ -137,17 +137,20 @@ const PostVideo = ({ navigation, route }) => {
       setVconten(null);
       setPrivacy("public");
       setLocated(null);
-      data.fileselect = null;
+      
+      console.log(data.fileselect)
       if (status == 200) {
-        navigation.navigate("Watch");
+        navigation.navigate("Video");
         setLoading(false);
-        alert(msg);
+        alert(data.message);
       }
     } catch (erro) {
       setLoading(false);
       console.log(erro + "->>catch lỗi ");
+    } finally {
+      data.fileselect = null;
     }
-  };
+  }; 
   return (
     <View style={{ flex: 1 }}>
       <View

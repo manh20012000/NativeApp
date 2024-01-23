@@ -28,11 +28,11 @@ import {
   import { FontAwesome5 } from "@expo/vector-icons";
   import * as ImagePicker from "expo-image-picker";
   import {UpdateAuth} from "../../Redex/auth.slice";
-  import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+  import path from "../../config";
   import axios from "axios";
 const EditProfile = ({ navigation, route }) => {
     
-    const dispatch = useDispatch()
 
     let [user, setUser] = useState(useSelector((state) => state.auth.value))
     const [selectedImages, setSelectedImages] = useState(user.avatar);
@@ -67,7 +67,7 @@ const EditProfile = ({ navigation, route }) => {
         });
         try {
           const { data } = await axios.post(
-            "https://nativeapp-vwvi.onrender.com/UpadateAvatar",
+          `https://nativeapp-vwvi.onrender.com/UpadateAvatar`,
             formData,
             {
               headers: {
@@ -76,14 +76,12 @@ const EditProfile = ({ navigation, route }) => {
             }
           )
           if (data.status == 200) {
-           
             dispatch(UpdateAuth(data.data))
             navigation.navigate("Infor");
-            setLoading(false);
-            alert(msg);
+            alert(data.mess);
           }
         } catch (err) {
-          
+          console.log(err)
         }
         
       };

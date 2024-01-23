@@ -57,7 +57,8 @@
        },
        btnTxt:{
           fontSize:24,
-           fontWeight:'bold',
+         fontWeight: 'bold',
+           color:'white'
        },
        ViewIcon:{
               

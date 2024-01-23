@@ -9,7 +9,7 @@ import {
   StatusBar,
   SafeAreaView,
 } from "react-native";
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useEffect, useRef, useCallback } from "react";
 import ViewVideo from "./ViewVideo";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,19 +20,61 @@ import { Tabs, CollapsibleTabView } from "react-native-collapsible-tab-view";
 import { FontAwesome, EvilIcons, AntDesign } from "@expo/vector-icons";
 import VideoData from "../../Data/VideoData";
 import FlatItem from "../TrangChu/FlatItem.js";
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
+import path from "../../config.js";
+import { UpdateAuth } from "../../Redex/auth.slice";
 
 const Infor = ({ navigation, route }) => {
+  const count = useSelector((state) => state.auth.value);
+  // console.log(count)
 
-  const count = useSelector((state) => state.auth.value)
- 
-  const [dataVideo, setDataVideo] = useState(VideoData);
-
-  const [dataUser, setData] = useState(count);
-
+  const [dataUser, setDatauUser] = useState(count);
   const [databaiviet, setDataBaiviet] = useState([]);
-
   const [isLiked, setIsLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [dataVideo, setDataVideo] = useState([]);
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const [action, setAction] = useState(false);
+  useFocusEffect(
+    useCallback(() => {
+      // Thay đổi action để phát video đầu tiên
+      setAction(true); // hoặc setAction(indexCuaVideoDauTien);
+      return () => {
+        // Reset lại action khi rời khỏi màn hình TikTok
+        setAction(false);
+      };
+    }, [])
+  );
+  useEffect(() => {
+    setAction(currentTabIndex);
+  }, [currentTabIndex]);
+  const [leng, setLeng] = useState(0);
+
+  const handlerSelectVideo = async () => {
+    try {
+      const lim = 5; // Định nghĩa giá trị lim
+      const { data } = await axios.get(
+        `${path}/selectVideoId/${lim}/${leng}/${count._id}`
+      );
+      setLeng(leng + 5);
+      setDataVideo((prevData) => prevData.concat(data.data));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    handlerSelectVideo();
+  }, []);
+  const onRefresh = () => {
+    setRefreshing(true);
+    handlerSelectVideo();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  };
+
   const handlePress = () => {
     setIsLiked(!isLiked);
     if (nblike === numberLike) {
@@ -45,82 +87,92 @@ const Infor = ({ navigation, route }) => {
   const setSeeInfor = () => {
     setSeeIF(!SeeIF);
   };
+  const handlerSlectVideo = async () => {};
   useEffect(() => {
     const selectPostUser = async () => {
-   
       try {
         const { data } = await axios.post(
-          "https://nativeapp-vwvi.onrender.com/selectPost_inUser",{
-            userId:dataUser._id}  
+          "https://nativeapp-vwvi.onrender.com/selectPost_inUser",
+          {
+            userId: dataUser._id,
+          }
         );
         setDataBaiviet(data.data);
       } catch (err) {
         console.log(err);
         return;
-  
       }
     };
     selectPostUser();
-  },[])
-
+  }, []);
   const InforHeader = () => {
     return (
       <View>
-      <View style={styles.avatar}>
-        <Image style={styles.imges} source={{ uri: dataUser.Avatar }}></Image>
-      </View>
-      <View style={styles.usercnhan}>
-
-        <Text style={styles.txt}>{dataUser.Hoten}</Text>
-      </View>
-      <View style={styles.view4}>
-        <TouchableOpacity style={styles.btn1}>
-          <Text style={styles.txt1}>+ Add to story</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("EditProfile", dataUser);
-          }}
-          style={styles.btn1}
-        >
-          <Text style={styles.txt1}>Edit Profile</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn2}>
-          <Text style={styles.txt1}>...</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.view5}>
-        <Text style={{fontSize:18}}>166 friend</Text>
-        <TouchableOpacity onPress={setSeeInfor}>
-          <Text style={{ color: "#222222",fontSize:20}}>Giới thiệu chung</Text>
-        </TouchableOpacity>
-      </View>
-
-      {SeeIF && (
-        <View style={styles.thongtin}>
-          <Text style={styles.txtx}>Ngày sinh {dataUser.Birth}</Text>
-          <Text style={styles.txtx}>Giới tính {dataUser.Gender == "male" ? "Nam" : "Nữ"}</Text>
-          <Text style={styles.txtx}>Email {dataUser.Email}</Text>
+        <View style={styles.avatar}>
+          <Image style={styles.imges} source={{ uri: dataUser.Avatar }}></Image>
         </View>
-      )}
-      <View style={{width:'100%',height:2,backgroundColor:'black',marginTop:2}}></View>
-    </View>
+        <View style={styles.usercnhan}>
+          <Text style={styles.txt}>{dataUser.Hoten}</Text>
+        </View>
+        <View style={styles.view4}>
+          <TouchableOpacity style={styles.btn1}>
+            <Text style={styles.txt1}>+ Add to story</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("EditProfile", dataUser);
+            }}
+            style={styles.btn1}
+          >
+            <Text style={styles.txt1}>Edit Profile</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.btn2}>
+            <Text style={styles.txt1}>...</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.view5}>
+          <Text style={{ fontSize: 18 }}>166 friend</Text>
+          <TouchableOpacity onPress={setSeeInfor}>
+            <Text style={{ color: "#222222", fontSize: 20 }}>
+              Giới thiệu chung
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {SeeIF && (
+          <View style={styles.thongtin}>
+            <Text style={styles.txtx}>Ngày sinh {dataUser.Birth}</Text>
+            <Text style={styles.txtx}>
+              Giới tính {dataUser.Gender == "male" ? "Nam" : "Nữ"}
+            </Text>
+            <Text style={styles.txtx}>Email {dataUser.Email}</Text>
+          </View>
+        )}
+        <View
+          style={{
+            width: "100%",
+            height: 2,
+            backgroundColor: "black",
+            marginTop: 2,
+          }}
+        ></View>
+      </View>
     );
   };
   return (
     <View style={{ flex: 1, position: "relative" }}>
-      <View style={{ flex: 0.2, position: "absolute", top: 30 }}>
-        <Text>dhsbcdshbc</Text>
-      </View>
-      <Tabs.Container renderHeader={InforHeader}>
+      <Tabs.Container
+        
+        renderHeader={InforHeader}>
         <Tabs.Tab name="BaiViet">
           <Tabs.FlatList
             removeClippedSubviews={true}
             keyExtractor={(item, index) => index.toString()}
             data={databaiviet}
             renderItem={({ item, index }) => {
-              return <FlatItem item={item} navigation={navigation} />;
+              return <FlatItem item={item}
+                navigation={navigation} />;
             }}
           />
         </Tabs.Tab>
@@ -130,8 +182,14 @@ const Infor = ({ navigation, route }) => {
             keyExtractor={(item, index) => index.toString()}
             data={dataVideo}
             renderItem={({ item, index }) => {
-              return <ViewVideo item={item} index={index} />;
+              return <ViewVideo
+                item={item}
+                index={index}
+                dataVideo={dataVideo}
+                navigation={navigation} 
+              />;
             }}
+            showsVerticalScrollIndicator={false}
             numColumns={3}
           />
         </Tabs.Tab>
@@ -148,7 +206,6 @@ const Infor = ({ navigation, route }) => {
   );
 };
 export default Infor;
-
 
 const styles = StyleSheet.create({
   container: {
@@ -187,8 +244,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     marginTop: 10,
-   
-    
   },
   btn1: {
     backgroundColor: "blue",

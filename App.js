@@ -8,7 +8,9 @@ import {
 } from "react-native";
 import Navigete from "./src/navigate/Navigate";
 import React, { Component, useState, useEffect } from "react";
-import { firestore } from "./Confige.js";
+import { getUserToken } from "./Token_Auth";
+import { store } from "./src/Redex/Store";
+import { Provider } from 'react-redux'
 const STYLES = ["default", "dark-content", "light-content"];
 const TRANSITIONS = ["fade", "slide", "none"];
 
@@ -19,7 +21,32 @@ export default function App() {
   const [statusBarTransition, setStatusBarTransition] = useState(
     TRANSITIONS[0]
   );
-  // const fetchDataFromFirestore = async () => {
+  
+  const [datas, setdata] = useState();
+
+  return (
+    <Provider store={store}>
+    <SafeAreaView style={{ flex: 1 }}>
+           <StatusBar
+            animated={true}
+            backgroundColor="black"
+            hidden={hidden}
+           />
+         <Navigete/>
+      </SafeAreaView>
+      </Provider>
+  );
+}
+ // <View style={{ flex: 1 }}>
+    //   <Text>cin chaj</Text>
+    //   <Image
+    //     style={{
+    //       width: 200,
+    //       height: 300,
+    //     }}
+    //     source={{ uri:'https://nativeapp.onrender.com'+datas}}
+    //   />
+    // </View>// const fetchDataFromFirestore = async () => {
   //   try {
   //     const querySnapshot = await getDocs(collection(firestore, 'user'));
   //     querySnapshot.forEach((doc) => {
@@ -29,11 +56,8 @@ export default function App() {
   //     console.log(error);
   //   }
   // }
-  // fetchDataFromFirestore();
-
-  const [datas, setdata] = useState();
-
-  // const login = async () => {
+// fetchDataFromFirestore();
+// const login = async () => {
   //   try {
   //     const { data } = await axios.get(
   //       "https://nativeapp.onrender.com/upload/getfile"
@@ -46,26 +70,3 @@ export default function App() {
   // };
   // login();
   // console.log(datas);
-
-  return (
-    // <View style={{ flex: 1 }}>
-    //   <Text>cin chaj</Text>
-    //   <Image
-    //     style={{
-    //       width: 200,
-    //       height: 300,
-    //     }}
-    //     source={{ uri:'https://nativeapp.onrender.com'+datas}}
-    //   />
-    // </View>
-    <SafeAreaView style={{ flex: 1 }}>
-        <Image source={{uri:datas}}/>
-           <StatusBar
-            animated={true}
-            backgroundColor="black"
-            hidden={hidden}
-           />
-         <Navigete/>
-          </SafeAreaView>
-  );
-}

@@ -25,44 +25,13 @@ import {
 } from "@react-navigation/bottom-tabs";
 const bootonTba = createBottomTabNavigator();
 const VideoTikTok = ({ navigation}) => {
-  const [selectedTab, setSelectedTab] = useState("For Your");
-  // console.log(dataUser)
-  const handleTabPress = (tabName) => {
-    setSelectedTab(tabName);
-  };
-
-  const renderTabs = (tabName) => {
-    const isSelected = selectedTab === tabName;
-    return (
-      <TouchableOpacity
-        key={tabName}
-        onPress={() => handleTabPress(tabName)}
-        style={{
-          paddingHorizontal: 10,
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 13,
-            fontWeight: "700",
-            color: isSelected ? "white" : "rgba(255, 255, 255, 0.5)",
-            borderBottomWidth: isSelected ? 4 : 0,
-
-            borderBottomColor: isSelected ? "white" : "transparent",
-          }}
-        >
-          {tabName}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
+ 
   const [isLoading, setIsLoading] = useState(true);
   const bottomTabHight = useBottomTabBarHeight();
   const [data, setData] = useState([]);
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [action, setAction] = useState(false);
-
   useFocusEffect(
     useCallback(() => {
       // Thay đổi action để phát video đầu tiên
@@ -76,18 +45,21 @@ const VideoTikTok = ({ navigation}) => {
   useEffect(() => {
     setAction(currentTabIndex);
   }, [currentTabIndex]);
+  const [leng, setLeng] = useState(0);
+
   const handlerSelectVideo = async () => {
     try {
-      const lim = 10; // Định nghĩa giá trị lim
+      const lim = 5; // Định nghĩa giá trị lim
 
       const { data } = await axios.post(
         `${path}/selectVideo`,
         {
           limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+          skip:leng,
         }
       );
-
-      setData(data.data);
+      setLeng(leng+5)
+      setData((prevData) => prevData.concat(data.data));
     } catch (err) {
       console.log(err);
     }
@@ -95,33 +67,27 @@ const VideoTikTok = ({ navigation}) => {
   useEffect(() => {
     handlerSelectVideo();
   }, []);
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    handlerSelectVideo();
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
-  };
-  const handleLoadMore = async () => {
-    // setRefreshing(true);
+    setLeng(0);
+  
     try {
-      const { data } = await axios.post(
-        // "http://192.168.57.244:8080/selectVideo"
-        `${path}/selectVideo`,
-        {
-          limiteds: 8,
-        }
-      );
-
-      setData((prevData) => prevData.concat(data.data));
-      // setRefreshing(false);
+      // Gọi handlerSelectVideo và đợi nó hoàn thành  
+      setData([]);
+      await handlerSelectVideo();
     } catch (err) {
       console.log(err);
+    } finally {
+      // Kết thúc setRefreshing sau một khoảng thời gian
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 2000);
     }
   };
   return (
-    <View style={{ height: 760, backgroundColor: "black" }}>
+    <View style={{backgroundColor:'black'}}>
       <FlatList
+         style={{backgroundColor:'black'}}
         data={data}
         pagingEnabled
         initialNumToRender={4}
@@ -146,7 +112,7 @@ const VideoTikTok = ({ navigation}) => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         removeClippedSubviews
-        onEndReached={handleLoadMore}
+        onEndReached={handlerSelectVideo}
         onEndReachedThreshold={(0, 5)}
       />
     </View>
@@ -154,3 +120,34 @@ const VideoTikTok = ({ navigation}) => {
 };
 export default VideoTikTok;
 const styles = StyleSheet.create({});
+ // const [selectedTab, setSelectedTab] = useState("For Your");
+  // // console.log(dataUser)
+  // const handleTabPress = (tabName) => {
+  //   setSelectedTab(tabName);
+  // };
+
+  // const renderTabs = (tabName) => {
+  //   const isSelected = selectedTab === tabName;
+  //   return (
+  //     <TouchableOpacity
+  //       key={tabName}
+  //       onPress={() => handleTabPress(tabName)}
+  //       style={{
+  //         paddingHorizontal: 10,
+  //       }}
+  //     >
+  //       <Text
+  //         style={{
+  //           fontSize: 13,
+  //           fontWeight: "700",
+  //           color: isSelected ? "white" : "rgba(255, 255, 255, 0.5)",
+  //           borderBottomWidth: isSelected ? 4 : 0,
+
+  //           borderBottomColor: isSelected ? "white" : "transparent",
+  //         }}
+  //       >
+  //         {tabName}
+  //       </Text>
+  //     </TouchableOpacity>
+  //   );
+  // };

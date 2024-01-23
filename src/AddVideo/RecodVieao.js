@@ -24,14 +24,12 @@ import { Video, ResizeMode } from "expo-av";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
-
 const RecodViedeo = ({ navigation}) => {
-  // set trạng thaí của nó khi truy cập
   const [autoPlays, setAutoplay] = useState(false);
   const [trangThai, setTrangThai] = useState(1);
   const [thanhBar, setThanhBar] = useState(1);
   const [image, setImage] = useState(null);
-
+  const [resizeMode, setResizeMode] = useState(false)
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [fileselect, setFileselect] = useState(null);
@@ -50,17 +48,21 @@ const RecodViedeo = ({ navigation}) => {
       quality: 1,
     });
     if (!result.canceled) {
-      if (result.type === "image") {
-        setSelectedImage(result.uri);
-        setFileselect(result.uri)
+     
+      if (result.assets[0].type === "image") {
+        setSelectedImage(result.assets[0].uri);
+        setFileselect(result.assets[0].uri)
         setTrangThai(2);
         setTypefile("image")
-      } else if (result.type === "video") {
-        setFileselect(result.uri)
-        setHeight(result.height)
-        setWidthV(result.width)
-        console.log(result.uri)
-        setSelectedVideo(result.uri);
+      } else if (result.assets[0].type === "video") {
+        if (result.assets[0].height<600) {
+          setResizeMode(true)
+        }
+        setFileselect(result.assets[0].uri)
+        setHeight(result.assets[0].height)
+        setWidthV(result.assets[0].width)
+        console.log(result.assets[0].uri)
+        setSelectedVideo(result.assets[0].uri);
         setAutoplay(true)
         setTrangThai(3);
         setTypefile("video")
@@ -124,7 +126,7 @@ const RecodViedeo = ({ navigation}) => {
   const ContinuteDegin = async () => {
 
     setAutoplay(false)
-    navigation.navigate("PostVideo", {inputText,positionX,positionY,typefile,fileselect,widthV,heightV});
+    navigation.navigate("PostVideo", {inputText,positionX,positionY,typefile,fileselect,widthV,heightV,resizeMode});
     }
   return (
     <View
@@ -304,7 +306,6 @@ const RecodViedeo = ({ navigation}) => {
           />
         </View>
       )}
-
       {trangThai == 3 && (
         <View
           style={{
@@ -352,6 +353,11 @@ const RecodViedeo = ({ navigation}) => {
               <Text style={{ color: "white", fontSize: 8 }}>settings</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() => {
+                 setAutoplay(false)
+            navigation.navigate("EditerVideo", {inputText,positionX,positionY,typefile,fileselect,widthV,heightV})
+          }}
+           
               style={{
                 alignItems: "center",
                 justifyContent: "space-around",
@@ -424,7 +430,7 @@ const RecodViedeo = ({ navigation}) => {
           </Text>
           <Video
             source={{ uri: selectedVideo }}
-            style={{ width: "100%", height: "50%" }}
+            style={{ width: "100%", height: "60%" }}
             useNativeControls
             resizeMode="cover"
             isLooping
@@ -432,6 +438,11 @@ const RecodViedeo = ({ navigation}) => {
           />
           <View style={{ flexDirection:'row',width:'90%',height:'10%',alignItems:'center',justifyContent:'space-around',position:'absolute',bottom:10}}>
             <TouchableOpacity
+             onPress={() => {
+              setAutoplay(false)
+                navigation.navigate("EditerVideo", {inputText, positionX, positionY, typefile, fileselect, widthV, heightV})
+             
+       }}
               style={{ width:'40%',backgroundColor:'white',height:'60%',alignItems:'center',justifyContent:'center',borderRadius:10}}
             >
               <Text style={{ color: 'black',fontWeight:'700'}}>

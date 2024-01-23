@@ -29,8 +29,21 @@ import { useNavigation } from "@react-navigation/native";
 import { Video, ResizeMode } from "expo-av";
 import screenfull from "screenfull";
 import VideoPlayer from "expo-video-player";
+import { useDispatch, useSelector } from 'react-redux';
+import { setVideoPlaying } from "../../Redex/handlerNaviVideo.js";
 import axios from "axios";
-const TrangChu = ({ navigation, route}) => {
+const TrangChu = ({ navigation, route }) => {
+  const isVideoPlaying = useSelector((state) => state.auth.isVideoPlaying);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const blurListener = navigation.addListener('blur', () => {
+      dispatch(setVideoPlaying(true));
+    });
+    return () => {
+      blurListener();
+    };
+  }, [navigation, dispatch]);
+
   const [userStory, setUserStory] = useState({}); // danh cho story
   const [data, setData] = useState(null);
   const [user, setUser] = useState(route.params.data); // dnah cho lấy dữ liệu từ dâtbase

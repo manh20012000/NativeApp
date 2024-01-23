@@ -8,13 +8,14 @@ const initialAuthstate= {
     reducers: {
         login: (state, action) => {
         state.value = action.payload
+        
       },
       logout: (state, action) => {
         state.value = null
       },
       UpdateAuth: (state, action) => {
         state.value = action.payload
-        //  console.log(state.value)
+        //  console.log(state.value,'styh3')
       },
     },
   })

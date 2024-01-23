@@ -21,6 +21,8 @@ import { useDispatch } from 'react-redux'
 import { login } from "../Redex/auth.slice";
 import path from "../config";
 import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { saveUserToken } from "../../Token_Auth";
 const Login = ({ navigation }) => {
   const [emailphone, setName] = useState("");
   const [matkhau, setPass] = useState("");
@@ -39,12 +41,14 @@ const Login = ({ navigation }) => {
         //  "https://nativeapp-vwvi.onrender.com/login",
         { taikhoan: emailphone, matkhau: matkhau }
       );
-
       if (data.status == 200) {
         const datas = data;
         const userData = datas.data;
+        // AsyncStorage.setItem("user",userData.taikhoan)
           dispath(login(userData))
         setLoading(false);
+        const userToken = 'CloudStrong';
+        await saveUserToken(userToken);
         navigation.navigate("BootonGate", userData);
         setPass("");
         setName("");

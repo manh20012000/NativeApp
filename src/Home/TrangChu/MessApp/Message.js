@@ -86,7 +86,6 @@ navigation
             <Feather name="video" size={24} color="white" />
           )
        }}
-
          />
       <bottonTad.Screen
         name='People'
@@ -107,8 +106,6 @@ navigation
           )
         }}
        />
-      
-
     </bottonTad.Navigator>
 
     </View>

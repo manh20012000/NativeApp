@@ -24,7 +24,7 @@ import VideoHomePage from "../Home/Video/VideoHomePage.js";
 const Tab = createBottomTabNavigator();
 const BootonGate = ({ navigation, route }) => {
   // console.log(route.params)
-
+  const bootonTba = createBottomTabNavigator();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -33,7 +33,7 @@ const BootonGate = ({ navigation, route }) => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconComponent;
 
-          if (route.name === "TrangChu") {
+          if (route.name === "Home") {
             iconComponent = (
               <Image
                 source={require("../Image/home.png")}
@@ -52,7 +52,7 @@ const BootonGate = ({ navigation, route }) => {
                 color={focused ? "white" : "#888888"}
               />
             );
-          } else if (route.name === "Thông báo") {
+          } else if (route.name === "Inbox") {
             iconComponent = (
               <FontAwesome
                 name="bell"
@@ -75,7 +75,7 @@ const BootonGate = ({ navigation, route }) => {
       })}
     >
       <Tab.Screen
-        name="TrangChu"
+        name="Home"
         component={Trangchu}
         initialParams={{ data: route.params }}
       />
@@ -96,7 +96,7 @@ const BootonGate = ({ navigation, route }) => {
           ),
         }}
       />
-      <Tab.Screen name="Thông báo" component={Notifices} />
+      <Tab.Screen name="Inbox" component={Notifices} />
       <Tab.Screen
         name="Infor"
         initialParams={{ data: route.params }}

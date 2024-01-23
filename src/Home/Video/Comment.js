@@ -22,7 +22,12 @@ import TimeAgo from "react-native-timeago";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import CommentChildren from "./CommentChirlden.js";
+import {
+  updateDataCommentChildrent,
+  getDataCommentChildrent,
+} from "../../Redex/updateComentChildren.js";
 import path from "../../config.js";
+import { useSelector, useDispatch } from "react-redux";
 const Comment = ({
   index,
   onDeleteComment,
@@ -34,33 +39,39 @@ const Comment = ({
   setSoluongcomemtChidrent,
   navigation,
   sendComemtChildren,
+  setqualityComment,
+  QualityComment,
 }) => {
+  const dispatch = useDispatch();
   const [user, setUser] = useState(item.User);
   const [Data, setData] = useState(item);
   const [Content, setContent] = useState(Data.Content);
   const [soluongCmt, setSoluongcmt] = useState(Data.SoluongCommentChildrent);
-  const [qualityCommetShow, setQualitycomemtShow] = useState(Data.SoluongCommentChildrent);
+  const [qualityCommetShow, setQualitycomemtShow] = useState(
+    Data.SoluongCommentChildrent
+  );
   const [ChidrenCpnent, setComponent] = useState(true);
   const [XemThem, setXemThem] = useState(false);
+  const [cmtChidren, setCmchildren] = useState([])
+  //const [cmtChidren, setCmchildren] = useState(useSelector((state) => state.auth.value))
 
-  useEffect(() => {
-    if (sendComemtChildren == null) {
-      return;
-    }
-    if (Data._id === sendComemtChildren.parentId) {
-      setCmchildren((prevComments) => [sendComemtChildren, ...prevComments]);
-      setQualitycomemtShow(qualityCommetShow + 1);
-      setComponent(true);
-    }
-  }, [sendComemtChildren]);
-  // const showComent = () => {};
+
+  // useEffect(() => {
+  //   console.log('hoolnay được thực hiện mấy lần ')
+  //   if (sendComemtChildren == null) {
+  //     return;
+  //   }
+  //   if (Data._id === sendComemtChildren.parentId) {
+  //     setCmchildren((prevComments) => [sendComemtChildren, ...prevComments]);
+  //     setComponent(true);
+  //   }
+  // }, [sendComemtChildren]);
+  // // const showComent = () => {};
   useEffect(() => {
     if (soluongCmt == 0) {
-      console.log('nhayd vào đya ',soluongCmt)
       setComponent(true);
       setXemThem(false);
     } else {
-      console.log('hihiih',soluongCmt)
       setComponent(true);
       setXemThem(true);
     }
@@ -69,9 +80,7 @@ const Comment = ({
   const [startIndex, setStartIndex] = useState(0);
   // const visibleItems = cmtChidren.slice(startIndex, startIndex + itemsPerPage);
   const [isLiked, setIsLiked] = useState(false);
-  const [cmtChidren, setCmchildren] = useState([]);
   const [leng, setLeng] = useState(0);
-
   const hanlderXemThem = async () => {
     setLoading(true);
     try {
@@ -79,10 +88,8 @@ const Comment = ({
       const { data } = await axios.get(
         `${path}/api_CommentVideoGetChildrent/${Data._id}/${leng}`
       );
-      setCmchildren((prevCmtChidren) => [
-        ...(prevCmtChidren || []),
-        ...data.data,
-      ]);
+      setCmchildren((prevCmtChidren) => [...(prevCmtChidren || []), ...data.data,]);
+      // dispatch(updateDataCommentChildrent(data.data));
       statusLoad(true);
       setLeng(leng + 3);
     } catch (error) {
@@ -117,10 +124,25 @@ const Comment = ({
     const QualityComment = Data.SoluongCommentChildrent + 1;
     onDeleteComment(QualityComment, Item._id);
   };
-  // useEffect(() => {
-  //   setCmchildren(Data.CommentChildren);
-  // }, [Data]);
 
+  const deleteCommentChildern = async (idComment) => {
+    try {
+      setLoading(true);
+      setqualityComment(QualityComment - 1);
+      console.log(idComment, Data.idVideo, item._id);
+      const updateComemntChildren = cmtChidren.filter(
+        (items) => items._id !== idComment
+      );
+      setCmchildren(updateComemntChildren);
+      const { data } = await axios.delete(
+        `${path}/deleteCommentChildrenVideo/${idComment}/${Data.idVideo}/${item._id}`
+      );
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <View style={{}}>
       <TouchableOpacity
@@ -133,8 +155,6 @@ const Comment = ({
           console.log("récd", Data._id);
           setParentId(Data._id);
           handleTextInputChange(user.Hoten + " 👉 ");
-
-          // setSoluongcomemtChidrent(Data.SoluongCommentChildrent+1);
         }}
       >
         <TouchableOpacity
@@ -221,7 +241,17 @@ const Comment = ({
             style={{ flex: 0.9 }}
             renderItem={({ item, index }) => {
               //console.log(JSON.stringify(item))
-              return <CommentChildren item={item} index={index} />;
+              return (
+                <CommentChildren
+                  item={item}
+                  index={index}
+                  navigation={navigation}
+                  deleteCommentChildern={deleteCommentChildern}
+                  setParentId={setParentId}
+                  handleTextInputChange={handleTextInputChange}
+                  idCommentCha={Data._id}
+                />
+              );
             }}
           />
         )}

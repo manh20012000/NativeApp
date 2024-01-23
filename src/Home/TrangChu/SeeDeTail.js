@@ -12,7 +12,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
-import DataOjs from "../../Data/DataObj.js";
+
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
@@ -23,17 +23,15 @@ import { Entypo } from "@expo/vector-icons";
 import { Tabs, CollapsibleTabView } from 'react-native-collapsible-tab-view'
 import { firestore } from "../../../Confige.js";
 import axios from "axios";
+import { io } from "socket.io-client";
 const SeeDeTail = ({ route,navigation }) => {
   const BackTrangHome = () => {
       navigation.navigate('TrangChu')
   }
   const [dataRoute, setDataRote] = useState(route.params);
-  console.log(dataRoute)
-    // ket noi firebase
     const [baiviet, setBaiviet] = useState([]);
-  
-  // onpressmes
   const NavigateMess = () => {
+
            navigation.navigate('PesionChat',dataRoute)
   }
   //  nhấn vào them hoặc bor ban be
