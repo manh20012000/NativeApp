@@ -18,29 +18,31 @@ import PostWithCamera from "../Home/TrangChu/PostWithCamera.js";
 import Coment from "../Home/TrangChu/comment.js";
 import EditProfile from "../Home/Information/EditInfor.js";
 import PostVideo from "../AddVideo/PostVideo.js";
-import { getUserToken } from "../../Token_Auth.js";
+import SetTingInfor from "../Home/Information/SetTingInfor.js";
 import EditerVideo from "../AddVideo/EditerVideo.js";
 import SeemVideo from "../Home/Information/SeemVideo.js";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux'
+import { login } from "../Redex/auth.slice";
 const Stack = createNativeStackNavigator();
 const Navigete = () => {
+  const dispath = useDispatch();
+  const [loading, setLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Thực hiện kiểm tra đăng nhập ở đây, bạn có thể sử dụng AsyncStorage hoặc Redux để kiểm tra
-  useEffect(() => {
-    // Ví dụ sử dụng hàm kiểm tra đăng nhập từ một module nào đó
+    // Thực hiện kiểm tra đăng nhập ở đây, bạn có thể sử dụng AsyncStorage hoặc Redux để kiểm tra
     const checkLoginStatus = async () => {
-      const userToken = await getUserToken(); // Giả sử getUserToken trả về token hoặc null
-    
-      if (userToken != null) {
-        console.log(userToken,'hahaha')
-        setIsLoggedIn(true);
+      const userTokenString = await AsyncStorage.getItem('userToken');
+      if (userTokenString!== null) {
+        const userTokenObject = JSON.parse(userTokenString);
+        setIsLoggedIn(true)
+        dispath(login(userTokenObject))
+        
       }
+      setLoading(true)
     };
-
     checkLoginStatus();
-  }, []);
   return (
-    <NavigationContainer
+    loading&&(<NavigationContainer
       style={{
         flex: 1,
       }}
@@ -67,12 +69,13 @@ const Navigete = () => {
         <Stack.Screen name="PostVideo" component={PostVideo} />
         <Stack.Screen name="EditerVideo" component={EditerVideo} />
         <Stack.Screen name="SeemVideo" component={SeemVideo} />
+        <Stack.Screen name="SetTingInfor" component={SetTingInfor} />
         {/* <Stack.Screen
         name='PostWithCamera'
         component={PostWithCamera}
       /> */}
       </Stack.Navigator>
-    </NavigationContainer>
+    </NavigationContainer>)
   );
 };
 export default Navigete;

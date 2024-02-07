@@ -24,18 +24,24 @@ import { Video, ResizeMode } from "expo-av";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
-const RecodViedeo = ({ navigation}) => {
+import axios from "axios";
+import path from "../config";
+import Spinner from "react-native-loading-spinner-overlay";
+import { useSelector, useDispatch } from "react-redux";
+const RecodViedeo = ({ navigation }) => {
   const [autoPlays, setAutoplay] = useState(false);
   const [trangThai, setTrangThai] = useState(1);
   const [thanhBar, setThanhBar] = useState(1);
   const [image, setImage] = useState(null);
-  const [resizeMode, setResizeMode] = useState(false)
+  const [resizeMode, setResizeMode] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [fileselect, setFileselect] = useState(null);
-  const [widthV, setWidthV] = useState(0)
-  const [heightV,setHeight]=useState(0)
-  const [typefile, setTypefile] = useState('');
+  const [widthV, setWidthV] = useState(0);
+  const [heightV, setHeight] = useState(0);
+  const [typefile, setTypefile] = useState("");
+  const count = useSelector((state) => state.auth.value);
+  const [dataUser, setData] = useState(count);
   const pickImages = async () => {
     setTrangThai(2);
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -48,24 +54,23 @@ const RecodViedeo = ({ navigation}) => {
       quality: 1,
     });
     if (!result.canceled) {
-     
       if (result.assets[0].type === "image") {
         setSelectedImage(result.assets[0].uri);
-        setFileselect(result.assets[0].uri)
+        setFileselect(result.assets[0].uri);
         setTrangThai(2);
-        setTypefile("image")
+        setTypefile("image");
       } else if (result.assets[0].type === "video") {
-        if (result.assets[0].height<600) {
-          setResizeMode(true)
+        if (result.assets[0].height < 600) {
+          setResizeMode(true);
         }
-        setFileselect(result.assets[0].uri)
-        setHeight(result.assets[0].height)
-        setWidthV(result.assets[0].width)
-        console.log(result.assets[0].uri)
+        setFileselect(result.assets[0].uri);
+        setHeight(result.assets[0].height);
+        setWidthV(result.assets[0].width);
+        console.log(result.assets[0].uri);
         setSelectedVideo(result.assets[0].uri);
-        setAutoplay(true)
+        setAutoplay(true);
         setTrangThai(3);
-        setTypefile("video")
+        setTypefile("video");
       }
     }
   };
@@ -98,25 +103,26 @@ const RecodViedeo = ({ navigation}) => {
     setShowModal(!showModal);
   };
   const textRef = useRef(null);
-  
+
   const [positionX, setPositionX] = useState(0);
   const [positionY, setPositionY] = useState(0);
-
+  const [loading, setLoading] = useState(false);
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gestureState) => {
         const { dx, dy } = gestureState;
-      
+
         textRef.current.setNativeProps({
           style: { transform: [{ translateX: dx }, { translateY: dy }] },
         });
-      },onPanResponderMove: (event, gestureState) => {
+      },
+      onPanResponderMove: (event, gestureState) => {
         const { dx, dy } = gestureState;
         textRef.current.setNativeProps({
           style: { transform: [{ translateX: dx }, { translateY: dy }] },
         });
-        console.log(dy)
+        console.log(dy);
         setPositionX(dx);
         setPositionY(dy);
       },
@@ -124,10 +130,70 @@ const RecodViedeo = ({ navigation}) => {
   ).current;
 
   const ContinuteDegin = async () => {
+    setAutoplay(false);
+    navigation.navigate("PostVideo", {
+      inputText,
+      positionX,
+      positionY,
+      typefile,
+      fileselect,
+      widthV,
+      heightV,
+      resizeMode,
+    });
+  };
 
-    setAutoplay(false)
-    navigation.navigate("PostVideo", {inputText,positionX,positionY,typefile,fileselect,widthV,heightV,resizeMode});
+  const HanderUploadVideo = async () => {
+    const formData = new FormData();
+    let datetime = new Date();
+    let datePostTimstemp = await datetime.toISOString().slice(0, -5);
+    setLoading(true);
+
+    formData.append("Height", heightV);
+    formData.append("widthV", widthV);
+    formData.append("datePost", datePostTimstemp);
+    // formData.append("videoConten", inputText);
+    // formData.append("privacy", privacy);
+    formData.append("Story", {
+      uri:fileselect,
+      name:`Story${datePostTimstemp}.mp4`,
+      type:"video/mp4",
+    });
+    formData.append("resizeMode", resizeMode);
+    formData.append("userId", dataUser._id);
+    formData.append("textinLocation", inputText);
+    formData.append("positionX", positionX);
+    formData.append("positionY", positionY);
+    // formData.append("nameMusic", dataUser.Hoten);
+    try {
+      const { status, message, msg } = await axios.post(
+        `${path}/uploadStory`,
+        //`${path}/uploadVideo`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      // setVconten(null);
+      // setPrivacy("public");
+      // setLocated(null);
+
+      console.log(fileselect);
+      if (status == 200) {
+        navigation.navigate("Home");
+        setLoading(false);
+        alert("sussecess");
+      }
+    } catch (erro) {
+      setLoading(false);
+      console.log(erro + "->>catch lỗi ");
+    } finally {
+      setAutoplay(false);
+       setFileselect(null);
     }
+  };
   return (
     <View
       style={{
@@ -323,10 +389,22 @@ const RecodViedeo = ({ navigation}) => {
             <FontAwesome name="remove" size={30} color="white" />
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ position: "absolute", top: 20, alignContent: "center",flexDirection:'row' }}
+            style={{
+              position: "absolute",
+              top: 20,
+              alignContent: "center",
+              flexDirection: "row",
+            }}
           >
-            <Text style={{ color: "white", fontWeight: "700", fontSize: 15,marginRight:10 }}>
-              Sound  
+            <Text
+              style={{
+                color: "white",
+                fontWeight: "700",
+                fontSize: 15,
+                marginRight: 10,
+              }}
+            >
+              Sound
             </Text>
             <FontAwesome name="music" size={20} color="white" />
           </TouchableOpacity>
@@ -354,10 +432,17 @@ const RecodViedeo = ({ navigation}) => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                 setAutoplay(false)
-            navigation.navigate("EditerVideo", {inputText,positionX,positionY,typefile,fileselect,widthV,heightV})
-          }}
-           
+                setAutoplay(false);
+                navigation.navigate("EditerVideo", {
+                  inputText,
+                  positionX,
+                  positionY,
+                  typefile,
+                  fileselect,
+                  widthV,
+                  heightV,
+                });
+              }}
               style={{
                 alignItems: "center",
                 justifyContent: "space-around",
@@ -424,7 +509,12 @@ const RecodViedeo = ({ navigation}) => {
           <Text
             ref={textRef}
             {...panResponder.panHandlers}
-            style={{ fontSize: 20,color:'white', padding: 10,fontWeight:'500' }}
+            style={{
+              fontSize: 20,
+              color: "white",
+              padding: 10,
+              fontWeight: "500",
+            }}
           >
             {inputText}
           </Text>
@@ -436,26 +526,46 @@ const RecodViedeo = ({ navigation}) => {
             isLooping
             shouldPlay={autoPlays}
           />
-          <View style={{ flexDirection:'row',width:'90%',height:'10%',alignItems:'center',justifyContent:'space-around',position:'absolute',bottom:10}}>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "90%",
+              height: "10%",
+              alignItems: "center",
+              justifyContent: "space-around",
+              position: "absolute",
+              bottom: 10,
+            }}
+          >
             <TouchableOpacity
-             onPress={() => {
-              setAutoplay(false)
-                navigation.navigate("EditerVideo", {inputText, positionX, positionY, typefile, fileselect, widthV, heightV})
-             
-       }}
-              style={{ width:'40%',backgroundColor:'white',height:'60%',alignItems:'center',justifyContent:'center',borderRadius:10}}
+              onPress={() => {
+                HanderUploadVideo();
+              }}
+              style={{
+                width: "40%",
+                backgroundColor: "white",
+                height: "60%",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 10,
+              }}
             >
-              <Text style={{ color: 'black',fontWeight:'700'}}>
-              Chỉnh sửa
-               </Text>
+              <Text style={{ color: "black", fontWeight: "700" }}>
+                Add Story
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-               onPress={ContinuteDegin}
-              style={{ width:'40%',backgroundColor:'red',height:'60%',alignItems:'center',justifyContent:'center',borderRadius:10}}
+              onPress={ContinuteDegin}
+              style={{
+                width: "40%",
+                backgroundColor: "red",
+                height: "60%",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 10,
+              }}
             >
-              <Text style={{ color: 'white',fontWeight:'700'}}>
-               Next
-               </Text>
+              <Text style={{ color: "white", fontWeight: "700" }}>Next</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -514,6 +624,11 @@ const RecodViedeo = ({ navigation}) => {
           </View>
         </View>
       </Modal>
+      <Spinner
+        visible={loading}
+        textContent={"Đang tải..."}
+        textStyle={{ color: "#FFF" }}
+      />
     </View>
   );
 };

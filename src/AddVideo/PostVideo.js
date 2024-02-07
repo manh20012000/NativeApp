@@ -125,8 +125,9 @@ const PostVideo = ({ navigation, route }) => {
     formData.append("positionY", data.positionY);
     formData.append("nameMusic", dataUser.Hoten);
     try {
-      const { status, msg } = await axios.post(
+      const {status, message,msg} = await axios.post(
         `${path}/uploadVideo`,
+        //`${path}/uploadVideo`,
         formData,
         {
           headers: {
@@ -142,7 +143,7 @@ const PostVideo = ({ navigation, route }) => {
       if (status == 200) {
         navigation.navigate("Video");
         setLoading(false);
-        alert(data.message);
+        alert('sussecess');
       }
     } catch (erro) {
       setLoading(false);

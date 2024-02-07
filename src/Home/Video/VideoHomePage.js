@@ -24,19 +24,9 @@ import VideoLocation from "./VideoLocation.js";
 
 const Tab = createMaterialTopTabNavigator();
 const VideoHomePage = () => {
-  const [isFocused, setIsFocused] = useState(false);
 
-  useFocusEffect(
-  useCallback(() => {
-      setIsFocused(true);
-      return () => {
-        setIsFocused(false);
-      };
-    }, [])
-  );
-  const [isPlaying, setIsPlaying] = useState(false);
   return (
-    <View style={{ flex: 1, position: "relative" }}>
+    <View style={{ flex: 1, position: "relative",backgroundColor:'black' }}>
       <View
         style={{
           position: "absolute",
@@ -67,9 +57,9 @@ const VideoHomePage = () => {
         initialRouteName="Foryou"
         screenOptions={{
           tabBarActiveTintColor: 'white',
-           tabBarInactiveTintColor: '#777777',
+           tabBarInactiveTintColor: '#CCCCCC',
           tabBarLabelStyle: {
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: "bold",
             textTransform: "none",
           },
@@ -129,7 +119,8 @@ const VideoHomePage = () => {
           name="Foryou"
           component={Foryou}
           options={{
-            tabBarLabel: "For you",
+            tabBarLabel: "Foryou",
+        
            
           }}
         />

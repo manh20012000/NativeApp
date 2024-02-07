@@ -77,7 +77,7 @@ const BootonGate = ({ navigation, route }) => {
       <Tab.Screen
         name="Home"
         component={Trangchu}
-        initialParams={{ data: route.params }}
+        // initialParams={{ data: route.params }}
       />
       <Tab.Screen name="Video" component={VideoHomePage} />
       <Tab.Screen

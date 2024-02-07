@@ -23,61 +23,82 @@ import {
   createBottomTabNavigator,
   useBottomTabBarHeight,
 } from "@react-navigation/bottom-tabs";
-
+import { useIsFocused } from '@react-navigation/native';
 const Folowing=({ navigation})=> {
+  const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(true);
   const bottomTabHight = useBottomTabBarHeight();
   const [data, setData] = useState([]);
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [action, setAction] = useState(false);
-
-  useFocusEffect(
-    useCallback(() => {
-      // Thay đổi action để phát video đầu tiên
-      setAction(false); // hoặc setAction(indexCuaVideoDauTien);
-      return () => {
-        // Reset lại action khi rời khỏi màn hình TikTok
-        setAction(false);
-      };
-    }, [])
-  );
-  useEffect(() => {
-    setAction(currentTabIndex);
-  }, [currentTabIndex]);
+  let trangthai = true;
   const [leng, setLeng] = useState(0);
-
   const handlerSelectVideo = async () => {
+   
     try {
-      const lim = 5; // Định nghĩa giá trị lim
-
-      const { data } = await axios.post(
-        `${path}/selectVideo`,
-        {
-          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-          skip:leng,
-        }
-      );
-      setLeng(leng+5)
+   const lim = 5; // Định nghĩa giá trị lim
+      const { data } = await axios.post(`${path}/selectVideo`, {
+        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+        skip: leng,
+      });
+      setLeng(leng + 5);
       setData((prevData) => prevData.concat(data.data));
     } catch (err) {
       console.log(err);
     }
   };
+  useEffect(() => {
+    if (isFocused) {
+      trangthai = true
+      if (trangthai == true) {
+        handlerSelectVideo();
+      }
+      setAction(currentTabIndex);
+    } else {
+      setAction(false);
+    trangthai=false
+    }
+    return () => {
+      // Hàm cleanup (nếu cần)
+    };
+  }, [isFocused]);
+  
   // useEffect(() => {
+  //   console.log('hahah22')
   //   handlerSelectVideo();
-  // }, []);
-  const onRefresh = () => {
+  // }, [trangthai]);
+  const onRefresh = async () => {
     setRefreshing(true);
-    handlerSelectVideo();
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
+    setLeng(0);
+    try {
+      try {
+        const lim = 5; // Định nghĩa giá trị lim
+        const { data } = await axios.post(
+          `${path}/selectVideo`,
+          {
+            limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+            skip:0,
+          }
+        );
+        setData([]);
+        setData(data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      // Kết thúc setRefreshing sau một khoảng thời gian
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 2000);
+    }
   };
   return (
-    <View >
+    <View style={{backgroundColor:'black'}}>
       <FlatList
-        
+         style={{backgroundColor:'black'}}
         data={data}
         pagingEnabled
         initialNumToRender={4}
@@ -95,6 +116,7 @@ const Folowing=({ navigation})=> {
           const index = Math.round(
             e.nativeEvent.contentOffset.y / (810 - bottomTabHight)
           );
+          setCurrentTabIndex(index)
           setAction(index);
         }}
         showsVerticalScrollIndicator={false}

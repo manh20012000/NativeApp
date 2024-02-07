@@ -1,24 +1,23 @@
-// Trong file reducer.js hoặc tương tự
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
-const initialAuthstate = {
-  value: [],
+const initialAuthState = {
+  datacomment: [],
 };
-
-export const CommentChildrent = createSlice({
-  name: "updateCommentChildrent",
-  initialState: initialAuthstate,
+export const commentChildrentSlice = createSlice({
+  name: 'commentChildrent',
+  initialState: initialAuthState,
   reducers: {
     getDataCommentChildrent: (state, action) => {
-      state.value = action.payload;
+      state.datacomment = action.payload;
     },
-    updateDataCommentChildrent: (state, action) => {
-      state.value = action.payload;
-      console.log("Updated state:", state.value);
+    updateDataCommentChildrent:  (state, action) => {
+      // console.log('New data:', action.payload);
+      state.datacomment = [...state.datacomment, ...action.payload];
+    },
+    addComment: (state, action) => {
+      state.datacomment.push(action.payload);
     },
   },
 });
-
-export const { getDataCommentChildrent, updateDataCommentChildrent } =
-  CommentChildrent.actions;
-export default CommentChildrent.reducer;
+export const { getDataCommentChildrent, updateDataCommentChildrent,addComment } = commentChildrentSlice.actions;
+export default commentChildrentSlice.reducer;

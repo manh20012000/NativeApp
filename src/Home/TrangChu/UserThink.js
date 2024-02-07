@@ -49,7 +49,7 @@ const UserThink = ({ navigation, route }) => {
   };
   // back trang chu
   const backTrangchu = () => {
-    navigation.navigate("TrangChu");
+    navigation.navigate("Home");
   };
   // lấy data cua use
   const [data, setData] = useState(count);
@@ -268,7 +268,7 @@ const UserThink = ({ navigation, route }) => {
       setLocation(null);
       setIsText(null);
       if (status == 200) {
-        navigation.navigate("TrangChu");
+        navigation.navigate("Home");
         setLoading(false);
         alert(msg);
       }

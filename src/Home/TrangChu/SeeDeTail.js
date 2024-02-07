@@ -26,7 +26,7 @@ import axios from "axios";
 import { io } from "socket.io-client";
 const SeeDeTail = ({ route,navigation }) => {
   const BackTrangHome = () => {
-      navigation.navigate('TrangChu')
+      navigation.navigate('Home')
   }
   const [dataRoute, setDataRote] = useState(route.params);
     const [baiviet, setBaiviet] = useState([]);

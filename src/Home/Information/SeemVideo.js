@@ -19,15 +19,17 @@ import { firestore } from "../../../Confige.js";
 import { collection, getDocs } from "firebase/firestore";
 import path from "../../config.js";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
 // import {
 //   createBottomTabNavigator,
 //   useBottomTabBarHeight,
 // } from "@react-navigation/bottom-tabs";
 import VideoItem from "../Video/VideoItem";
 const SeemVideo = ({ navigation, route }) => {
+  const count = useSelector((state) => state.auth.value);
   const [isLoading, setIsLoading] = useState(true);
   //   const bottomTabHight = useBottomTabBarHeight();
-
+  const [dataUser, setDatauUser] = useState(count);
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [action, setAction] = useState(false);
@@ -48,7 +50,6 @@ const SeemVideo = ({ navigation, route }) => {
         // Reset lại action khi rời khỏi màn hình TikTok
         setAction(false);
       };
-      console.log('haha2')
       console.log(data,'data',selectedVideo)
     }, [])
   );
@@ -59,15 +60,18 @@ const SeemVideo = ({ navigation, route }) => {
 
   const handlerSelectVideo = async () => {
     try {
-      const lim = 5; // Định nghĩa giá trị lim
-      console.log('hahaha',index)
-      const { data } = await axios.post(`${path}/selectVideo`, {
-        limiteds: index, // Gửi dữ liệu với key là 'limiteds'
-        skip: leng,
-      });
-      const updatedComments =data.data.filter((item) => item._id !== selectedVideo._id);
-      setLeng(leng + 5);
-      setData((prevData) => prevData.concat(updatedComments));
+      const lim = 15; // Định nghĩa giá trị lim
+      const { data } = await axios.post(
+        `${path}/selectedVideoId`,
+        {
+          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+          skip: leng,
+          id:count._id,
+        }
+      );
+      setLeng(leng + 3);
+      // setData((prevData) => prevData.concat(data.data));
+      setData[data.data]
     } catch (err) {
       console.log(err);
     }
@@ -151,8 +155,9 @@ const SeemVideo = ({ navigation, route }) => {
         pagingEnabled
         initialNumToRender={4}
         keyExtractor={(item, index) => index.toString()}
+        maxToRenderPerBatch={5}
         renderItem={({ item, index }) => {
-         
+       
           return (
             <VideoItem
               item={item}
@@ -175,7 +180,7 @@ const SeemVideo = ({ navigation, route }) => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        removeClippedSubviews
+       
         onEndReached={handlerSelectVideo}
         onEndReachedThreshold={(0, 5)}
       />

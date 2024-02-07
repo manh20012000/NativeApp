@@ -21,6 +21,8 @@ import { React, useState, useRef, useEffect, memo } from "react";
 import TimeAgo from "react-native-timeago";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import { useSelector, useDispatch } from "react-redux";
+import path from "../../config";
 const CommentChildren = ({
   index,
   item,
@@ -36,6 +38,7 @@ const CommentChildren = ({
 }) => {
   const [user, setUser] = useState(item.User);
   const [Data, setData] = useState(item);
+  const count = useSelector((state) => state.auth.value);
   const [Content, setContent] = useState(Data.Content);
   const [soluongCmt, setSoluongcmt] = useState(Data.SoluongCommentChildrent);
   const [cmtChidren, setCmchildren] = useState(Data.CommentChildren);
@@ -62,7 +65,6 @@ const CommentChildren = ({
   };
   const [showOptions, setShowOptions] = useState(false);
   const [Item, setItem] = useState("");
-  
   const handleLongPress = (selectedItem) => {
     setShowOptions(true);
     setItem(selectedItem);
@@ -71,16 +73,58 @@ const CommentChildren = ({
     setShowOptions(false);
   };
   const deleteComment = async () => {
-
     setShowOptions(false);
     deleteCommentChildern(item._id);
   };
   useEffect(() => {
     setCmchildren(Data.CommentChildren);
   }, [Data]);
+
+  const [isLikedcmt, setisLikedcmt] = useState(false);
+  const [qualitylike, setqualitylike] = useState(Data.soluonglike)
+  let soluongTim = qualitylike;
+  useEffect( ()=>{
+    const trangthai = () => {
+      Data.idLike.forEach((item) => {
+        console.log(item)
+        if (item === count._id) {
+          setisLikedcmt(true);
+         
+        }
+      });
+    };
+    trangthai();
+  },[])
+  const handlderLike = async() => {
+    let like = !isLikedcmt;
+    setisLikedcmt(like)
+    if (isLikedcmt == false) {
+      soluongTim = soluongTim + 1;
+    
+      setqualitylike(soluongTim);
+    } else if (isLikedcmt == true) {
+      if (soluongTim > 0) {
+        soluongTim = soluongTim - 1;
+        setqualitylike(soluongTim);
+      }
+    }
+    try {
+      const { data } = await axios.post(`${path}/likeComemntVideoChildren`, {
+        idcomment: Data._id,
+        idlike: count._id,
+        Soluong: soluongTim,
+        Trangthai:like
+      });
+    } catch (err) {
+      console.log(err,'log error');
+    }
+    console.log(soluongTim)
+  }
   return (
-    <View>
-      <TouchableOpacity
+    idCommentCha == item.idParentComment && (
+      <View>
+        <View style={{ flexDirection: 'row' }}>
+           <TouchableOpacity
         style={styles.pressAble}
         onLongPress={() => {
           handleLongPress(Data);
@@ -126,7 +170,7 @@ const CommentChildren = ({
             <View style={styles.ViewitemCmt}>
               <TimeAgo
                 style={{ color: "black", opacity: 0.7, fontSize: 12 }}
-                time={Data.createdAt}
+                time={Data.Timing}
                 hideAgo={true}
               />
 
@@ -140,23 +184,7 @@ const CommentChildren = ({
                 <Text style={{ opacity: 0.5, fontSize: 13 }}>Reply</Text>
               </TouchableOpacity>
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: 50,
-              }}
-            >
-              <TouchableOpacity>
-                <AntDesign
-                  name="hearto"
-                  size={16}
-                  color={isLiked ? "red" : "black"}
-                />
-              </TouchableOpacity>
-              <Text style={{ opacity: 0.6, fontSize: 10 }}>1234</Text>
-            </View>
+           
           </View>
           <View style={{ marginLeft: 30 }}>
             {Data.Image ? (
@@ -167,7 +195,27 @@ const CommentChildren = ({
             ) : null}
           </View>
         </View>
-      </TouchableOpacity>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-around",
+              width: 50,
+            }}
+            onPress={handlderLike}
+          >
+            <View>
+              <AntDesign
+                name="heart"
+                size={15}
+                color={isLikedcmt ? "red" : "#808080"}
+              />
+            </View>
+            <Text style={{ opacity: 0.6, fontSize: 10 }}>{qualitylike}</Text>
+          </TouchableOpacity>
+        </View>
+     
       <Modal visible={showOptions} animationType="slide" transparent>
         <TouchableWithoutFeedback onPress={handleBackdropPress}>
           <View
@@ -202,7 +250,7 @@ const CommentChildren = ({
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-    </View>
+    </View>)
   );
 };
 export default CommentChildren;
@@ -216,9 +264,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: "row",
     marginTop: 5,
-    width: "100%",
+    width: "80%",
     borderRadius: 10,
     paddingHorizontal: 5,
+
   },
   ViewitemCmt: {
     flexDirection: "row",

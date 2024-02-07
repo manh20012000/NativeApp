@@ -14,6 +14,7 @@ import {
   Keyboard,
   useWindowDimensions,
   TouchableWithoutFeedback,
+
 } from "react-native";
 import { React, useState, useEffect, useRef, useCallback, memo } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -26,7 +27,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import HTML from "react-native-render-html";
-import updateComentChildren from "../../Redex/updateComentChildren.js";
+import { addComment } from "../../Redex/updateComentChildren.js";
 import axios from "axios";
 import { Entypo } from "@expo/vector-icons";
 import Constants from "expo-constants";
@@ -34,14 +35,13 @@ import { MaterialIcons } from "@expo/vector-icons";
 import Comment from "./Comment.js";
 import path from "../../config.js";
 import uuid from "uuid/v4";
-// import Video from "react-native-video";
+
 import { BottomSheet } from "react-native-btr";
 const VideoItem = ({ item, action, navigation }) => {
-  // console.log(action);
-  // console.log(item)
   const { width } = useWindowDimensions();
   const count = useSelector((state) => state.auth.value);
   const [dataUser, setDataUser] = useState(count);
+  const dispath = useDispatch();
   const [selectedTab, setSelectedTab] = useState("For Your");
   const [inFullscreen, setInFullsreen] = useState(false);
   const [inFullscreen2, setInFullsreen2] = useState(false);
@@ -55,23 +55,24 @@ const VideoItem = ({ item, action, navigation }) => {
   const [play, setPlay] = useState(action);
   const [status, setStatus] = useState({});
   const [showControls, setShowControls] = useState(false);
- const [currentPositionMillis, setCurrentPositionMillis] = useState(0);
+  const [currentPositionMillis, setCurrentPositionMillis] = useState(0);
   const [videoDuration, setVideoDuration] = useState(0);
   const [isSeekBarVisible, setSeekBarVisible] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
- const[processingTime,setProgress]=useState(0)
+  const [stateSelect, setStateSelect] = useState(true);
+  const [processingTime, setProgress] = useState(0);
+  const [commentsUpdatedExtra, setCommentsUpdatedExtra] = useState(0);
   const handlePlaybackStatusUpdate = (status) => {
     if (status.isLoaded) {
       setVideoDuration(status.durationMillis || 0);
     }
   };
-
   useEffect(() => {
     setPlay(action);
     if (action == true) {
       videoRef.current.setPositionAsync(0); // Đặt lại thời gian video về 0
       videoRef.current.playAsync();
-      setProgress(0)
+      setProgress(0);
     }
     setShowControls(false);
   }, [action]);
@@ -85,13 +86,13 @@ const VideoItem = ({ item, action, navigation }) => {
     // }
     if (videoRef.current) {
       const status = await videoRef.current.getStatusAsync();
-    const { positionMillis, durationMillis } = status;
+      const { positionMillis, durationMillis } = status;
 
-    // Log thời gian đã xem và tổng thời gian video
-    // console.log('Thời gian đã xem:', positionMillis);
-    //   console.log('Tổng thời gian video:', durationMillis);
+      // Log thời gian đã xem và tổng thời gian video
+      // console.log('Thời gian đã xem:', positionMillis);
+      //   console.log('Tổng thời gian video:', durationMillis);
       const currentProgress = (positionMillis / durationMillis) * 100;
-    setProgress(currentProgress);
+      setProgress(currentProgress);
     }
     setPlay(!play);
     setShowControls(!showControls);
@@ -111,25 +112,25 @@ const VideoItem = ({ item, action, navigation }) => {
   };
   const handeMisstore = () => {
     if (play) {
-        Animated.loop(
-          Animated.timing(discAnimatedValue, {
-            toValue: 1,
-            duration: 2000,
-            easing: Easing.linear,
-            useNativeDriver: true,
-          })
-        ).start();
-      } else {
-        Animated.loop(
-          Animated.timing(discAnimatedValue, {
-            toValue: 1,
-            duration: 2000,
-            easing: Easing.linear,
-            useNativeDriver: true,
-          })
-        ).stop();
-      }
-  }
+      Animated.loop(
+        Animated.timing(discAnimatedValue, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        })
+      ).start();
+    } else {
+      Animated.loop(
+        Animated.timing(discAnimatedValue, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        })
+      ).stop();
+    }
+  };
   useEffect(
     () => {
       handeMisstore();
@@ -162,9 +163,7 @@ const VideoItem = ({ item, action, navigation }) => {
     trangthai();
   }, []);
   const [numberLike, setNumber] = useState(datavideo.SoluongTym);
-
   let soluongTim = numberLike;
-
   const handleLike = async () => {
     let Liked = !isLiked;
     setIsLiked(Liked);
@@ -235,12 +234,31 @@ const VideoItem = ({ item, action, navigation }) => {
   };
   const [conten, setConten] = useState("");
   const [comment, setComment] = useState([]);
-  
+  const [Skipcomemnt,setSkip]=useState(0)
+  const updateQualityComemnt = (qualitycoment, indexcoment, skip) => {
+    setSkip(skip)
+    console.log(indexcoment, qualitycoment,skip)
+    // Sử dụng map để tạo một bản sao mới của mảng với giá trị được cập nhật
+    const updatedComments = comment.map((cmt, index) => {
+      if (index === indexcoment) {
+        // Nếu là chỉ mục cần cập nhật, thì cập nhật giá trị quality
+        return {
+          ...cmt,
+          SoluongCommentChildrent: qualitycoment,
+        };
+      }
+      // Nếu không phải là chỉ mục cần cập nhật, giữ nguyên giá trị
+      return cmt;
+    });
+
+    // Cập nhật lại mảng comment
+    setComment(updatedComments);
+  };
+
   const [soluongcomemtChidrent, setSoluongcomemtChidrent] = useState(0);
   const [parentId, setParentId] = useState(null);
   const handleSetParentId = (newParentId) => {
     setParentId(newParentId);
-
   };
   const handleTextInputChange = (text) => {
     setPopup(false);
@@ -253,6 +271,7 @@ const VideoItem = ({ item, action, navigation }) => {
     }
   };
   // thưucj hiện selelect bình luận
+
   const [redCircle] = useState(new Animated.Value(0));
   const [blackCircle] = useState(new Animated.Value(180)); // Bắt đầu ở 180 độ, để chúng xoay cạnh nhau
   const [loading, setLoading] = useState(false);
@@ -270,33 +289,37 @@ const VideoItem = ({ item, action, navigation }) => {
   };
   const [leng, setLeng] = useState(0);
   const selectCmt = async () => {
-    setLoading(true);
-    startRotation();
-    try {
-      const { data } = await axios.post(`${path}/api_CommentVideoGet`,{
-        idVideo: datavideo._id,
-        Skips:leng,
-      });
-      setComment((prevData) => prevData.concat(data.data));
-      // console.log(data.data)
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-    } finally {
-      setLoading(false);
-      setLeng(leng + 20)
+    if (stateSelect) {
+      setLoading(true);
+      startRotation();
+      try {
+        const { data } = await axios.post(`${path}/api_CommentVideoGet`, {
+          idVideo: datavideo._id,
+          Skips: leng,
+        });
+        setComment((prevData) => prevData.concat(data.data));
+        // console.log(data.data)
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      } finally {
+        setLoading(false);
+        setLeng(leng + 20);
+        setStateSelect(false);
+      }
     }
   };
+
   const [statusLoad, setStatusLoad] = useState(false);
   Keyboard.addListener("keyboardDidHide", () => {
     // Xử lý khi bàn phím biến mất
   });
   const [Popsend, setPopsend] = useState(false);
   const [textInputHeight, setTextInputHeight] = useState(40);
-
   // sendcommentVideo
   const [commentsUpdated, setCommentsUpdated] = useState(0);
   const [sendComemtChildren, setSendCommentChidren] = useState(null);
   const [sendCommentQuik, setQuikCommentCdr] = useState();
+
   const SendComment = async () => {
     let soluong = soluongCmt + 1;
     if (conten === "") {
@@ -317,7 +340,7 @@ const VideoItem = ({ item, action, navigation }) => {
           Soluongcmt: soluong,
           SoluongCommentChildrent: 0,
           User: dataUser,
-          createdAt: new Date(),
+          Timing: new Date().toISOString(),
         };
         // console.log(newComment)
         setComment((prevComments) => [newComment, ...prevComments]);
@@ -328,13 +351,13 @@ const VideoItem = ({ item, action, navigation }) => {
           idVideo: datavideo._id,
           Content: contens,
           Soluongcmt: soluong,
-          parentId: parentId,
+          idParentComment: parentId,
           User: dataUser,
-          createdAt: new Date(),
+          Timing: new Date().toISOString(),
         };
-        dispatch(updateDataCommentChildrent(newComment));
+        dispath(addComment(newComment));
         // setSendCommentChidren(newComment);
-        
+        console.log("jajaja");
       }
       const { data } = await axios.post(`${path}/api_CommentVideoPost`, {
         _id: myId,
@@ -342,7 +365,7 @@ const VideoItem = ({ item, action, navigation }) => {
         idVideo: datavideo._id,
         Conten: contens,
         Soluongcmt: soluong,
-        parentId: parentId,
+        idParentComment: parentId,
       });
       setParentId(null);
       setSoluongcmt(soluong);
@@ -350,7 +373,6 @@ const VideoItem = ({ item, action, navigation }) => {
     } catch (err) {
       console.log(err);
     } finally {
-      //  console.log(comment)
     }
   };
   const deleteComment = async (SoluongCommentChildrent, idComment) => {
@@ -371,17 +393,14 @@ const VideoItem = ({ item, action, navigation }) => {
   };
 
   return (
-    <TouchableWithoutFeedback
-      style={{ flex: 1,  backgroundColor: 'black',}}
-      onPress={handleScreenTouch}
-    >
+    <TouchableWithoutFeedback style={{ flex: 1 }} onPress={handleScreenTouch}>
       <View style={styles.contain}>
         <Video
           source={{ uri: datavideo.Video }}
           style={{
             width: "100%",
             // flex: 1,
-            height:758,
+            // // height:758,
             position: "absolute",
             top: 0,
             left: 0,
@@ -389,15 +408,14 @@ const VideoItem = ({ item, action, navigation }) => {
             bottom: 0,
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: 'black',
+            backgroundColor: "black",
           }}
           ref={videoRef}
-          resizeMode={datavideo.resizeMode ? ResizeMode.CONTAIN : 'cover'}
+          resizeMode={datavideo.resizeMode ? ResizeMode.CONTAIN : "cover"}
           // resizeMode={ResizeMode.CONTAIN}
           isLooping
           shouldPlay={play}
           useNativeControls={false}
-  
         />
 
         {showControls && (
@@ -483,7 +501,7 @@ const VideoItem = ({ item, action, navigation }) => {
             </Text>
           </TouchableOpacity>
           <View style={styles.verticalItem}>
-            <FontAwesome name="share" size={24} color="white" />
+            <MaterialCommunityIcons name="share" size={28} color="white" />
             <Text style={styles.verticalBarText}>Share</Text>
           </View>
         </View>
@@ -523,7 +541,7 @@ const VideoItem = ({ item, action, navigation }) => {
                 <Text
                   style={{ fontSize: 15, color: "black", fontWeight: "bold" }}
                 >
-                  {soluongCmt >= 1000
+                  {soluongCmt >= 10000
                     ? (soluongCmt / 1000).toFixed(1) + "k"
                     : soluongCmt}{" "}
                   Comments
@@ -580,8 +598,9 @@ const VideoItem = ({ item, action, navigation }) => {
                 <View style={{ flex: 0.8 }}>
                   <FlatList
                     data={comment}
-                    key={commentsUpdated}
+                    key={commentsUpdatedExtra}
                     initialNumToRender={8}
+                    extraData={commentsUpdatedExtra}
                     showsVerticalScrollIndicator={false}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item, index }) => {
@@ -599,13 +618,14 @@ const VideoItem = ({ item, action, navigation }) => {
                           sendComemtChildren={sendComemtChildren}
                           setqualityComment={setSoluongcmt}
                           QualityComment={soluongCmt}
+                          updateQualityComemnt={updateQualityComemnt}
+                          Skipcomemnt={Skipcomemnt}
                         />
                       );
-                    
                     }}
                     removeClippedSubviews
-                     onEndReached={selectCmt}
-                      onEndReachedThreshold={(0, 5)}
+                    onEndReached={selectCmt}
+                    onEndReachedThreshold={(0, 5)}
                   />
                 </View>
               </View>
@@ -751,10 +771,25 @@ const VideoItem = ({ item, action, navigation }) => {
           </View>
         </Modal>
         {isSeekBarVisible && (
-          <View style={{position:'absolute',width:'95%',height:2,backgroundColor:'#888888',bottom:0,marginHorizontal:10}}>
-            <View style={{position:'absolute',width:`${processingTime}%`,height:3,backgroundColor:'white',zIndex:1}}>
-              
-           </View>
+          <View
+            style={{
+              position: "absolute",
+              width: "95%",
+              height: 2,
+              backgroundColor: "#888888",
+              bottom: 0,
+              marginHorizontal: 10,
+            }}
+          >
+            <View
+              style={{
+                position: "absolute",
+                width: `${processingTime}%`,
+                height: 3,
+                backgroundColor: "white",
+                zIndex: 1,
+              }}
+            ></View>
           </View>
         )}
       </View>
@@ -767,7 +802,7 @@ const styles = StyleSheet.create({
     width: "100%",
     position: "relative",
     height: 758,
-    backgroundColor:'black',
+    backgroundColor: "black",
   },
   BottomSelect: {
     position: "absolute",
@@ -799,6 +834,7 @@ const styles = StyleSheet.create({
   chanelName: {
     color: "white",
     fontWeight: "bold",
+    fontVariant: ["lining-nums"],
   },
   caption: {
     color: "white",
@@ -826,15 +862,17 @@ const styles = StyleSheet.create({
     position: "absolute",
     marginLeft: 40,
     bottom: 3,
+    fontSize: 11,
+    fontWeight: "500",
+    fontStyle: "italic",
   },
   verticalBar: {
     position: "absolute",
     right: 7,
     bottom: 50,
-  
     height: 260,
-    justifyContent: 'space-around',
-    flexDirection:'column',
+    justifyContent: "space-around",
+    flexDirection: "column",
   },
   verticalItem: {
     marginBottom: 24,
@@ -868,6 +906,7 @@ const styles = StyleSheet.create({
   },
   MusicDisc: {
     bottom: 6,
+    fontStyle: "italic",
   },
 });
 // const {id,channelName, uri, caption, musicName, likes, comments, avatarUri} =item

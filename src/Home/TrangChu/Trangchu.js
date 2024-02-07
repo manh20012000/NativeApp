@@ -32,40 +32,63 @@ import VideoPlayer from "expo-video-player";
 import { useDispatch, useSelector } from 'react-redux';
 import { setVideoPlaying } from "../../Redex/handlerNaviVideo.js";
 import axios from "axios";
-const TrangChu = ({ navigation, route }) => {
-  const isVideoPlaying = useSelector((state) => state.auth.isVideoPlaying);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const blurListener = navigation.addListener('blur', () => {
-      dispatch(setVideoPlaying(true));
-    });
-    return () => {
-      blurListener();
-    };
-  }, [navigation, dispatch]);
-
+import path from "../../config.js";
+import SkeletonApp from "../../SkeletonApp.js";
+import Skeleton from "../../Skeleton.js";
+const TrangChu = ({ navigation }) => {
+  
+  const user = useSelector((state) => state.auth.value);
+  // console.log(user)
   const [userStory, setUserStory] = useState({}); // danh cho story
-  const [data, setData] = useState(null);
-  const [user, setUser] = useState(route.params.data); // dnah cho lấy dữ liệu từ dâtbase
+  const [data, setData] = useState([{index:1}]);
   const [isLoading, setIsLoading] = useState(true);
   const [fullscreen, setfullscreen] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
-
   const [refreshing, setRefreshing] = useState(false);
+  const [dataStory, setDataStory] = useState([{index:1}])
+  const [leng, setLeng] = useState(0);
+  const [SakeIload2, setSakeIload2] = useState(false);
+  const handlerSelectVideoStory = async () => {
+  
+    try {
+      const lim = 5; // Định nghĩa giá trị lim
+      const { data } = await axios.post(`${path}/selectStory`, {
+        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+        skip: leng,
+      });
+      setLeng(leng + 3);
+      // console.log(data.data)
+      if (data.data != null && data.data.length > 0) {
+       
+       
+        // setDataStory((prevData) => prevData.concat(data.data));
+      }
+      setDataStory(data.data)
+       setSakeIload2(true)
+    } catch (err) {
+      console.log(err);
+    } finally {
+      
+    }
+  };
+  const [SakeIload, setSakeIload] = useState(false);
   const fetchdata = async () => {
       try {
         const { data } = await axios.get(
           "https://nativeapp-vwvi.onrender.com/selectBaiViet"
         );
+      
         setData(data.data);
-  
+        setSakeIload(true)
       } catch (err) {
         console.log(err);
       }
     };
   useEffect(() => {
+    handlerSelectVideoStory();
     fetchdata();
+
   }, []);
   // useEffect(() => {
   //   const backAction = () => {
@@ -131,7 +154,7 @@ const TrangChu = ({ navigation, route }) => {
             alignItems: "center",
           }}
         >
-          <Text style={{ alignItems: "center" }}>+</Text>
+          <Text style={{ alignItems: "center",}}>+</Text>
         </View>
         <View
           style={{
@@ -262,19 +285,21 @@ const TrangChu = ({ navigation, route }) => {
         </View>
         <FlatList
           horizontal
-          data={data}
-          // keyExtractor={(item) => item.id.toString()}
+          data={dataStory}
+          keyExtractor={(item, index) => index.toString()}
           ListHeaderComponent={str}
-          renderItem={({ item }) => {
+          renderItem={({ item,index }) => {
+    
             return (
-              <View>
+              SakeIload2 ?( <View>
                 <TouchableOpacity
                   onPress={() => {
                     setIsViewerOpen(true);
                     setUserStory({
-                      name: item.name,
-                      video: urlVideo,
-                      avata: item.avata,
+                      name: item.User.Hoten,
+                      video: item.VideoOrImage,
+                      avata: item.User.Avatar,
+                      iduser:item.User._id
                     });
                   }}
                   style={{
@@ -287,7 +312,7 @@ const TrangChu = ({ navigation, route }) => {
                   }}
                 >
                   <Video
-                    source={{ uri: urlVideo }} // link tinht
+                    source={{ uri: item.VideoOrImage }} // link tinht
                   
                     style={{
                       width: "100%",
@@ -300,7 +325,7 @@ const TrangChu = ({ navigation, route }) => {
                     isLooping
                   />
                   <Image
-                    source={{ uri: item.avata }}
+                    source={{ uri: item.User.Avatar }}
                     style={{
                       width: 34,
                       height: 34,
@@ -319,10 +344,14 @@ const TrangChu = ({ navigation, route }) => {
                       position: "absolute",
                     }}
                   >
-                    {item.name}
+                    {item.User.Hoten}
                   </Text>
                 </TouchableOpacity>
-              </View>
+              </View>) : (<View
+              style={{flexDirection:'row',width:250,justifyContent:"space-between",height:150}}
+                ><Skeleton width={120} height={150} borderRadius={10} />
+                <Skeleton width={120} height={150} borderRadius={10} />
+                </View>)
             );
           }}
         />
@@ -338,18 +367,19 @@ const TrangChu = ({ navigation, route }) => {
         <FlatList
           data={data}
           ListHeaderComponent={FlatStory}
-           keyExtractor={(item, index) =>index.toString()}
+          keyExtractor={(item, index) =>index.toString()}
           removeClippedSubviews={true}
           renderItem={({ item, index }) => {
+            // console.log(SakeIload)
             return (
-              
-              item.Pemission === 'public' && (
+              SakeIload ? (
                 <FlatItem
-                item={item}
-                index={index}
-                userDn={user._id}
-                navigation={navigation}
-              />)
+                  item={item}
+                  index={index}
+                  userDn={user._id}
+                  navigation={navigation}//width={120}height={100}style={{borderRadius:10}}
+                />
+              ) :<SkeletonApp/>
             );
           }}
           refreshControl={
@@ -369,6 +399,10 @@ const TrangChu = ({ navigation, route }) => {
                 marginHorizontal: 15,
               }}
             >
+               {/* name: item.User,
+                      video: item.VideoOrImage,
+                      avata: item.avata,
+                      iduser:item.User._id */}
               <View style={{ flexDirection: "row" }}>
                 <Image
                   source={{ uri: userStory.avata }}
@@ -384,6 +418,7 @@ const TrangChu = ({ navigation, route }) => {
                   style={{
                     fontSize: 20,
                     margin: 15,
+                    fontWeight:'800'
                   }}
                 >
                   {userStory.name}

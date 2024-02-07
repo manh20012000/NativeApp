@@ -32,6 +32,7 @@ import TimeAgo from "react-native-timeago";
 import { LinearGradient } from "expo-linear-gradient";
 import RenderHtml from "react-native-render-html";
 import { Octicons } from "@expo/vector-icons";
+import path from "../../config.js";
 // import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 const FlatItem = memo((props) => {
   const user = props.item.User; //
@@ -76,6 +77,7 @@ const FlatItem = memo((props) => {
   let soluongTim = numberLike;
 
   const handleLike = async () => {
+    // console.log('njabnjsd')
     let Liked = !isLiked;
     setIsLiked(Liked);
     if (isLiked == false) {
@@ -89,7 +91,7 @@ const FlatItem = memo((props) => {
     }
     try {
       const { data } = await axios.post(
-        "https://nativeapp-vwvi.onrender.com/tymPost",
+        `${path}/tymPost`,
         {
           idUser: props.userDn,
           idBaiPost: databaiviet._id,
@@ -97,6 +99,7 @@ const FlatItem = memo((props) => {
           Trangthai: Liked,
         }
       );
+      console.log('nhay dbusjd')
     } catch (err) {
       console.log(err);
     }
@@ -109,13 +112,14 @@ const FlatItem = memo((props) => {
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const anh = databaiviet.Image;
-  const images = anh.map((url) => ({ url }));
+  // console.log(anh)
+  // const images = anh.map((url) => ({ url }));
   const [showImage, setImage] = useState(false);
   const [quyen, setquyen] = useState("");
 
   useEffect(() => {
     const renderImgae = () => {
-      if (images.length > 0) {
+      if (anh.length > 0) {
         setImage(true);
       } else {
         setImage(false);
@@ -166,7 +170,6 @@ const FlatItem = memo((props) => {
     const parts = text.split("@");
     setNoiDung(text);
   };
-
   const selectCmt = async () => {
     const { data } = await axios.post(
       "https://nativeapp-vwvi.onrender.com/selectDataCmt",
@@ -273,7 +276,7 @@ const FlatItem = memo((props) => {
                 time={databaiviet.createdAt}
               />
             </View>
-            <View
+            {/* <View
               style={{
                 justifyContent: "center",
                 alignItems: "center",
@@ -284,7 +287,7 @@ const FlatItem = memo((props) => {
               {databaiviet.Loaction != null ? (
                 <Text>-Bạn đang ở {databaiviet.Loaction}</Text>
               ) : null}
-            </View>
+            </View> */}
           </View>
         </TouchableOpacity>
         <TouchableOpacity
@@ -303,8 +306,8 @@ const FlatItem = memo((props) => {
         </TouchableOpacity>
       </View>
       <View style={{ marginBottom: 10, paddingHorizontal: 6 }}>
-        <Text>{databaiviet.Trangthai}</Text>
-        <Text>{databaiviet.Fell}</Text>
+        <Text style={{fontSize:16,fontWeight:'500'}}>{databaiviet.Trangthai}</Text>
+        <Text  style={{fontSize:14,fontWeight:'400'}}>{databaiviet.Fell}</Text>
       </View>
       {showImage == true && (
         <Swiper style={{ position: "relative", height: 450 }} loop={true}>
@@ -334,7 +337,7 @@ const FlatItem = memo((props) => {
                 {isViewerOpen && (
                   <Modal visible={true} transparent={true}>
                     <ImageViewer
-                      imageUrls={images}
+                      imageUrls={anh}
                       index={currentImageIndex}
                       onSwipeDown={() => setIsViewerOpen(false)}
                       enableSwipeDown={true}
@@ -347,14 +350,14 @@ const FlatItem = memo((props) => {
         </Swiper>
       )}
       <View style={styles.viewsa}>
-        <Text style={{ fontSize: 20 }}>
+        <Text style={{ fontSize: 15 ,fontWeight:"bold" }}>
           {" "}
           {numberLike >= 1000
             ? (numberLike / 1000).toFixed(1) + "k"
             : numberLike}{" "}
           Like
         </Text>
-        <Text style={{ fontSize: 20 }}> {soluongCmt} Bình luận</Text>
+        <Text style={{ fontSize: 15,fontWeight:'bold' }}> {soluongCmt} Bình luận</Text>
       </View>
       <View
         style={{

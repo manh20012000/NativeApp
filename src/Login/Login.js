@@ -22,7 +22,7 @@ import { login } from "../Redex/auth.slice";
 import path from "../config";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { saveUserToken } from "../../Token_Auth";
+// import { saveUserToken } from "../../Token_Auth";
 const Login = ({ navigation }) => {
   const [emailphone, setName] = useState("");
   const [matkhau, setPass] = useState("");
@@ -44,16 +44,15 @@ const Login = ({ navigation }) => {
       if (data.status == 200) {
         const datas = data;
         const userData = datas.data;
-        // AsyncStorage.setItem("user",userData.taikhoan)
+        const userDataString = JSON.stringify(userData);
+        await AsyncStorage.setItem("userToken", userDataString);
           dispath(login(userData))
         setLoading(false);
-        const userToken = 'CloudStrong';
-        await saveUserToken(userToken);
         navigation.navigate("BootonGate", userData);
         setPass("");
         setName("");
       } else {
-        alert("tai khaone hoặc mật khẩu không chính xác");
+        alert("tài khoản hoặc mật khẩu không chính xác");
       }
     } catch (eror) {
       setLoading(false);

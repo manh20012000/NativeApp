@@ -76,7 +76,7 @@ const EditProfile = ({ navigation, route }) => {
             }
           )
           if (data.status == 200) {
-            dispatch(UpdateAuth(data.data))
+            useDispatch(UpdateAuth(data.data))
             navigation.navigate("Infor");
             alert(data.mess);
           }

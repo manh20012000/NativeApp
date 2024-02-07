@@ -31,8 +31,6 @@ const EditerVideo = ({ navigation, route }) => {
   const [contain, setContain] = useState(true);
   const [desiredSize, setDesiredSize] = useState({ height: 620, width: 250 });
   const scaleValue = useRef(new Animated.Value(1)).current;
-
-  
   const startZoomIn = () => {
     setContain(false);
     setDesiredSize({ height: 720, width: 350 });
@@ -41,7 +39,6 @@ const EditerVideo = ({ navigation, route }) => {
       useNativeDriver: false,
     }).start();
   };
-
   const resetZoom = () => {
     setContain(true);
     setDesiredSize({ height: 620, width: 250 });

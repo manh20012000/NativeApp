@@ -54,11 +54,16 @@ const Infor = ({ navigation, route }) => {
 
   const handlerSelectVideo = async () => {
     try {
-      const lim = 5; // Định nghĩa giá trị lim
-      const { data } = await axios.get(
-        `${path}/selectVideoId/${lim}/${leng}/${count._id}`
+      const lim = 15; // Định nghĩa giá trị lim
+      const { data } = await axios.post(
+        `${path}/selectedVideoId`,
+        {
+          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+          skip: leng,
+          id:count._id,
+        }
       );
-      setLeng(leng + 5);
+      setLeng(leng + 3);
       setDataVideo((prevData) => prevData.concat(data.data));
     } catch (err) {
       console.log(err);
@@ -67,9 +72,23 @@ const Infor = ({ navigation, route }) => {
   useEffect(() => {
     handlerSelectVideo();
   }, []);
-  const onRefresh = () => {
+  const onRefresh = async() => {
     setRefreshing(true);
-    handlerSelectVideo();
+    try {
+      const lim = 9; // Định nghĩa giá trị lim
+      const { data } = await axios.post(
+        `${path}/selectedVideoId`,
+        {
+          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+          skip: leng,
+          id:count._id,
+        }
+      );
+      setLeng(leng + 3);
+      setDataVideo((prevData) => prevData.concat(data.data));
+    } catch (err) {
+      console.log(err);
+    }
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -126,7 +145,11 @@ const Infor = ({ navigation, route }) => {
           >
             <Text style={styles.txt1}>Edit Profile</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btn2}>
+          <TouchableOpacity
+            onPress={() => 
+              navigation.navigate('SetTingInfor')
+            }
+            style={styles.btn2}>
             <Text style={styles.txt1}>...</Text>
           </TouchableOpacity>
         </View>
