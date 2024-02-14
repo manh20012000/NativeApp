@@ -32,6 +32,7 @@ const Navigete = () => {
     // Thực hiện kiểm tra đăng nhập ở đây, bạn có thể sử dụng AsyncStorage hoặc Redux để kiểm tra
     const checkLoginStatus = async () => {
       const userTokenString = await AsyncStorage.getItem('userToken');
+     
       if (userTokenString!== null) {
         const userTokenObject = JSON.parse(userTokenString);
         setIsLoggedIn(true)

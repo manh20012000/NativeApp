@@ -304,7 +304,7 @@ const VideoItem = ({ item, action, navigation }) => {
       } finally {
         setLoading(false);
         setLeng(leng + 20);
-        setStateSelect(false);
+        setStateSelect(false);  
       }
     }
   };

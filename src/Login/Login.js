@@ -46,7 +46,7 @@ const Login = ({ navigation }) => {
         const userData = datas.data;
         const userDataString = JSON.stringify(userData);
         await AsyncStorage.setItem("userToken", userDataString);
-          dispath(login(userData))
+        dispath(login(userData))
         setLoading(false);
         navigation.navigate("BootonGate", userData);
         setPass("");

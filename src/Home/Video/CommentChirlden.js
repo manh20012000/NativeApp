@@ -83,17 +83,16 @@ const CommentChildren = ({
   const [isLikedcmt, setisLikedcmt] = useState(false);
   const [qualitylike, setqualitylike] = useState(Data.soluonglike)
   let soluongTim = qualitylike;
-  useEffect( ()=>{
-    const trangthai = () => {
-      Data.idLike.forEach((item) => {
-        console.log(item)
+  useEffect(() => {
+    console.log(Data.idLike, 'mảng lile')
+    if(Array.isArray(Data.idLike)){ Data.idLike.forEach((item) => {
         if (item === count._id) {
           setisLikedcmt(true);
-         
+          console.log(item, 'item', count._id,isLikedcmt)
         }
-      });
-    };
-    trangthai();
+    });
+    }
+     
   },[])
   const handlderLike = async() => {
     let like = !isLikedcmt;

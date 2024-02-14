@@ -63,15 +63,13 @@ const Comment = memo(
     const [XemThem, setXemThem] = useState(false);
     const [cmtChidren, setCmchildren] = useState(datacomment);
     useEffect(() => {
-      setCmchildren(datacomment);
+      setCmchildren(datacomment); 
     }, [datacomment]);
 
     useEffect(() => {
       if (soluongCmt < 1) {
-        setComponent(true);
         setXemThem(false);
       } else {
-        setComponent(true);
         setXemThem(true);
       }
     }, []);
@@ -128,7 +126,6 @@ const Comment = memo(
       const QualityComment = Data.SoluongCommentChildrent + 1;
       onDeleteComment(QualityComment, Item._id);
     };
-
     const deleteCommentChildern = async (idComment) => {
       try {
         setLoading(true);
@@ -152,15 +149,16 @@ const Comment = memo(
     const [qualitylike, setqualitylike] = useState(Data.soluonglike);
     let soluongTim = qualitylike;
     useEffect(() => {
-      const trangthai = () => {
-        Data.idLike.forEach((item) => {
+      console.log(Data.idLike, 'islike cha')
+      if (Array.isArray(Data.idLike)) {
+         Data.idLike.forEach((item) => {
           console.log(item);
           if (item === count._id) {
             setisLikedcmt(true);
           }
         });
-      };
-      trangthai();
+      }
+       
     }, []);
     const handlderLike = async () => {
       let like = !isLikedcmt;
@@ -196,11 +194,11 @@ const Comment = memo(
             onLongPress={() => {
               handleLongPress(Data);
             }}
-            // onPress={() => {
-            //   console.log("récd", Data._id);
-            //   setParentId(Data._id);
-            //   handleTextInputChange(user.Hoten + " 👉 ");
-            // }}
+            onPress={() => {
+              console.log("récd", Data._id);
+              setParentId(Data._id);
+              handleTextInputChange(user.Hoten + " 👉 ");
+            }}
           >
             <TouchableOpacity
               onPress={() => navigation.navigate("SeeDeTail", user)}
@@ -244,7 +242,6 @@ const Comment = memo(
                       console.log("récd", Data._id);
                       setParentId(Data._id);
                       handleTextInputChange(user.Hoten + " 👉 ");
-
                       // setSoluongcomemtChidrent(Data.SoluongCommentChildrent+1);
                     }}
                   >

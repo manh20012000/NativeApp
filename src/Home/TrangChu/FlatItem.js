@@ -12,6 +12,7 @@ import {
   FlatList,
   TextInput,
   KeyboardAvoidingView,
+  Animated,
 } from "react-native";
 import { React, useState, useRef, useEffect, memo } from "react";
 import { NavigationContainer } from "@react-navigation/native";
@@ -33,6 +34,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import RenderHtml from "react-native-render-html";
 import { Octicons } from "@expo/vector-icons";
 import path from "../../config.js";
+import uuid from "uuid/v4";
+import { useSelector, useDispatch } from "react-redux";
 // import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 const FlatItem = memo((props) => {
   const user = props.item.User; //
@@ -40,6 +43,7 @@ const FlatItem = memo((props) => {
   const [isLiked, setIsLiked] = useState("");
   const [arrlike, setArrlike] = useState(databaiviet.Like);
   const [isVisible2, setIsVisible2] = useState(false);
+  const userCurent = useSelector((state) => state.auth.value);
   const toggleModal2 = () => {
     setIsVisible2(!isVisible2);
   };
@@ -90,16 +94,13 @@ const FlatItem = memo((props) => {
       }
     }
     try {
-      const { data } = await axios.post(
-        `${path}/tymPost`,
-        {
-          idUser: props.userDn,
-          idBaiPost: databaiviet._id,
-          Soluong: soluongTim,
-          Trangthai: Liked,
-        }
-      );
-      console.log('nhay dbusjd')
+      const { data } = await axios.post(`${path}/tymPost`, {
+        idUser: props.userDn,
+        idBaiPost: databaiviet._id,
+        Soluong: soluongTim,
+        Trangthai: Liked,
+      });
+      console.log("nhay dbusjd");
     } catch (err) {
       console.log(err);
     }
@@ -171,11 +172,14 @@ const FlatItem = memo((props) => {
     setNoiDung(text);
   };
   const selectCmt = async () => {
-    const { data } = await axios.post(
-      "https://nativeapp-vwvi.onrender.com/selectDataCmt",
-      { idbaiviet: databaiviet._id }
-    );
+    console.log(databaiviet._id);
+    const { data } = await axios.post(`${path}/selectDataCmt`, {
+      //const { data } = await axios.post(`https://nativeapp-vwvi.onrender.com/selectDataCmt`, {
+      idbaiviet: databaiviet._id,
+      skip: 10,
+    });
     setBinhLuan(data.data);
+    // console.log(JSON.stringify(data.data), 'consso;edataacmt')
   };
   // cho phép gữi ảnh với bình luận // sendcomment
   const [CommentChildren, setCommentChildren] = useState([]);
@@ -197,12 +201,24 @@ const FlatItem = memo((props) => {
       });
     }
   };
+  const handlerSelectCommentChildren = async () => {};
   const HandelerDeletePickture = () => {
     setIsImageCmt(true);
     setImageCmt(null);
   };
   const formData = new FormData();
+  const [commentArr, setCommentArr] = useState([]);
+  const handleSetCommentArr = (comments) => {
+    setCommentArr(comments);
+    // console.log(comments, 'commentAeee')
+  };
+  const [comments, setComments] = useState([]);
+  const handleComemntData = (comments) => {
+    setComments(comments);
+    // console.log(comments, 'commentAeee')
+  };
   const SendComment = async () => {
+    const myId = uuid();
     // const randomInt = Math.floor(Math.random() * 10001); // Tạo số nguyên từ 0 đến 10000
     let soluong = soluongCmt + 1;
     setSoluongcmt(soluong);
@@ -214,45 +230,88 @@ const FlatItem = memo((props) => {
     setNoiDung("");
     setImageCmt(null);
     setIsImageCmt(true);
-    try {
-      console.log(parentId, typeof parentId);
-      formData.append("UserCmt", props.userDn);
-      formData.append("idBaiviet", databaiviet._id);
-      formData.append("Noidung", noidung);
-      formData.append("Soluongcmt", soluong);
-      formData.append("parentId", JSON.stringify(parentId));
-      if (image) {
-        formData.append("imageCmt", {
-          uri: image,
-          name: `image.jpeg`,
-          type: "image/jpeg", // Loại tệp
-        });
-      }
-      const { data } = await axios.post(
-        "https://nativeapp-vwvi.onrender.com/SendComment",
-        //"http://192.168.188.136:8080/SendComment",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+    if (parentId == null) {
+      const newComment = {
+        _id: myId,
+        idBaiviet: databaiviet._id,
+        Content: noidung,
+        Soluongcmt: soluong,
+        SoluongCommentChildrent: 0,
+        createdAt: new Date().toISOString(),
+        Image: null,
+        User: userCurent,
+        CommentChildren: commentArr,
+        comments: comments,
+      };
+      setBinhLuan((prevComments) => [newComment, ...prevComments]);
+    } else {
+      const newComment = {
+        _id: myId,
+        idBaiviet: databaiviet._id,
+        Content: noidung,
+        Soluongcmt: soluong,
+        createdAt: new Date().toISOString(),
+        parentId: parentId,
+        Image: null,
+        User: userCurent,
+        comments: comments,
+      };
+      // setCommentArr((prevComments) => [...prevComments, newComment]);
+      // setBinhLuan((prevBinhLuan) =>
+      //   prevBinhLuan.map((comment) =>
+      //     comment._id === parentId
+      //       ? { ...comment, comments: [...comment.comments, newComment] }
+      //       : comment
+      //   )
+      // );
+      //nếu như dùng đoạn code của mình trên ấy aj khi mình thêm 1 comment con thì nó không được
+      // hiển thị  mà phải tải lại như này ạ  tải lại thì nó mới hiển thị xem thêm và khi xem
+      // khi cem thêm thì nhấn vào đấy được xem comment con ạ
+      let newBinhLuan = [...binhluan];
+
+      newBinhLuan.map((comment) =>
+        comment._id === parentId
+          ? { ...comment, comments: [...comment.comments, newComment] }
+          : comment
       );
-      setParentId(null);
-      setSoluongcmt(soluong);
-      // setBinhLuan(data.data);
-      setImageCmt(null);
-      selectCmt();
-    } catch (err) {
-      console.log(err);
+      setBinhLuan(newBinhLuan);
     }
+    // try {
+    //   formData.append("_id", myId);
+    //   formData.append("UserCmt", props.userDn);
+    //   formData.append("idBaiviet", databaiviet._id);
+    //   formData.append("Noidung", noidung);
+    //   formData.append("Soluongcmt", soluong);
+    //   formData.append("parentId", JSON.stringify(parentId));
+
+    //   if (image) {
+    //     formData.append("imageCmt", {
+    //       uri: image,
+    //       name: `image.jpeg`,
+    //       type: "image/jpeg", // Loại tệp
+    //     });
+    //   }
+    //   const { data } = await axios.post(
+    //     `${path}/SendCommentArticles`,
+    //     // "https://nativeapp-vwvi.onrender.com:8080/SendCommentArticles",
+    //     formData,
+    //     {
+    //       headers: {
+    //         "Content-Type": "multipart/form-data",
+    //       },
+    //     }
+    //   );
+    //   setParentId(null);
+    //   setSoluongcmt(soluong);
+    //   setImageCmt(null);
+    //   selectCmt();
+    // } catch (err) {
+    //   console.log(err, "log erree");
+    // }
   };
 
   return (
-    <View
-    
-      style={styles.contain}
-    >
+    <View style={styles.contain}>
       <View style={styles.bottomgradien}>
         <TouchableOpacity
           onPress={DetaiHandress}
@@ -306,58 +365,65 @@ const FlatItem = memo((props) => {
         </TouchableOpacity>
       </View>
       <View style={{ marginBottom: 10, paddingHorizontal: 6 }}>
-        <Text style={{fontSize:16,fontWeight:'500'}}>{databaiviet.Trangthai}</Text>
-        <Text  style={{fontSize:14,fontWeight:'400'}}>{databaiviet.Fell}</Text>
+        <Text style={{ fontSize: 16, fontWeight: "500" }}>
+          {databaiviet.Trangthai}
+        </Text>
+        <Text style={{ fontSize: 14, fontWeight: "400" }}>
+          {databaiviet.Fell}
+        </Text>
       </View>
       {showImage == true && (
         <Swiper style={{ position: "relative", height: 450 }} loop={true}>
           {anh.map((image, index) => (
             <View key={index}>
               {/* <SkeletonPlaceholder> */}
-                <View style={styles.mapImg}>
-                  <Text>
-                    {index + 1}/{anh.length}
-                  </Text>
-                </View>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    setIsViewerOpen(true);
-                    setCurrentImageIndex(index);
+              <View style={styles.mapImg}>
+                <Text>
+                  {index + 1}/{anh.length}
+                </Text>
+              </View>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setIsViewerOpen(true);
+                  setCurrentImageIndex(index);
+                }}
+              >
+                <Image
+                  source={{ uri: image }}
+                  style={{
+                    width: "auto",
+                    height: 440,
+                    zIndex: 0,
                   }}
-                >
-                  <Image
-                    source={{ uri: image }}
-                    style={{
-                      width: "auto",
-                      height: 440,
-                      zIndex: 0,
-                    }}
+                />
+              </TouchableWithoutFeedback>
+              {isViewerOpen && (
+                <Modal visible={true} transparent={true}>
+                  <ImageViewer
+                    imageUrls={anh}
+                    index={currentImageIndex}
+                    onSwipeDown={() => setIsViewerOpen(false)}
+                    enableSwipeDown={true}
                   />
-                </TouchableWithoutFeedback>
-                {isViewerOpen && (
-                  <Modal visible={true} transparent={true}>
-                    <ImageViewer
-                      imageUrls={anh}
-                      index={currentImageIndex}
-                      onSwipeDown={() => setIsViewerOpen(false)}
-                      enableSwipeDown={true}
-                    />
-                  </Modal>
-                )}
+                </Modal>
+              )}
               {/* </SkeletonPlaceholder> */}
             </View>
           ))}
         </Swiper>
       )}
       <View style={styles.viewsa}>
-        <Text style={{ fontSize: 15 ,fontWeight:"bold" }}>
+        <Text style={{ fontSize: 15, fontWeight: "bold" }}>
           {" "}
           {numberLike >= 1000
             ? (numberLike / 1000).toFixed(1) + "k"
             : numberLike}{" "}
           Like
         </Text>
-        <Text style={{ fontSize: 15,fontWeight:'bold' }}> {soluongCmt} Bình luận</Text>
+        <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+          {" "}
+          {soluongCmt} Bình luận
+        </Text>
       </View>
       <View
         style={{
@@ -431,7 +497,7 @@ const FlatItem = memo((props) => {
               <FlatList
                 style={{ flex: 0.9 }}
                 data={binhluan}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item) => item._id}
                 renderItem={({ item, index }) => {
                   return (
                     <Coment
@@ -442,6 +508,8 @@ const FlatItem = memo((props) => {
                       handleTextInputChange={handleTextInputChange}
                       idbaiviet={databaiviet._id}
                       setParentId={setParentId}
+                      setCommentArr={handleSetCommentArr}
+                      handleComemntData={handleComemntData}
                     />
                   );
                 }}
