@@ -14,7 +14,7 @@ import {
   Keyboard,
   useWindowDimensions,
   TouchableWithoutFeedback,
-
+  Dimensions,
 } from "react-native";
 import { React, useState, useEffect, useRef, useCallback, memo } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -27,7 +27,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import HTML from "react-native-render-html";
-import { addComment } from "../../Redex/updateComentChildren.js";
+import { addComment } from "../../Redex/Reducer/updateComentChildren.js";
 import axios from "axios";
 import { Entypo } from "@expo/vector-icons";
 import Constants from "expo-constants";
@@ -62,6 +62,18 @@ const VideoItem = ({ item, action, navigation }) => {
   const [stateSelect, setStateSelect] = useState(true);
   const [processingTime, setProgress] = useState(0);
   const [commentsUpdatedExtra, setCommentsUpdatedExtra] = useState(0);
+  const calculateHeight = () => {
+    const { height } = Dimensions.get("window");
+    // console.log(height)
+    // Tính toán chiều cao dựa trên độ phân giải của thiết bị
+    const calculatedHeight = Math.round(height - 50); // Thay 1920 bằng độ phân giải chiều cao của thiết bị của bạn
+    // console.log(calculatedHeight)
+    return calculatedHeight;
+  };
+
+  // Sử dụng giá trị chiều cao được tính toán
+  const dynamicHeight = calculateHeight();
+
   const handlePlaybackStatusUpdate = (status) => {
     if (status.isLoaded) {
       setVideoDuration(status.durationMillis || 0);
@@ -234,10 +246,10 @@ const VideoItem = ({ item, action, navigation }) => {
   };
   const [conten, setConten] = useState("");
   const [comment, setComment] = useState([]);
-  const [Skipcomemnt,setSkip]=useState(0)
+  const [Skipcomemnt, setSkip] = useState(0);
   const updateQualityComemnt = (qualitycoment, indexcoment, skip) => {
-    setSkip(skip)
-    console.log(indexcoment, qualitycoment,skip)
+    setSkip(skip);
+    console.log(indexcoment, qualitycoment, skip);
     // Sử dụng map để tạo một bản sao mới của mảng với giá trị được cập nhật
     const updatedComments = comment.map((cmt, index) => {
       if (index === indexcoment) {
@@ -304,7 +316,7 @@ const VideoItem = ({ item, action, navigation }) => {
       } finally {
         setLoading(false);
         setLeng(leng + 20);
-        setStateSelect(false);  
+        setStateSelect(false);
       }
     }
   };
@@ -394,7 +406,14 @@ const VideoItem = ({ item, action, navigation }) => {
 
   return (
     <TouchableWithoutFeedback style={{ flex: 1 }} onPress={handleScreenTouch}>
-      <View style={styles.contain}>
+      <View
+        style={{
+          width: "100%",
+          position: "relative",
+          height: dynamicHeight,
+          backgroundColor: "black",
+        }}
+      >
         <Video
           source={{ uri: datavideo.Video }}
           style={{

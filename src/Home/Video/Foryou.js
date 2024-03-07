@@ -33,7 +33,7 @@ const VideoTikTok = ({ navigation }) => {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [action, setAction] = useState(true);
-  const [loading,setLoading]=useState(true)
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     if (isFocused) {
       setAction(currentTabIndex);
@@ -51,7 +51,7 @@ const VideoTikTok = ({ navigation }) => {
   const [leng, setLeng] = useState(0);
 
   const handlerSelectVideo = async () => {
-    console.log('hahaa')
+    console.log("hahaa");
     try {
       const lim = 5; // Định nghĩa giá trị lim
 
@@ -66,7 +66,7 @@ const VideoTikTok = ({ navigation }) => {
     } catch (err) {
       console.log(err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -76,15 +76,14 @@ const VideoTikTok = ({ navigation }) => {
     setRefreshing(true);
     setLeng(0);
     try {
-        const lim = 3; // Định nghĩa giá trị lim
+      const lim = 3; // Định nghĩa giá trị lim
 
-        const { data } = await axios.post(`${path}/selectVideo`, {
-          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-          skip: 0,
-        });
-        setData([]);
-        setData(data.data);
-    
+      const { data } = await axios.post(`${path}/selectVideo`, {
+        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+        skip: 0,
+      });
+      setData([]);
+      setData(data.data);
     } catch (err) {
       console.log(err);
     } finally {
@@ -95,41 +94,46 @@ const VideoTikTok = ({ navigation }) => {
     }
   };
   return (
-    <View style={{ backgroundColor: "black" }}>
-      {!loading&&(<FlatList
-        style={{ backgroundColor: "black" }}
-        data={data}
-        pagingEnabled
-        maxToRenderPerBatch={5}
-        initialNumToRender={4}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => {
-          return (
-            <VideoItem
-              item={item}
-              action={action === index}
-              navigation={navigation}
-            />
-          );
-        }}
-        onScroll={(e) => {
-          const index = Math.round(
-            e.nativeEvent.contentOffset.y / (810 - bottomTabHight)
-          );
-          setCurrentTabIndex(index);
-          setAction(index);
-        }}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        onEndReached={handlerSelectVideo}
-        onEndReachedThreshold={(1)}
-      />)}
-      {loading && (
-        <View style={{ flex: 1, backgroundColor: 'black' }}>
-        
-      </View>)}
+    <View style={{ backgroundColor: "black", flex: 1 }}>
+      {!loading && (
+        <FlatList
+          style={{flex:1,backgroundColor:'black'  }}
+          // contentContainerStyle={{
+          //   flexGrow: 1,
+          //   justifyContent: "center",
+          //   backgroundColor: "green",
+          //   alignContent: "center",
+          // }}
+          data={data}
+          pagingEnabled
+          maxToRenderPerBatch={5}
+          initialNumToRender={4}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => {
+            return (
+              <VideoItem
+                item={item}
+                action={action === index}
+                navigation={navigation}
+              />
+            );
+          }}
+          onScroll={(e) => {
+            const index = Math.round(
+              e.nativeEvent.contentOffset.y / (810 - bottomTabHight)
+            );
+            setCurrentTabIndex(index);
+            setAction(index);
+          }}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          onEndReached={handlerSelectVideo}
+          onEndReachedThreshold={1}
+        />
+      )}
+      {loading && <View style={{ flex: 1, backgroundColor: "black" }}></View>}
     </View>
   );
 };

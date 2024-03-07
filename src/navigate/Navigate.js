@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import NewRecode from "../AddVideo/NewRecode.js";
@@ -21,62 +21,96 @@ import PostVideo from "../AddVideo/PostVideo.js";
 import SetTingInfor from "../Home/Information/SetTingInfor.js";
 import EditerVideo from "../AddVideo/EditerVideo.js";
 import SeemVideo from "../Home/Information/SeemVideo.js";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDispatch } from 'react-redux'
-import { login } from "../Redex/auth.slice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { login } from "../Redex/Reducer/auth.slice.js";
+import { jwtDecode } from "jwt-decode";
+import { encode, decode } from 'js-base64';
+
+// import socketConnect from "../context/SocketContext.js";
+import { io } from "socket.io-client";
 const Stack = createNativeStackNavigator();
 const Navigete = () => {
   const dispath = useDispatch();
   const [loading, setLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-    // Thực hiện kiểm tra đăng nhập ở đây, bạn có thể sử dụng AsyncStorage hoặc Redux để kiểm tra
+  // const { socket, onlineSocket} = socketConnect();
+  // Thực hiện kiểm tra đăng nhập ở đây, bạn có thể sử dụng AsyncStorage hoặc Redux để kiểm tra
+  useEffect(() => {
     const checkLoginStatus = async () => {
-      const userTokenString = await AsyncStorage.getItem('userToken');
-     
-      if (userTokenString!== null) {
+      const userTokenString = await AsyncStorage.getItem("userToken");
+      if (userTokenString !== null) {
         const userTokenObject = JSON.parse(userTokenString);
-        setIsLoggedIn(true)
-        dispath(login(userTokenObject))
-        
+        console.log(userTokenObject)
+
+        const decoded = decode(userTokenObject.accessToken);
+        // console.log(decoded)
+        const isTokenExpired = decoded.exp * 1000 < Date.now();
+        if (isTokenExpired) {
+          setIsLoggedIn(false);
+          alert("session cokies ")
+        } else {
+          
+          setIsLoggedIn(true);
+          
+          dispath(login(userTokenObject));
+        }
       }
-      setLoading(true)
+      setLoading(true);
+      const socket = io("http://192.168.188.136:3001");
+      // socket.emit("message", { message: "Hello, server!" });
+      // console.log(socket);
+      // // Lắng nghe tin nhắn từ server
+      // socket.on("message", (data) => {
+      //   console.log("Received message from server:", data.message);
+      // });
+
+      // Ngắt kết nối khi component unmount
+      return () => {
+        socket.disconnect();
+      };
     };
     checkLoginStatus();
+    //socketConnect();
+  }, []);
+
   return (
-    loading&&(<NavigationContainer
-      style={{
-        flex: 1,
-      }}
-    >
-      <Stack.Navigator
-        initialRouteName={isLoggedIn?'BootonGate':'Login'}
-        screenOptions={{ headerShown: false }}
+    loading && (
+      <NavigationContainer
+        style={{
+          flex: 1,
+        }}
       >
-        <Stack.Screen name="Login" component={Login} />
+        <Stack.Navigator
+          initialRouteName={isLoggedIn ? "BootonGate" : "Login"}
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="Login" component={Login} />
 
-        <Stack.Screen name="BootonGate" component={BootonGate} />
+          <Stack.Screen name="BootonGate" component={BootonGate} />
 
-        <Stack.Screen name="SeeDeTail" component={SeeDeTail} />
-        <Stack.Screen name="Dangky" component={Dangky} />
-        <Stack.Screen name="ThemInfor" component={AddInfor} />
-        <Stack.Screen name="Timkiem" component={Timkiem} />
-        <Stack.Screen name="NewReCode" component={NewRecode} />
-        <Stack.Screen name="Mess" component={Message} />
-        <Stack.Screen name="PesionChat" component={PesionChat} />
-        <Stack.Screen name="UserThink" component={UserThink} />
-        <Stack.Screen name="InforUser" component={InforUser} />
-        <Stack.Screen name="Coment" component={Coment} />
-        <Stack.Screen name="EditProfile" component={EditProfile} />
-        <Stack.Screen name="PostVideo" component={PostVideo} />
-        <Stack.Screen name="EditerVideo" component={EditerVideo} />
-        <Stack.Screen name="SeemVideo" component={SeemVideo} />
-        <Stack.Screen name="SetTingInfor" component={SetTingInfor} />
-        {/* <Stack.Screen
+          <Stack.Screen name="SeeDeTail" component={SeeDeTail} />
+          <Stack.Screen name="Dangky" component={Dangky} />
+          <Stack.Screen name="ThemInfor" component={AddInfor} />
+          <Stack.Screen name="Timkiem" component={Timkiem} />
+          <Stack.Screen name="NewReCode" component={NewRecode} />
+          <Stack.Screen name="Mess" component={Message} />
+          <Stack.Screen name="PesionChat" component={PesionChat} />
+          <Stack.Screen name="UserThink" component={UserThink} />
+          <Stack.Screen name="InforUser" component={InforUser} />
+          <Stack.Screen name="Coment" component={Coment} />
+          <Stack.Screen name="EditProfile" component={EditProfile} />
+          <Stack.Screen name="PostVideo" component={PostVideo} />
+          <Stack.Screen name="EditerVideo" component={EditerVideo} />
+          <Stack.Screen name="SeemVideo" component={SeemVideo} />
+          <Stack.Screen name="SetTingInfor" component={SetTingInfor} />
+          {/* <Stack.Screen
         name='PostWithCamera'
         component={PostWithCamera}
       /> */}
-      </Stack.Navigator>
-    </NavigationContainer>)
+        </Stack.Navigator>
+      </NavigationContainer>
+    )
   );
 };
 export default Navigete;

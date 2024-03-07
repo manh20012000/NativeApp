@@ -23,7 +23,7 @@ import FlatItem from "../TrangChu/FlatItem.js";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import path from "../../config.js";
-import { UpdateAuth } from "../../Redex/auth.slice";
+import { UpdateAuth } from "../../Redex/Reducer/auth.slice.js";
 
 const Infor = ({ navigation, route }) => {
   const count = useSelector((state) => state.auth.value);
@@ -55,14 +55,11 @@ const Infor = ({ navigation, route }) => {
   const handlerSelectVideo = async () => {
     try {
       const lim = 15; // Định nghĩa giá trị lim
-      const { data } = await axios.post(
-        `${path}/selectedVideoId`,
-        {
-          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-          skip: leng,
-          id:count._id,
-        }
-      );
+      const { data } = await axios.post(`${path}/selectedVideoId`, {
+        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+        skip: leng,
+        id: count._id,
+      });
       setLeng(leng + 3);
       setDataVideo((prevData) => prevData.concat(data.data));
     } catch (err) {
@@ -72,18 +69,15 @@ const Infor = ({ navigation, route }) => {
   useEffect(() => {
     handlerSelectVideo();
   }, []);
-  const onRefresh = async() => {
+  const onRefresh = async () => {
     setRefreshing(true);
     try {
       const lim = 9; // Định nghĩa giá trị lim
-      const { data } = await axios.post(
-        `${path}/selectedVideoId`,
-        {
-          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-          skip: leng,
-          id:count._id,
-        }
-      );
+      const { data } = await axios.post(`${path}/selectedVideoId`, {
+        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+        skip: leng,
+        id: count._id,
+      });
       setLeng(leng + 3);
       setDataVideo((prevData) => prevData.concat(data.data));
     } catch (err) {
@@ -146,10 +140,9 @@ const Infor = ({ navigation, route }) => {
             <Text style={styles.txt1}>Edit Profile</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => 
-              navigation.navigate('SetTingInfor')
-            }
-            style={styles.btn2}>
+            onPress={() => navigation.navigate("SetTingInfor")}
+            style={styles.btn2}
+          >
             <Text style={styles.txt1}>...</Text>
           </TouchableOpacity>
         </View>
@@ -185,17 +178,14 @@ const Infor = ({ navigation, route }) => {
   };
   return (
     <View style={{ flex: 1, position: "relative" }}>
-      <Tabs.Container
-        
-        renderHeader={InforHeader}>
+      <Tabs.Container renderHeader={InforHeader}>
         <Tabs.Tab name="BaiViet">
           <Tabs.FlatList
             removeClippedSubviews={true}
             keyExtractor={(item, index) => index.toString()}
             data={databaiviet}
             renderItem={({ item, index }) => {
-              return <FlatItem item={item}
-                navigation={navigation} />;
+              return <FlatItem item={item} navigation={navigation} />;
             }}
           />
         </Tabs.Tab>
@@ -205,12 +195,14 @@ const Infor = ({ navigation, route }) => {
             keyExtractor={(item, index) => index.toString()}
             data={dataVideo}
             renderItem={({ item, index }) => {
-              return <ViewVideo
-                item={item}
-                index={index}
-                dataVideo={dataVideo}
-                navigation={navigation} 
-              />;
+              return (
+                <ViewVideo
+                  item={item}
+                  index={index}
+                  dataVideo={dataVideo}
+                  navigation={navigation}
+                />
+              );
             }}
             showsVerticalScrollIndicator={false}
             numColumns={3}

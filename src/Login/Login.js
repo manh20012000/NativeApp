@@ -17,11 +17,11 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { AntDesign, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Spinner from "react-native-loading-spinner-overlay";
-import { useDispatch } from 'react-redux'
-import { login } from "../Redex/auth.slice";
+import { useDispatch } from "react-redux";
+import { login } from "../Redex/Reducer/auth.slice";
 import path from "../config";
 import axios from "axios";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { saveUserToken } from "../../Token_Auth";
 const Login = ({ navigation }) => {
   const [emailphone, setName] = useState("");
@@ -37,16 +37,17 @@ const Login = ({ navigation }) => {
       }
       setLoading(true);
       const { data } = await axios.post(
-            `${path}/login`,
+        `${path}/login`,
         //  "https://nativeapp-vwvi.onrender.com/login",
         { taikhoan: emailphone, matkhau: matkhau }
       );
       if (data.status == 200) {
         const datas = data;
         const userData = datas.data;
+        console.log("userData")
         const userDataString = JSON.stringify(userData);
         await AsyncStorage.setItem("userToken", userDataString);
-        dispath(login(userData))
+        dispath(login(userData));
         setLoading(false);
         navigation.navigate("BootonGate", userData);
         setPass("");
@@ -100,23 +101,23 @@ const Login = ({ navigation }) => {
               value={matkhau}
               onChangeText={(matkhau) => {
                 setPass(matkhau);
-                 if (matkhau != "") {
-                setEys(true);
-              } else {
-                setEys(false);
-              }
+                if (matkhau != "") {
+                  setEys(true);
+                } else {
+                  setEys(false);
+                }
               }}
             />
             {eye == true && (
-            <TouchableOpacity onPress={anhien}>
-              <Ionicons
-                name={hienthi ? "eye-off" : "eye"}
-                size={30}
-                color="black"
-                style={styles.eye}
-              />
-            </TouchableOpacity>
-          )}
+              <TouchableOpacity onPress={anhien}>
+                <Ionicons
+                  name={hienthi ? "eye-off" : "eye"}
+                  size={30}
+                  color="black"
+                  style={styles.eye}
+                />
+              </TouchableOpacity>
+            )}
           </View>
           <View
             style={{

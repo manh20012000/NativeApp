@@ -22,10 +22,10 @@ import TimeAgo from "react-native-timeago";
 import { MaterialIcons } from "@expo/vector-icons";
 import path from "../../config";
 import CommentChildrens from "./CommentChrildrens";
-const Coment = memo((props) => {
+const CommentPanrent = memo((props) => {
   const [user, setUser] = useState(props.item.User);
   const [Data, setData] = useState(props.item);
-  // console.log(Data.comments)
+  console.log(props.item.comments,'comment con')
   const [Noidung, setNoiDung] = useState(Data.Content);
   const [soluongCmt, setSoluongcmt] = useState(Data.soluongcmt);
   const [DataCommentChildren, setCmchildren] = useState([]);
@@ -135,7 +135,7 @@ const Coment = memo((props) => {
       </View>
       <View style={{ marginLeft: 60 }}>
         <FlatList
-          data={DataCommentChildren}  
+          data={DataCommentChildren}
           style={{ flex: 0.9 }}
           keyExtractor={(item) => item._id}
           renderItem={({ item, index }) => {
@@ -188,8 +188,8 @@ const Coment = memo((props) => {
       </Modal>
     </View>
   );
-})
-export default Coment;
+});
+export default CommentPanrent;
 const styles = StyleSheet.create({
   topView: {
     flexDirection: "row",

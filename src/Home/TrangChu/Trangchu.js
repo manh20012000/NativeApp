@@ -29,28 +29,26 @@ import { useNavigation } from "@react-navigation/native";
 import { Video, ResizeMode } from "expo-av";
 import screenfull from "screenfull";
 import VideoPlayer from "expo-video-player";
-import { useDispatch, useSelector } from 'react-redux';
-import { setVideoPlaying } from "../../Redex/handlerNaviVideo.js";
+import { useDispatch, useSelector } from "react-redux";
+import { setVideoPlaying } from "../../Redex/Reducer/handlerNaviVideo.js";
 import axios from "axios";
 import path from "../../config.js";
 import SkeletonApp from "../../SkeletonApp.js";
 import Skeleton from "../../Skeleton.js";
 const TrangChu = ({ navigation }) => {
-  
   const user = useSelector((state) => state.auth.value);
   // console.log(user)
   const [userStory, setUserStory] = useState({}); // danh cho story
-  const [data, setData] = useState([{index:1}]);
+  const [data, setData] = useState([{ index: 1 }]);
   const [isLoading, setIsLoading] = useState(true);
   const [fullscreen, setfullscreen] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [dataStory, setDataStory] = useState([{index:1}])
+  const [dataStory, setDataStory] = useState([{ index: 1 }]);
   const [leng, setLeng] = useState(0);
   const [SakeIload2, setSakeIload2] = useState(false);
   const handlerSelectVideoStory = async () => {
-  
     try {
       const lim = 5; // Định nghĩa giá trị lim
       const { data } = await axios.post(`${path}/selectStory`, {
@@ -60,35 +58,31 @@ const TrangChu = ({ navigation }) => {
       setLeng(leng + 3);
       // console.log(data.data)
       if (data.data != null && data.data.length > 0) {
-       
-       
         // setDataStory((prevData) => prevData.concat(data.data));
       }
-      setDataStory(data.data)
-       setSakeIload2(true)
+      setDataStory(data.data);
+      setSakeIload2(true);
     } catch (err) {
       console.log(err);
     } finally {
-      
     }
   };
   const [SakeIload, setSakeIload] = useState(false);
   const fetchdata = async () => {
-      try {
-        const { data } = await axios.get(
-          "https://nativeapp-vwvi.onrender.com/selectBaiViet"
-        );
-      
-        setData(data.data);
-        setSakeIload(true)
-      } catch (err) {
-        console.log(err);
-      }
-    };
+    try {
+      const { data } = await axios.get(
+        "https://nativeapp-vwvi.onrender.com/selectBaiViet"
+      );
+
+      setData(data.data);
+      setSakeIload(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
     handlerSelectVideoStory();
     fetchdata();
-
   }, []);
   // useEffect(() => {
   //   const backAction = () => {
@@ -154,7 +148,7 @@ const TrangChu = ({ navigation }) => {
             alignItems: "center",
           }}
         >
-          <Text style={{ alignItems: "center",}}>+</Text>
+          <Text style={{ alignItems: "center" }}>+</Text>
         </View>
         <View
           style={{
@@ -288,10 +282,9 @@ const TrangChu = ({ navigation }) => {
           data={dataStory}
           keyExtractor={(item, index) => index.toString()}
           ListHeaderComponent={str}
-          renderItem={({ item,index }) => {
-    
-            return (
-              SakeIload2 ?( <View>
+          renderItem={({ item, index }) => {
+            return SakeIload2 ? (
+              <View>
                 <TouchableOpacity
                   onPress={() => {
                     setIsViewerOpen(true);
@@ -299,7 +292,7 @@ const TrangChu = ({ navigation }) => {
                       name: item.User.Hoten,
                       video: item.VideoOrImage,
                       avata: item.User.Avatar,
-                      iduser:item.User._id
+                      iduser: item.User._id,
                     });
                   }}
                   style={{
@@ -313,7 +306,6 @@ const TrangChu = ({ navigation }) => {
                 >
                   <Video
                     source={{ uri: item.VideoOrImage }} // link tinht
-                  
                     style={{
                       width: "100%",
                       height: "100%",
@@ -347,11 +339,19 @@ const TrangChu = ({ navigation }) => {
                     {item.User.Hoten}
                   </Text>
                 </TouchableOpacity>
-              </View>) : (<View
-              style={{flexDirection:'row',width:250,justifyContent:"space-between",height:150}}
-                ><Skeleton width={120} height={150} borderRadius={10} />
+              </View>
+            ) : (
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: 250,
+                  justifyContent: "space-between",
+                  height: 150,
+                }}
+              >
                 <Skeleton width={120} height={150} borderRadius={10} />
-                </View>)
+                <Skeleton width={120} height={150} borderRadius={10} />
+              </View>
             );
           }}
         />
@@ -367,19 +367,19 @@ const TrangChu = ({ navigation }) => {
         <FlatList
           data={data}
           ListHeaderComponent={FlatStory}
-          keyExtractor={(item, index) =>index.toString()}
+          keyExtractor={(item, index) => index.toString()}
           removeClippedSubviews={true}
           renderItem={({ item, index }) => {
             // console.log(SakeIload)
-            return (
-              SakeIload ? (
-                <FlatItem
-                  item={item}
-                  index={index}
-                  userDn={user._id}
-                  navigation={navigation}//width={120}height={100}style={{borderRadius:10}}
-                />
-              ) :<SkeletonApp/>
+            return SakeIload ? (
+              <FlatItem
+                item={item}
+                index={index}
+                userDn={user._id}
+                navigation={navigation} //width={120}height={100}style={{borderRadius:10}}
+              />
+            ) : (
+              <SkeletonApp />
             );
           }}
           refreshControl={
@@ -399,7 +399,7 @@ const TrangChu = ({ navigation }) => {
                 marginHorizontal: 15,
               }}
             >
-               {/* name: item.User,
+              {/* name: item.User,
                       video: item.VideoOrImage,
                       avata: item.avata,
                       iduser:item.User._id */}
@@ -418,7 +418,7 @@ const TrangChu = ({ navigation }) => {
                   style={{
                     fontSize: 20,
                     margin: 15,
-                    fontWeight:'800'
+                    fontWeight: "800",
                   }}
                 >
                   {userStory.name}
@@ -539,3 +539,286 @@ export default TrangChu;
 //   fetchDataFromFirestore();
 // }, []);
 // thục hien  su lý video
+/*import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  TextInput,
+} from "react-native";
+
+import { React, useEffect, useState } from "react";
+import DataOjs from "../../../Data/DataObj";
+import { Feather } from "@expo/vector-icons";
+import axios from "axios";
+import io from "socket.io-client";
+import path from "../../../config.js";
+import { useSelector, useDispatch } from "react-redux";
+const socket = io(`${path}`);
+const Chat = ({ navigation }) => {
+  const [filter, setFillter] = useState([]);
+  const SelectUserMessage = async () => {
+    try {
+      const { data } = await axios.get(`${path}/UserRouter`);
+      // console.log(data, "data selector");
+      setFillter(data);
+    } catch (error) {
+      console.log(error, "lỗi nhânj với ");
+    } finally {
+      // console.log(dataUserChat)
+    }
+  };
+  const user = useSelector((state) => state.auth.value);
+  useEffect(() => {
+    SelectUserMessage();
+  }, []);
+  useEffect(() => {
+    const getPersionChat = async () => {
+      try {
+        const { data } = await axios.post(`${path}/selectChatPersion`, {
+          _id: user._id,
+        });
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  }, []);
+  const [Seach, setSeach] = useState("");
+
+  const handlerSearch = (text) => {
+    setSeach(text);
+    const filterData = filter.filter((value) =>
+      value.name.toLowerCase().includes(text.toLowerCase())
+    );
+
+    setFillter(filterData);
+  };
+
+  const str = () => {
+    return (
+      <View>
+        <View
+          style={{
+            width: 50,
+            height: 50,
+            borderRadius: 50,
+            justifyContent: "center",
+            alignItems: "center",
+            borderWidth: 1,
+            marginRight: 4,
+            backgroundColor: "white",
+          }}
+        >
+          <TouchableOpacity>
+            <Text style={{ fontWeight: "300", fontSize: 30 }}>+</Text>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 12 }}>seemore</Text>
+        </View>
+      </View>
+    );
+  };
+  const seach = () => {
+    return (
+      <View style={{  justifyContent: "center",backgroundColor:'pink'}}>
+        <View
+          style={{
+            justifyContent: "center",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              width: 350,
+              backgroundColor: "white",
+              marginRight: 15,
+              borderRadius: 40,
+              padding: 8,
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <TextInput
+              style={{ width: 300 }}
+              placeholder="nhâp tìm kiếm"
+              value={Seach}
+              onChangeText={handlerSearch}
+            ></TextInput>
+            <TouchableOpacity>
+              <Feather name="search" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View
+          style={{
+            width: "100%",
+            height: "50%",
+            marginTop: 10,
+            justifyContent: "center",
+            // alignItems: "center",
+            marginHorizontal: 10,
+          }}
+        >
+          <FlatList
+            ListHeaderComponent={str}
+            horizontal
+            data={filter}
+            renderItem={({ item, index }) => {
+              return (
+                <TouchableOpacity
+                  style={{
+                    height: "100%",
+                    width: "auto",
+                    // justifyContent: "center",
+                  }}
+                >
+                  <View style={{ justifyContent: "center" }}>
+                    <View
+                      style={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: 50,
+                        backgroundColor: "white",
+                        marginLeft: 15,
+                      }}
+                    >
+                      <Image
+                        source={{ uri: item.Avatar }}
+                        style={{
+                          width: 50,
+                          height: 50,
+                          borderRadius: 50,
+                        }}
+                      ></Image>
+                    </View>
+
+                    <View style={{ justifyContent: "center" }}>
+                      <Text
+                        style={{
+                          color: "white",
+                          width: "auto",
+                          fontSize: 12,
+                          height: 25,
+                          marginLeft: 10,
+                          textAlign: "center",
+                          fontWeight: "400",
+                        }}
+                      >
+                        {item.Hoten}
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </View>
+      </View>
+    );
+  };
+  const DetaiHandress = () => {
+    props.navigation.navigate("SeeDeTail", props.item);
+  };
+  return (
+   
+    <FlatList
+      style={{backgroundColor:'black'}}
+        ListHeaderComponent={seach}
+        data={DataOjs}
+      renderItem={({ item, index }) => {
+          console.log(index)
+          return (
+            <View
+              style={{
+                marginHorizontal:5,
+                width: "90%",
+                height: "100%",
+                flexDirection: "row",
+                paddingVertical:1
+                            }}
+             
+            >
+              <View
+                style={{
+                  width: "auto",
+                  height: 120,
+                }}
+               
+              >
+                <View
+                  style={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: 64,
+                    marginHorizontal: 6,
+                    backgroundColor:'pink'
+                  }}
+                >
+                  <Image
+                    source={{ uri: item.avatar }}
+                    style={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: 64,
+                      marginHorizontal: 6,
+                    }}
+                  ></Image>
+                  <Text
+                      style={{
+                        color: "#00FF00",
+                        fontSize: 70,
+                        position: "absolute",
+                        right: 30,
+                        bottom:14,
+                      }}
+                    >
+                      {item.trangthai}
+                    </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("PesionChat", item);
+                }}
+                style={{}}>
+                <Text
+                  style={{
+                    fontSize: 19,
+                    color: "white",
+                    fontWeight: "800",
+                  }}
+                >
+                  {item.Hoten}
+                </Text>
+                <Text style={{ color: "white" }}>Cin chào bạn nha </Text>
+              </TouchableOpacity>
+            </View>
+          );
+        }}
+      ></FlatList>
+  );
+};
+export default Chat;
+const styles = StyleSheet.create({
+  header: {
+    width: "100%",
+    justifyContent: "center",
+    height: "8%",
+    backgroundColor: "black",
+    flex: 0.08,
+    flexDirection: "row",
+  },
+});
+*/

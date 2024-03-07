@@ -26,7 +26,7 @@ import { BottomSheet } from "react-native-btr";
 import Binhluan from "./BinhLuan.js";
 import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
-import Coment from "./comment.js";
+import CommentPanrent from "./comment.js";
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import TimeAgo from "react-native-timeago";
@@ -105,7 +105,6 @@ const FlatItem = memo((props) => {
       console.log(err);
     }
   };
-
   const DetaiHandress = () => {
     props.navigation.navigate("SeeDeTail", databaiviet.User);
   };
@@ -256,25 +255,23 @@ const FlatItem = memo((props) => {
         User: userCurent,
         comments: comments,
       };
-      // setCommentArr((prevComments) => [...prevComments, newComment]);
-      // setBinhLuan((prevBinhLuan) =>
-      //   prevBinhLuan.map((comment) =>
-      //     comment._id === parentId
-      //       ? { ...comment, comments: [...comment.comments, newComment] }
-      //       : comment
-      //   )
-      // );
-      //nếu như dùng đoạn code của mình trên ấy aj khi mình thêm 1 comment con thì nó không được
-      // hiển thị  mà phải tải lại như này ạ  tải lại thì nó mới hiển thị xem thêm và khi xem
-      // khi cem thêm thì nhấn vào đấy được xem comment con ạ
-      let newBinhLuan = [...binhluan];
-
-      newBinhLuan.map((comment) =>
-        comment._id === parentId
-          ? { ...comment, comments: [...comment.comments, newComment] }
-          : comment
+      setCommentArr((prevComments) => [...prevComments, newComment]);
+      setBinhLuan((prevBinhLuan) =>
+        prevBinhLuan.map((comment) =>
+          comment._id === parentId
+            ? { ...comment, comments: [...comment.comments, newComment] }
+            : comment
+        )
       );
-      setBinhLuan(newBinhLuan);
+      // console.log(binhluan);
+      // let newBinhLuan = [...binhluan];
+
+      // newBinhLuan.map((comment) =>
+      //   comment._id === parentId
+      //     ? { ...comment, comments: [...comment.comments, newComment] }
+      //     : comment
+      // );
+      // setBinhLuan(newBinhLuan);
     }
     // try {
     //   formData.append("_id", myId);
@@ -308,6 +305,10 @@ const FlatItem = memo((props) => {
     // } catch (err) {
     //   console.log(err, "log erree");
     // }
+    setTimeout(() => {
+      console.log(binhluan,'binh kuan ');
+    }, 2000);
+    
   };
 
   return (
@@ -500,7 +501,7 @@ const FlatItem = memo((props) => {
                 keyExtractor={(item) => item._id}
                 renderItem={({ item, index }) => {
                   return (
-                    <Coment
+                    <CommentPanrent
                       item={item}
                       index={index}
                       userdn={props.userDn}

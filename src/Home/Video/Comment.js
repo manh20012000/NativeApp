@@ -25,7 +25,7 @@ import CommentChildren from "./CommentChirlden.js";
 import {
   updateDataCommentChildrent,
   getDataCommentChildrent,
-} from "../../Redex/updateComentChildren.js";
+} from "../../Redex/Reducer/updateComentChildren.js";
 import path from "../../config.js";
 import { useSelector, useDispatch } from "react-redux";
 const Comment = memo(
@@ -63,7 +63,7 @@ const Comment = memo(
     const [XemThem, setXemThem] = useState(false);
     const [cmtChidren, setCmchildren] = useState(datacomment);
     useEffect(() => {
-      setCmchildren(datacomment); 
+      setCmchildren(datacomment);
     }, [datacomment]);
 
     useEffect(() => {
@@ -149,16 +149,15 @@ const Comment = memo(
     const [qualitylike, setqualitylike] = useState(Data.soluonglike);
     let soluongTim = qualitylike;
     useEffect(() => {
-      console.log(Data.idLike, 'islike cha')
+      console.log(Data.idLike, "islike cha");
       if (Array.isArray(Data.idLike)) {
-         Data.idLike.forEach((item) => {
+        Data.idLike.forEach((item) => {
           console.log(item);
           if (item === count._id) {
             setisLikedcmt(true);
           }
         });
       }
-       
     }, []);
     const handlderLike = async () => {
       let like = !isLikedcmt;
