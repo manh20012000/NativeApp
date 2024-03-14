@@ -9,36 +9,29 @@ import {
 } from "react-native";
 
 import { React, useEffect, useState } from "react";
-import DataOjs from "../../../Data/DataObj";
 import { Feather } from "@expo/vector-icons";
 import axios from "axios";
-import io from "socket.io-client";
 import path from "../../../config.js";
 import { useSelector, useDispatch } from "react-redux";
-import socketConnect from "../../../context/SocketContext.js";
+import {GiftedChat} from "react-native-gifted-chat";
+import {useSocket} from "../../../socket";
 const Chat = ({ navigation }) => {
   const user = useSelector((state) => state.auth.value);
 
-  // const socketconnect = socketConnect();
-  // useEffect(() => {
-
-  //   // Lắng nghe thông báo về trạng thái hoạt động từ server
-  //   socketConnect.on('userActive', (data) => {
-  //     console.log(`User ${data.userId} is ${data.active ? 'active' : 'inactive'}`);
-
-  //     // Xử lý trạng thái hoạt động của người dùng ở đây
-  //   });
-
-  //   return () => {
-  //     // Ngắt kết nối khi component unmount
-  //     socketConnect.disconnect();
-  //   };
-  // }, []);
-
   const [filter, setFillter] = useState([]);
+    const socket = useSocket();
+    useEffect(() => {
+        socket?.on('incomingMessage', () => {
+            SelectUserMessage();
+        });
+        return () => {
+            socket?.off('incomingMessage');
+        };
+    }, []);
   const SelectUserMessage = async () => {
     try {
       const { data } = await axios.get(`${path}/UserRouter`);
+        console.log(data)
       setFillter(data);
     } catch (error) {
       console.log(error, "lỗi nhânj với ");
@@ -296,7 +289,7 @@ const Chat = ({ navigation }) => {
                   {item.participants.Hoten}
                 </Text>
                 <Text style={{ color: "white" }}>
-                  {item.messages.senderId === user._id ? "You" : item.participants.Hoten}: {item.messages.message}
+                  {item?.messages?.senderId === user._id ? "You" : item.participants.Hoten}: {item?.messages?.message}
 </Text>
               </View>
             </TouchableOpacity>

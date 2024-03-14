@@ -27,8 +27,6 @@ import { login } from "../Redex/Reducer/auth.slice.js";
 import { jwtDecode } from "jwt-decode";
 import { encode, decode } from 'js-base64';
 
-// import socketConnect from "../context/SocketContext.js";
-import { io } from "socket.io-client";
 const Stack = createNativeStackNavigator();
 const Navigete = () => {
   const dispath = useDispatch();
@@ -50,28 +48,15 @@ const Navigete = () => {
           setIsLoggedIn(false);
           alert("session cokies ")
         } else {
-          
+
           setIsLoggedIn(true);
-          
+
           dispath(login(userTokenObject));
         }
       }
       setLoading(true);
-      const socket = io("http://192.168.188.136:3001");
-      // socket.emit("message", { message: "Hello, server!" });
-      // console.log(socket);
-      // // Lắng nghe tin nhắn từ server
-      // socket.on("message", (data) => {
-      //   console.log("Received message from server:", data.message);
-      // });
-
-      // Ngắt kết nối khi component unmount
-      return () => {
-        socket.disconnect();
-      };
     };
     checkLoginStatus();
-    //socketConnect();
   }, []);
 
   return (
