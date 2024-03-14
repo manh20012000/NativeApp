@@ -471,7 +471,7 @@ const VideoItem = ({ item, action, navigation }) => {
           <View style={styles.musicContainer}>
             <Image
               style={styles.musicIcon}
-              source={require("D:/lapTrinhMobile/NativeApp/src/Image/music-note.png")}
+              source={require("../../Image/music-note.png")}
             />
             <Text style={styles.musicName}>nền nhạc-{datavideo.MusicName}</Text>
           </View>
@@ -823,17 +823,19 @@ const styles = StyleSheet.create({
     height: 758,
     backgroundColor: "black",
   },
-  BottomSelect: {
-    position: "absolute",
-    paddingHorizontal: 8,
-    paddingBottom: 16,
-  },
+  // BottomSelect: {
+  //   position: "absolute",
+  //   paddingHorizontal: 8,
+  //   paddingBottom: 16,
+  // },
   BottomSelect: {
     position: "absolute",
     bottom: 0,
     flexDirection: "row",
     width: "100%",
     height: "100%",
+    paddingHorizontal: 8,
+    paddingBottom: 16,
   },
   BootomLeftSelection1: {
     height: "auto",

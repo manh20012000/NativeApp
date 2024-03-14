@@ -13,11 +13,10 @@
     "@react-native-async-storage/async-storage": "^1.21.0",
     "@react-native-community/datetimepicker": "7.2.0",
     "@react-native-community/geolocation": "^3.1.0",
-    "@react-native-community/masked-view": "^0.1.11",
     "@react-native-community/slider": "^4.4.3",
-    "@react-native-firebase/analytics": "^18.3.1",
-    "@react-native-firebase/app": "^18.8.0",
-    "@react-native-firebase/messaging": "^18.7.3",
+    "@react-native-firebase/analytics": "18.3.1",
+    "@react-native-firebase/app": "18.3.1",
+    "@react-native-firebase/messaging": "18.3.1",
     "@react-native-masked-view/masked-view": "^0.3.1",
     "@react-navigation/bottom-tabs": "^6.5.8",
     "@react-navigation/material-top-tabs": "^6.6.3",
@@ -57,7 +56,6 @@
     "react-native-btr": "^2.2.0",
     "react-native-cache": "^2.0.3",
     "react-native-collapsible-tab-view": "^6.2.1",
-    "react-native-date-picker": "^4.3.2",
     "react-native-element-dropdown": "^2.9.0",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "~2.12.0",
@@ -102,5 +100,13 @@
     "@babel/core": "^7.20.0",
     "@babel/preset-react": "^7.23.3"
   },
+  "resolutions": {
+    "react-native-reanimated": "~3.3.0"
+  },
+  "nohoist": [
+    "**/react-native-reanimated",
+    "**//react-native-skeleton-content",
+    "**/@gorhom/bottom-sheet"
+  ],
   "private": true
 }
