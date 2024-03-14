@@ -56,11 +56,16 @@ const FlatItem = memo((props) => {
   };
   useEffect(() => {
     const listLike = async () => {
-      const { data } = await axios.post(
-        "https://nativeapp-vwvi.onrender.com/selectLike",
+      try {
+         const { data } = await axios.post(
+        `${path}/selectLike`,
         { _idBaiviet: databaiviet._id }
       );
       setArrlike(data);
+      } catch (err) {
+        console.log(err,'selectlike trang thái')
+      }
+     
     };
     listLike();
   }, []);
@@ -94,6 +99,7 @@ const FlatItem = memo((props) => {
       }
     }
     try {
+      console.log('nhay vào tympost')
       const { data } = await axios.post(`${path}/tymPost`, {
         idUser: props.userDn,
         idBaiPost: databaiviet._id,
@@ -102,7 +108,7 @@ const FlatItem = memo((props) => {
       });
       console.log("nhay dbusjd");
     } catch (err) {
-      console.log(err);
+      console.log(err,'flat item trang chu');
     }
   };
   const DetaiHandress = () => {
@@ -172,12 +178,17 @@ const FlatItem = memo((props) => {
   };
   const selectCmt = async () => {
     console.log(databaiviet._id);
-    const { data } = await axios.post(`${path}/selectDataCmt`, {
+    try {
+      const { data } = await axios.post(`${path}/selectDataCmt`, {
       //const { data } = await axios.post(`https://nativeapp-vwvi.onrender.com/selectDataCmt`, {
       idbaiviet: databaiviet._id,
       skip: 10,
     });
     setBinhLuan(data.data);
+    } catch (err){
+      console.log("selectDataCmt",err)
+    }
+    
     // console.log(JSON.stringify(data.data), 'consso;edataacmt')
   };
   // cho phép gữi ảnh với bình luận // sendcomment

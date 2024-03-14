@@ -112,6 +112,7 @@ const VideoTikTok = ({ navigation }) => {
           renderItem={({ item, index }) => {
             return (
               <VideoItem
+                style={{flex:1}}
                 item={item}
                 action={action === index}
                 navigation={navigation}

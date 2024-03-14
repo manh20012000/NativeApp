@@ -32,42 +32,52 @@ import path from "../../../config";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { useSelector, useDispatch } from "react-redux";
-import socket from "../../../context/SocketContext.js";
+// import { socket } from "../../../utils/index.js";
 const PesionChat = ({ route, navigation }) => {
   const user = useSelector((state) => state.auth.value);
   const [socketOnline, setSocketOnline] = useState([]);
   const [groupName, setGroupName] = useState("");
-
+  const { participants, Messages } = route.params;
   const [data, setData] = useState(DataOjs);
-  // console.log(JSON.stringify('bddb'+route.params.id))
-  const dataRoute = route.params;
-  //    console.log(dataRoute)
   const [textIcon, setText] = useState("");
-  // mangr tin nhăn
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(Messages);
+  const ENDPOINT = "http://192.168.188.136:8080";
+  //   const socket = io(ENDPOINT, {
+  //     transports: ['websocket']
+  //  });
+  const socket = io(ENDPOINT);
+  const [connected, setConnected] = useState(false);
+
   useEffect(() => {
-    // Gọi API để lấy tin nhắn từ server
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get(`${path}/getMessage/${dataRoute._id}`);
-        setMessages(data);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      }
-    };
-    fetchData();
-  }, [route.params.userId]);
-  useEffect(() => {
-    try {
-      const getMessage = async () => {
-        const { data } = await axios.get(`${path}/getMessage/${dataRoute._id}`);
-        setMessages(data);
-      };
-      getMessage();
-    } catch (err) {
-      console.log(err);
-    }
+    // Lắng nghe sự kiện "connected" từ server
+    // socket.on("connected", (data) => {
+    //   console.log("Received:", data);
+    //   setConnected(true);
+    // });
+
+    // // Xử lý lỗi kết nối
+    // socket.on("connect_error", (error) => {
+    //   console.error("Connection error:", error);
+    //   setConnected(false);
+    // });
+
+    // // Ngắt kết nối khi unmount component
+    // return () => {
+    //   socket.disconnect();
+    // };
   }, []);
+  // useEffect(() => {
+  //   // Gọi API để lấy tin nhắn từ server
+  //   const fetchData = async () => {
+  //     try {
+  //       const { data } = await axios.get(`${path}/getMessage/${participants._id}`);
+  //       setMessages(data);
+  //     } catch (error) {
+  //       console.error("Error fetching messages:", error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [participants._id]);
   const onSend = useCallback(async (messages = []) => {
     try {
       setMessages((previousMessages) =>
@@ -80,7 +90,7 @@ const PesionChat = ({ route, navigation }) => {
       };
       // sendMessage(message);
       // Gửi tin nhắn lên server sử dụng Axios
-      const response = await axios.post(`${path}/send/${dataRoute._id}`, {
+      const response = await axios.post(`${path}/send/${participants._id}`, {
         message: messages[0].text,
         // Các thông tin khác nếu cần
       });
@@ -95,7 +105,7 @@ const PesionChat = ({ route, navigation }) => {
   }, []);
   //change buutobsen
   const troveCanhan = () => {
-    navigation.navigate("SeeDeTail", dataRoute);
+    navigation.navigate("SeeDeTail", participants);
   };
   const renderSend = (props) => {
     return (
@@ -180,7 +190,7 @@ const PesionChat = ({ route, navigation }) => {
               }}
             >
               <Image
-                source={{ uri: route.params.Avatar }}
+                source={{ uri: participants.Avatar }}
                 style={{
                   width: 44,
                   height: 44,
@@ -207,7 +217,7 @@ const PesionChat = ({ route, navigation }) => {
                 fontWeight: "900",
               }}
             >
-              {route.params.Hoten}
+              {participants.Hoten}
             </Text>
           </TouchableOpacity>
         </View>

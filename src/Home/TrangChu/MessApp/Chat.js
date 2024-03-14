@@ -12,36 +12,17 @@ import { React, useEffect, useState } from "react";
 import DataOjs from "../../../Data/DataObj";
 import { Feather } from "@expo/vector-icons";
 import axios from "axios";
-import io from "socket.io-client";
 import path from "../../../config.js";
 import { useSelector, useDispatch } from "react-redux";
-import socketConnect from "../../../context/SocketContext.js";
 const Chat = ({ navigation }) => {
   const user = useSelector((state) => state.auth.value);
-
-  // const socketconnect = socketConnect();
-  // useEffect(() => {
-
-  //   // Lắng nghe thông báo về trạng thái hoạt động từ server
-  //   socketConnect.on('userActive', (data) => {
-  //     console.log(`User ${data.userId} is ${data.active ? 'active' : 'inactive'}`);
-
-  //     // Xử lý trạng thái hoạt động của người dùng ở đây
-  //   });
-
-  //   return () => {
-  //     // Ngắt kết nối khi component unmount
-  //     socketConnect.disconnect();
-  //   };
-  // }, []);
-
   const [filter, setFillter] = useState([]);
   const SelectUserMessage = async () => {
     try {
       const { data } = await axios.get(`${path}/UserRouter`);
       setFillter(data);
     } catch (error) {
-      console.log(error, "lỗi nhânj với ");
+      console.log(error, "lỗi cho mỗi cuộc chat ");
     } finally {
       // console.log(dataUserChat)
     }
@@ -53,7 +34,7 @@ const Chat = ({ navigation }) => {
       // console.log(data, "data selector");
       setListbarUser(data);
     } catch (error) {
-      console.log(error, "lôi sãy ra khi sleect với dữ liệu user ");
+      console.log(error, "lỗi với selectuser ");
     } finally {
       // console.log(dataUserChat)
     }
@@ -84,6 +65,23 @@ const Chat = ({ navigation }) => {
     );
 
     setFillter(filterData);
+  };
+  const testaxios = async () => {
+    try {
+      
+      const { data } = await axios.get(`${path}/`);
+      console.log(data)
+    } catch (err) {
+        console.log(err,' catch áppp App ')
+      }
+  }
+  testaxios();
+  const chatPersion = (item) => {
+   
+    navigation.navigate("PesionChat", {
+      participants: item.participants,
+      Messages: item.messages,
+    });
   };
   const str = () => {
     return (
@@ -251,9 +249,7 @@ const Chat = ({ navigation }) => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              onPress={() => {
-                navigation.navigate("PesionChat", item.participants);
-              }}
+              onPress={()=>chatPersion(item)}
             >
               <View style={{ flex: 0.3 }}>
                 <View
@@ -296,8 +292,11 @@ const Chat = ({ navigation }) => {
                   {item.participants.Hoten}
                 </Text>
                 <Text style={{ color: "white" }}>
-                  {item.messages.senderId === user._id ? "You" : item.participants.Hoten}: {item.messages.message}
-</Text>
+                  {item.messages.senderId === user._id
+                    ? "You"
+                    : item.participants.Hoten}
+                  : {item.messages[0].text}
+                </Text>
               </View>
             </TouchableOpacity>
           );

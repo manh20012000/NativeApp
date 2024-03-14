@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import Skeleton from "./Skeleton.js";
-const SkeletonApp = () => {
+const SkeletonApp = ({ trangthai }) => {
+  // console.log('trangthaia',trangthai)
   return (
     <View
       style={{
@@ -15,8 +16,8 @@ const SkeletonApp = () => {
       <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
         <Skeleton width={60} height={60} borderRadius={100} />
         <View style={{ justifyContent: "space-around", marginHorizontal: 20 }}>
-          <Skeleton width={200} height={18} borderRadius={6} />
-          <Skeleton width={100} height={15} borderRadius={6} />
+          <Skeleton width={200} height={18} borderRadius={6} trangthai={trangthai} />
+          <Skeleton width={100} height={15} borderRadius={6} trangthai={trangthai}/>
         </View>
       </View>
       <View style={{ marginTop: 10 }}>
@@ -29,9 +30,9 @@ const SkeletonApp = () => {
           marginTop: 20,
         }}
       >
-        <Skeleton width={100} height={18} borderRadius={6} />
-        <Skeleton width={100} height={18} borderRadius={6} />
-        <Skeleton width={100} height={18} borderRadius={6} />
+        <Skeleton width={100} height={18} borderRadius={6} trangthai={trangthai}/>
+        <Skeleton width={100} height={18} borderRadius={6} trangthai={trangthai}/>
+        <Skeleton width={100} height={18} borderRadius={6} trangthai={trangthai}/>
       </View>
     </View>
   );

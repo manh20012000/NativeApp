@@ -1,17 +1,27 @@
 import { StyleSheet, Text, View, Animated } from "react-native";
 import React, { useRef, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-const Skeleton = ({ width, height, style,borderRadius }) => {
+const Skeleton = ({ width, height, style,borderRadius,trangthai}) => {
   const translateX = useRef(new Animated.Value(-width)).current;
   useEffect(() => {
-    Animated.loop(
-      Animated.timing(translateX, {
-        toValue: width,
-        useNativeDriver: true,
-        duration: 1000,
-      })
-    ).start();
-  }, [width]);
+    if (trangthai) { // Nếu trạng thái là true
+      // console.log(trangthai)
+      const animation = Animated.loop(
+        Animated.timing(translateX, {
+          toValue: width,
+          useNativeDriver: true,
+          duration: 1000,
+        })
+      );
+  
+      animation.start();
+  
+      // Return cleanup function to stop animation when trangthai becomes false
+      return () => {
+        animation.stop();
+      };
+    }
+  }, [width, trangthai]);
 
   return (
  

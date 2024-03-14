@@ -27,8 +27,7 @@ import { UpdateAuth } from "../../Redex/Reducer/auth.slice.js";
 
 const Infor = ({ navigation, route }) => {
   const count = useSelector((state) => state.auth.value);
-  // console.log(count)
-
+  // console.log(count,'usser counet')
   const [dataUser, setDatauUser] = useState(count);
   const [databaiviet, setDataBaiviet] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
@@ -47,6 +46,16 @@ const Infor = ({ navigation, route }) => {
       };
     }, [])
   );
+  const selectUser = async () => {
+    try {
+     
+      const { data } = await axios.get(`${path}/userInfor`);
+
+      setDatauUser(data.data);
+    } catch (err) {
+      console.log(err, "log userInfor");
+    }
+  };
   useEffect(() => {
     setAction(currentTabIndex);
   }, [currentTabIndex]);
@@ -61,13 +70,16 @@ const Infor = ({ navigation, route }) => {
         id: count._id,
       });
       setLeng(leng + 3);
+      console.log("di liệu được sinh ra 222")
       setDataVideo((prevData) => prevData.concat(data.data));
+      // console.log(data.data,'dataa')
     } catch (err) {
-      console.log(err);
+      console.log(err, "log loi infor user222");
     }
   };
   useEffect(() => {
     handlerSelectVideo();
+    selectUser();
   }, []);
   const onRefresh = async () => {
     setRefreshing(true);
@@ -104,15 +116,17 @@ const Infor = ({ navigation, route }) => {
   useEffect(() => {
     const selectPostUser = async () => {
       try {
+        console.log("dataUser._id",dataUser._id)
         const { data } = await axios.post(
-          "https://nativeapp-vwvi.onrender.com/selectPost_inUser",
+          `${path}/selectPost_inUser`,
           {
             userId: dataUser._id,
           }
         );
+       console.log("di liệu được sinh ra ")
         setDataBaiviet(data.data);
       } catch (err) {
-        console.log(err);
+        console.log(err, "log lỗi infor");
         return;
       }
     };
@@ -125,6 +139,9 @@ const Infor = ({ navigation, route }) => {
           <Image style={styles.imges} source={{ uri: dataUser.Avatar }}></Image>
         </View>
         <View style={styles.usercnhan}>
+          
+          <Image style={{width:40,height:40,borderRadius:40}} source={{ uri: dataUser.Avatar }}></Image>
+          
           <Text style={styles.txt}>{dataUser.Hoten}</Text>
         </View>
         <View style={styles.view4}>
@@ -133,7 +150,7 @@ const Infor = ({ navigation, route }) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("EditProfile", dataUser);
+              navigation.navigate("EditProfile", count);
             }}
             style={styles.btn1}
           >
@@ -255,7 +272,7 @@ const styles = StyleSheet.create({
   },
   usercnhan: {
     justifyContent: "space-around",
-    width: "70%",
+    width: "50%",
     alignItems: "center",
     flexDirection: "row",
     marginTop: 10,

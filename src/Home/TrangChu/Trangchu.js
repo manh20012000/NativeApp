@@ -63,21 +63,23 @@ const TrangChu = ({ navigation }) => {
       setDataStory(data.data);
       setSakeIload2(true);
     } catch (err) {
-      console.log(err);
+      console.log(err,'selectstory trang chu');
     } finally {
     }
   };
   const [SakeIload, setSakeIload] = useState(false);
+  const [isSakeIload, setSakecheck] = useState(true);
   const fetchdata = async () => {
     try {
       const { data } = await axios.get(
-        "https://nativeapp-vwvi.onrender.com/selectBaiViet"
+        `${path}/selectBaiViet`
       );
-
       setData(data.data);
       setSakeIload(true);
     } catch (err) {
-      console.log(err);
+      console.log(err,'selectbaiviet');
+    } finally {
+      setSakecheck(false)
     }
   };
   useEffect(() => {
@@ -349,8 +351,8 @@ const TrangChu = ({ navigation }) => {
                   height: 150,
                 }}
               >
-                <Skeleton width={120} height={150} borderRadius={10} />
-                <Skeleton width={120} height={150} borderRadius={10} />
+                  <Skeleton width={120} height={150} borderRadius={10} trangthai={ isSakeIload} />
+                <Skeleton width={120} height={150} borderRadius={10} trangthai={ isSakeIload}/>
               </View>
             );
           }}
@@ -379,7 +381,7 @@ const TrangChu = ({ navigation }) => {
                 navigation={navigation} //width={120}height={100}style={{borderRadius:10}}
               />
             ) : (
-              <SkeletonApp />
+              <SkeletonApp trangthai={ isSakeIload}/>
             );
           }}
           refreshControl={

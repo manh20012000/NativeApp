@@ -13,7 +13,7 @@ import { store } from "./src/Redex/Store";
 import { Provider } from 'react-redux'
 const STYLES = ["default", "dark-content", "light-content"];
 const TRANSITIONS = ["fade", "slide", "none"];
-
+import path from "./src/config";
 import axios from "axios";
 export default function App() {
   const [hidden, setHidden] = useState(false);
@@ -21,7 +21,16 @@ export default function App() {
   const [statusBarTransition, setStatusBarTransition] = useState(
     TRANSITIONS[0]
   );
-  
+  // const testaxios = async () => {
+  //   try {
+      
+  //     const { data } = await axios.get(`${path}/`);
+  //     console.log(data)
+  //   } catch (err) {
+  //       console.log(err,' catch áppp App ')
+  //     }
+  // }
+  // testaxios();
   const [datas, setdata] = useState();
 
   return (

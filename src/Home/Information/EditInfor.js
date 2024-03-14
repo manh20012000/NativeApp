@@ -27,19 +27,24 @@ import { Entypo } from "@expo/vector-icons";
 import { BottomSheet } from "react-native-btr";
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { UpdateAuth } from "../../Redex/Reducer/auth.slice";
+import { UpdateAuth,login } from "../../Redex/Reducer/auth.slice";
 import { useSelector, useDispatch } from "react-redux";
+
 import path from "../../config";
 import axios from "axios";
+import Spinner from "react-native-loading-spinner-overlay";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const EditProfile = ({ navigation, route }) => {
-  let [user, setUser] = useState(useSelector((state) => state.auth.value));
-  const [selectedImages, setSelectedImages] = useState(user.avatar);
-  const [displayName, setDisplayName] = useState(user.DisplayName);
+  let user = route.params;
+  // console.log(user)
+  const dispath = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [selectedImages, setSelectedImages] = useState(user.Avatar);
+  const [displayName, setDisplayName] = useState(user.Hoten);
   const [address, setAddress] = useState(user.address);
   const [school, setSchool] = useState(user.school);
   const [occupation, setOccupation] = useState(user.occupation);
   const [relationship, setRelationship] = useState(user.relationship);
-
   const pickImages = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsMultipleSelection: false,
@@ -54,6 +59,7 @@ const EditProfile = ({ navigation, route }) => {
   };
 
   const updateProfile = async (iduser, avatar) => {
+    setLoading(true);
     const formData = new FormData();
     const randomInt = Math.floor(Math.random() * 10001);
     formData.append("iduser", iduser);
@@ -64,7 +70,7 @@ const EditProfile = ({ navigation, route }) => {
     });
     try {
       const { data } = await axios.post(
-        `https://nativeapp-vwvi.onrender.com/UpadateAvatar`,
+        `${path}/UpadateAvatar`,
         formData,
         {
           headers: {
@@ -73,12 +79,24 @@ const EditProfile = ({ navigation, route }) => {
         }
       );
       if (data.status == 200) {
-        useDispatch(UpdateAuth(data.data));
+      
+        const userData = {
+          _id:data.data._id,
+          Hoten:data.data.Hoten,
+          Avatar:data.data.Avatar,
+          email: data.data.Email,
+          accessToken:user.accessToken,
+        }
+        dispath(UpdateAuth(userData));
         navigation.navigate("Infor");
         alert(data.mess);
+        const userDataString = JSON.stringify(userData);
+        await AsyncStorage.setItem("userToken", userDataString);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err,'log lỗi editinfor');
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -93,6 +111,7 @@ const EditProfile = ({ navigation, route }) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
+            console.log(user._id,selectedImages)
             updateProfile(user._id, selectedImages);
           }}
           style={styles.save}
@@ -110,13 +129,17 @@ const EditProfile = ({ navigation, route }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.thanhngang}></View>
-
+      <Spinner
+              visible={loading}
+              textContent={"upadateUser..."}
+              textStyle={{ color: "#FFF" }}
+            />
       <View style={styles.thongtin}>
-        <Text style={styles.txt}>Ngày sinh: {user.BirthOfDate}</Text>
+        <Text style={styles.txt}>Ngày sinh: {user.Birth}</Text>
         <Text style={styles.txt}>
           Giới tính: {user.Gender == 1 ? "Nam" : "Nữ"}
         </Text>
-        <Text style={styles.txt}>Email: {user.UserName}</Text>
+        <Text style={styles.txt}>Email: {user.email}</Text>
       </View>
       <View style={styles.thanhngang}></View>
 
