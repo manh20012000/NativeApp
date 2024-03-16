@@ -27,7 +27,7 @@ import { Entypo } from "@expo/vector-icons";
 import { BottomSheet } from "react-native-btr";
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { UpdateAuth,login } from "../../Redex/Reducer/auth.slice";
+import { UpdateAuth, login } from "../../Redex/Reducer/auth.slice";
 import { useSelector, useDispatch } from "react-redux";
 
 import path from "../../config";
@@ -36,7 +36,8 @@ import Spinner from "react-native-loading-spinner-overlay";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const EditProfile = ({ navigation, route }) => {
   let user = route.params;
-  // console.log(user)
+  const count = useSelector((state) => state.auth.value);
+  
   const dispath = useDispatch();
   const [loading, setLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState(user.Avatar);
@@ -69,24 +70,20 @@ const EditProfile = ({ navigation, route }) => {
       name: `${randomInt}image_.jpeg`, // Tên tệp
     });
     try {
-      const { data } = await axios.post(
-        `${path}/UpadateAvatar`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const { data } = await axios.post(`${path}/UpadateAvatar`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       if (data.status == 200) {
-      
         const userData = {
-          _id:data.data._id,
-          Hoten:data.data.Hoten,
-          Avatar:data.data.Avatar,
+          _id: data.data._id,
+          Hoten: data.data.Hoten,
+          Avatar: data.data.Avatar,
           email: data.data.Email,
-          accessToken:user.accessToken,
-        }
+          accessToken: count.accessToken,
+        };
+        console.log(userData);
         dispath(UpdateAuth(userData));
         navigation.navigate("Infor");
         alert(data.mess);
@@ -94,7 +91,7 @@ const EditProfile = ({ navigation, route }) => {
         await AsyncStorage.setItem("userToken", userDataString);
       }
     } catch (err) {
-      console.log(err,'log lỗi editinfor');
+      console.log(err, "log lỗi editinfor");
     } finally {
       setLoading(false);
     }
@@ -111,7 +108,7 @@ const EditProfile = ({ navigation, route }) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            console.log(user._id,selectedImages)
+            console.log(user._id, selectedImages);
             updateProfile(user._id, selectedImages);
           }}
           style={styles.save}
@@ -130,19 +127,18 @@ const EditProfile = ({ navigation, route }) => {
       </View>
       <View style={styles.thanhngang}></View>
       <Spinner
-              visible={loading}
-              textContent={"upadateUser..."}
-              textStyle={{ color: "#FFF" }}
-            />
+        visible={loading}
+        textContent={"upadateUser..."}
+        textStyle={{ color: "#FFF" }}
+      />
       <View style={styles.thongtin}>
         <Text style={styles.txt}>Ngày sinh: {user.Birth}</Text>
         <Text style={styles.txt}>
           Giới tính: {user.Gender == 1 ? "Nam" : "Nữ"}
         </Text>
-        <Text style={styles.txt}>Email: {user.email}</Text>
+        <Text style={styles.txt}>Email: {user.Email}</Text>
       </View>
       <View style={styles.thanhngang}></View>
-
       <TextInput
         placeholder="Tên hiển thị"
         style={styles.txt1}
@@ -240,9 +236,9 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   txt: {
-    fontSize: 20,
-    color: "black",
-    fontWeight: "300",
+    color: "white",
+    fontWeight: "500",
+    fontSize: 16,
   },
   thanhngang: {
     width: "100%",

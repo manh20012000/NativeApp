@@ -9,14 +9,25 @@ import {
 } from "react-native";
 
 import { React, useEffect, useState } from "react";
-import DataOjs from "../../../Data/DataObj";
 import { Feather } from "@expo/vector-icons";
 import axios from "axios";
 import path from "../../../config.js";
 import { useSelector, useDispatch } from "react-redux";
+import { GiftedChat } from "react-native-gifted-chat";
+import { useSocket } from "../../../socket";
 const Chat = ({ navigation }) => {
   const user = useSelector((state) => state.auth.value);
+
   const [filter, setFillter] = useState([]);
+  const socket = useSocket();
+  useEffect(() => {
+    socket?.on("incomingMessage", () => {
+      SelectUserMessage();
+    });
+    return () => {
+      socket?.off("incomingMessage");
+    };
+  }, []);
   const SelectUserMessage = async () => {
     try {
       const { data } = await axios.get(`${path}/UserRouter`);
@@ -34,9 +45,8 @@ const Chat = ({ navigation }) => {
       // console.log(data, "data selector");
       setListbarUser(data);
     } catch (error) {
-      console.log(error, "lỗi với selectuser ");
+      console.log(error, "lôi sãy ra khi sleect với dữ liệu user ");
     } finally {
-      // console.log(dataUserChat)
     }
   };
   useEffect(() => {
@@ -66,16 +76,6 @@ const Chat = ({ navigation }) => {
 
     setFillter(filterData);
   };
-  const testaxios = async () => {
-    try {
-      
-      const { data } = await axios.get(`${path}/`);
-      console.log(data)
-    } catch (err) {
-        console.log(err,' catch áppp App ')
-      }
-  }
-  testaxios();
   const chatPersion = (item) => {
    
     navigation.navigate("PesionChat", {
@@ -238,6 +238,7 @@ const Chat = ({ navigation }) => {
         ListHeaderComponent={seach}
         data={filter}
         renderItem={({ item, index }) => {
+          // console.log(item)
           return (
             <TouchableOpacity
               style={{
@@ -249,10 +250,10 @@ const Chat = ({ navigation }) => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              onPress={()=>chatPersion(item)}
+               onPress={()=>chatPersion(item)}
             >
-              <View style={{ flex: 0.3 }}>
-                <View
+             <View style={{ flex: 0.3 }}>
+               <View
                   style={{
                     position: "relative",
                     width: 50,
@@ -261,43 +262,44 @@ const Chat = ({ navigation }) => {
                     backgroundColor: "pink",
                   }}
                 >
-                  <Image
+                 <Image
                     source={{ uri: item.participants.Avatar }}
                     style={{
                       width: "100%",
                       height: "100%",
                       borderRadius: 64,
                     }}
-                  ></Image>
-                  <Text
-                    style={{
-                      color: "#00FF00",
-                      fontSize: 70,
-                      position: "absolute",
-                      bottom: -14,
-                    }}
                   >
-                    {item.trangthai}
-                  </Text>
+                 </Image>
+            {/* // //   //       <Text
+            //         style={{
+            //           color: "#00FF00",
+            //           fontSize: 70,
+            //           position: "absolute",
+            //           bottom: -14,
+            //         }}
+            //       >
+            //         {/* {item.trangthai} */}
+            {/* //       </Text> */} 
                 </View>
               </View>
               <View style={{ flex: 0.7, marginLeft: -20 }}>
-                <Text
+               <Text
                   style={{
                     fontSize: 19,
                     color: "white",
                     fontWeight: "800",
                   }}
                 >
-                  {item.participants.Hoten}
+                   {item.participants.Hoten}
                 </Text>
-                <Text style={{ color: "white" }}>
-                  {item.messages.senderId === user._id
-                    ? "You"
+             <Text style={{ color: "white" }}>
+               {item.messages.senderId === user._id
+                  ? "You"
                     : item.participants.Hoten}
                   : {item.messages[0].text}
-                </Text>
-              </View>
+                </Text> 
+               </View>
             </TouchableOpacity>
           );
         }}

@@ -34,7 +34,7 @@ const SeemVideo = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [action, setAction] = useState(false);
   const { selectedVideo, dataVideo,index } = route.params;
-  const [data, setData] = useState(dataVideo);
+  const [data, setData] = useState([]);
   useEffect(() => {
     const addVideo = () => {
       console.log('hjajaja')
@@ -71,7 +71,7 @@ const SeemVideo = ({ navigation, route }) => {
       );
       setLeng(leng + 3);
       // setData((prevData) => prevData.concat(data.data));
-      setData(data.data)
+      setData[data.data]
     } catch (err) {
       console.log(err);
     }

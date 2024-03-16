@@ -44,11 +44,10 @@ const Login = ({ navigation }) => {
       if (data.status == 200) {
         const datas = data;
         const userData = datas.data;
-
+        console.log("userData");
         const userDataString = JSON.stringify(userData);
         await AsyncStorage.setItem("userToken", userDataString);
         dispath(login(userData));
-        // console.log(userData)
         setLoading(false);
         navigation.navigate("BootonGate", userData);
         setPass("");

@@ -63,7 +63,7 @@ const TrangChu = ({ navigation }) => {
       setDataStory(data.data);
       setSakeIload2(true);
     } catch (err) {
-      console.log(err,'selectstory trang chu');
+      console.log(err);
     } finally {
     }
   };
@@ -74,12 +74,11 @@ const TrangChu = ({ navigation }) => {
       const { data } = await axios.get(
         `${path}/selectBaiViet`
       );
+
       setData(data.data);
       setSakeIload(true);
     } catch (err) {
-      console.log(err,'selectbaiviet');
-    } finally {
-      setSakecheck(false)
+      console.log(err);
     }
   };
   useEffect(() => {
@@ -351,9 +350,9 @@ const TrangChu = ({ navigation }) => {
                   height: 150,
                 }}
               >
-                  <Skeleton width={120} height={150} borderRadius={10} trangthai={ isSakeIload} />
+                <Skeleton width={120} height={150} borderRadius={10} trangthai={ isSakeIload} />
                 <Skeleton width={120} height={150} borderRadius={10} trangthai={ isSakeIload}/>
-              </View>
+          </View>
             );
           }}
         />

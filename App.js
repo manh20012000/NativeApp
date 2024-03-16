@@ -15,35 +15,29 @@ const STYLES = ["default", "dark-content", "light-content"];
 const TRANSITIONS = ["fade", "slide", "none"];
 import path from "./src/config";
 import axios from "axios";
+import {SocketProvider} from "./src/socket";
 export default function App() {
   const [hidden, setHidden] = useState(false);
   const [statusBarStyle, setStatusBarStyle] = useState(STYLES[0]);
   const [statusBarTransition, setStatusBarTransition] = useState(
     TRANSITIONS[0]
   );
-  // const testaxios = async () => {
-  //   try {
-      
-  //     const { data } = await axios.get(`${path}/`);
-  //     console.log(data)
-  //   } catch (err) {
-  //       console.log(err,' catch áppp App ')
-  //     }
-  // }
-  // testaxios();
+  
   const [datas, setdata] = useState();
 
   return (
     <Provider store={store}>
-    <SafeAreaView style={{ flex: 1 }}>
-           <StatusBar
+      <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar
             animated={true}
             backgroundColor="black"
             hidden={hidden}
-           />
-         <Navigete/>
+        />
+        <SocketProvider>
+          <Navigete/>
+        </SocketProvider>
       </SafeAreaView>
-      </Provider>
+    </Provider>
   );
 }
  // <View style={{ flex: 1 }}>

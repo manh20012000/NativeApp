@@ -470,11 +470,10 @@ const VideoItem = ({ item, action, navigation }) => {
             <Text style={styles.caption}>{datavideo.VideoConten}</Text>
           </View>
         </View>
-
         <View style={styles.musicContainer}>
           <Image
             style={styles.musicIcon}
-            source={require("D:/lapTrinhMobile/NativeApp/src/Image/music-note.png")}
+            source={require("D:/LaptrinhMobile/NativeApp/src/Image/music-note.png")}
           />
           <Text style={styles.musicName}>nền nhạc-{datavideo.MusicName}</Text>
         </View>

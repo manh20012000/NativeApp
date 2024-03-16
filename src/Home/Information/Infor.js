@@ -36,6 +36,7 @@ const Infor = ({ navigation, route }) => {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [action, setAction] = useState(false);
+  const [inforUser, setUserInfor] = useState();
   useFocusEffect(
     useCallback(() => {
       // Thay đổi action để phát video đầu tiên
@@ -48,10 +49,10 @@ const Infor = ({ navigation, route }) => {
   );
   const selectUser = async () => {
     try {
-     
-      const { data } = await axios.get(`${path}/userInfor`);
-
-      setDatauUser(data.data);
+      console.log(count._id, "ìddd");
+      const { data } = await axios.post(`${path}/userInfor`, { _id: count._id });
+      setUserInfor(data.data);
+      // console.log("user", data.data);
     } catch (err) {
       console.log(err, "log userInfor");
     }
@@ -70,9 +71,7 @@ const Infor = ({ navigation, route }) => {
         id: count._id,
       });
       setLeng(leng + 3);
-      console.log("di liệu được sinh ra 222")
       setDataVideo((prevData) => prevData.concat(data.data));
-      // console.log(data.data,'dataa')
     } catch (err) {
       console.log(err, "log loi infor user222");
     }
@@ -93,7 +92,7 @@ const Infor = ({ navigation, route }) => {
       setLeng(leng + 3);
       setDataVideo((prevData) => prevData.concat(data.data));
     } catch (err) {
-      console.log(err);
+      console.log(err, "loi vưới selectedVideoId");
     }
     setTimeout(() => {
       setRefreshing(false);
@@ -116,14 +115,11 @@ const Infor = ({ navigation, route }) => {
   useEffect(() => {
     const selectPostUser = async () => {
       try {
-        console.log("dataUser._id",dataUser._id)
-        const { data } = await axios.post(
-          `${path}/selectPost_inUser`,
-          {
-            userId: dataUser._id,
-          }
-        );
-       console.log("di liệu được sinh ra ")
+        console.log("dataUser._id", dataUser._id);
+        const { data } = await axios.post(`${path}/selectPost_inUser`, {
+          userId: dataUser._id,
+        });
+        console.log("di liệu được sinh ra ");
         setDataBaiviet(data.data);
       } catch (err) {
         console.log(err, "log lỗi infor");
@@ -139,9 +135,11 @@ const Infor = ({ navigation, route }) => {
           <Image style={styles.imges} source={{ uri: dataUser.Avatar }}></Image>
         </View>
         <View style={styles.usercnhan}>
-          
-          <Image style={{width:40,height:40,borderRadius:40}} source={{ uri: dataUser.Avatar }}></Image>
-          
+          <Image
+            style={{ width: 40, height: 40, borderRadius: 40 }}
+            source={{ uri: dataUser.Avatar }}
+          ></Image>
+
           <Text style={styles.txt}>{dataUser.Hoten}</Text>
         </View>
         <View style={styles.view4}>
@@ -150,7 +148,8 @@ const Infor = ({ navigation, route }) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("EditProfile", count);
+       
+              navigation.navigate("EditProfile", inforUser);
             }}
             style={styles.btn1}
           >
@@ -175,11 +174,11 @@ const Infor = ({ navigation, route }) => {
 
         {SeeIF && (
           <View style={styles.thongtin}>
-            <Text style={styles.txtx}>Ngày sinh {dataUser.Birth}</Text>
+            <Text style={styles.txtx}>Ngày sinh {inforUser.Birth}</Text>
             <Text style={styles.txtx}>
-              Giới tính {dataUser.Gender == "male" ? "Nam" : "Nữ"}
+              Giới tính {inforUser.Gender == "male" ? "Nam" : "Nữ"}
             </Text>
-            <Text style={styles.txtx}>Email {dataUser.Email}</Text>
+            <Text style={styles.txtx}>Email {inforUser.Email}</Text>
           </View>
         )}
         <View

@@ -28,7 +28,7 @@ const Message = ({ navigation }) => {
         // console.log(data, "data selector");
         setDataUser(data);
       } catch (error) {
-        console.log(error, "lỗi nhận user");
+        console.log(error, "lỗi nhânj với ");
       } finally {
         // console.log(dataUserChat)
       }

@@ -40,7 +40,8 @@ const Dangky = ({ navigation, route }) => {
     } else if (matkhau === passC) {
       try {
         const data = await axios.post(
-          "https://nativeapp-vwvi.onrender.com/sigin",
+            `${path}/login`,
+          // "https://nativeapp-vwvi.onrender.com/sigin",
           {
             email: email,
             phone: route.params[0],
@@ -52,12 +53,12 @@ const Dangky = ({ navigation, route }) => {
             matkhau: matkhau,
           }
         );
-    
+
         if (data.status === 200) {
-          
+
             setLoading(false);
             navigation.navigate("Login");
-            setMail(""), 
+            setMail(""),
             setPass(""), setPassC("");
             console.log("gudshud");
             setLoading(false);
@@ -71,7 +72,7 @@ const Dangky = ({ navigation, route }) => {
     } else {
       alert("mật khẩu xác nhận ko chính xác");
     }
-   
+
   };
 
   // tao check hien thi với radio button
@@ -130,7 +131,7 @@ const Dangky = ({ navigation, route }) => {
             onChangeText={setMail}
           ></TextInput>
 
-        
+
           <TextInput
             style={[styles.textinput, styles.txt1]}
             label="Nhập mật khẩu"

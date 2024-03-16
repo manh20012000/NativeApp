@@ -11,7 +11,7 @@ import {
   TextInput,
   StatusBar,
 } from "react-native";
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, {useState, useEffect, useCallback, useRef, useContext} from "react";
 import DataOjs from "../../../Data/DataObj";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -30,71 +30,77 @@ import {
 } from "react-native-gifted-chat";
 import path from "../../../config";
 import axios from "axios";
-import { io } from "socket.io-client";
 import { useSelector, useDispatch } from "react-redux";
-// import { socket } from "../../../utils/index.js";
+import {useSocket} from "../../../socket";
 const PesionChat = ({ route, navigation }) => {
   const user = useSelector((state) => state.auth.value);
   const [socketOnline, setSocketOnline] = useState([]);
   const [groupName, setGroupName] = useState("");
+  const socket = useSocket();
+
   const { participants, Messages } = route.params;
   const [data, setData] = useState(DataOjs);
   const [textIcon, setText] = useState("");
   const [messages, setMessages] = useState(Messages);
-  const ENDPOINT = "http://192.168.188.136:8080";
-  //   const socket = io(ENDPOINT, {
-  //     transports: ['websocket']
-  //  });
-  const socket = io(ENDPOINT);
-  const [connected, setConnected] = useState(false);
+
+    useEffect(() => {
+        socket?.on('incomingMessage', (data) => {
+            setMessages((previousMessages) =>
+                GiftedChat.append(previousMessages, {
+                    ...data,
+                    createdAt: new Date(data.createdAt),
+                }),
+            );
+        });
+        return () => {
+            socket?.off('incomingMessage');
+        };
+    }, []);
 
   useEffect(() => {
-    // Lắng nghe sự kiện "connected" từ server
-    // socket.on("connected", (data) => {
-    //   console.log("Received:", data);
-    //   setConnected(true);
-    // });
-
-    // // Xử lý lỗi kết nối
-    // socket.on("connect_error", (error) => {
-    //   console.error("Connection error:", error);
-    //   setConnected(false);
-    // });
-
-    // // Ngắt kết nối khi unmount component
-    // return () => {
-    //   socket.disconnect();
+    // // Gọi API để lấy tin nhắn từ server
+    // const fetchData = async () => {
+    //   try {
+    //     const { data } = await axios.get(`${path}/getMessage/${participants._id}`);
+    //     setMessages(data);
+    //   } catch (error) {
+    //     console.error("Error fetching messages:", error);
+    //   }
     // };
-  }, []);
+    // fetchData();
+  }, [route.params.userId]);
+
   // useEffect(() => {
-  //   // Gọi API để lấy tin nhắn từ server
-  //   const fetchData = async () => {
-  //     try {
-  //       const { data } = await axios.get(`${path}/getMessage/${participants._id}`);
+  //   try {
+  //     const getMessage = async () => {
+  //       const { data } = await axios.get(`${path}/getMessage/${dataRoute._id}`);
   //       setMessages(data);
-  //     } catch (error) {
-  //       console.error("Error fetching messages:", error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [participants._id]);
+  //     };
+  //     getMessage();
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }, []);
+
   const onSend = useCallback(async (messages = []) => {
     try {
       setMessages((previousMessages) =>
         GiftedChat.append(previousMessages, messages)
       );
 
-      const sendMessage = () => {
-        console.log(message, "message");
-        socket.emit("message", { message: "hoho" });
-      };
       // sendMessage(message);
       // Gửi tin nhắn lên server sử dụng Axios
-      const response = await axios.post(`${path}/send/${participants._id}`, {
+      const response = await axios.post(`${path}/send/${dataRoute._id}`, {
         message: messages[0].text,
         // Các thông tin khác nếu cần
       });
-      //   console.log('Server response:', response.data);
+
+      if (response.data) {
+          socket.emit("sendMessage", {
+              ...messages[0],
+              receiverId: dataRoute._id,
+          });
+      }
       // Cập nhật state để hiển thị tin nhắn trong GiftedChat
 
       // Hiển thị hoặc ẩn component nếu cần
@@ -105,7 +111,7 @@ const PesionChat = ({ route, navigation }) => {
   }, []);
   //change buutobsen
   const troveCanhan = () => {
-    navigation.navigate("SeeDeTail", participants);
+    navigation.navigate("SeeDeTail", dataRoute);
   };
   const renderSend = (props) => {
     return (
@@ -190,7 +196,7 @@ const PesionChat = ({ route, navigation }) => {
               }}
             >
               <Image
-                source={{ uri: participants.Avatar }}
+               source={{ uri: participants.Avatar }}
                 style={{
                   width: 44,
                   height: 44,
@@ -217,7 +223,7 @@ const PesionChat = ({ route, navigation }) => {
                 fontWeight: "900",
               }}
             >
-              {participants.Hoten}
+             {participants.Hoten}
             </Text>
           </TouchableOpacity>
         </View>
@@ -303,7 +309,7 @@ const PesionChat = ({ route, navigation }) => {
               borderBlockColor: "#666666",
               height: 35,
               width: 140,
-              borderRadius: 4,
+              // borderRadius: 4,
               borderRadius: 13,
               backgroundColor: "#888888",
               flexDirection: "row",

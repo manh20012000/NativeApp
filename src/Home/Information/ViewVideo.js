@@ -26,12 +26,12 @@ import {
   createBottomTabNavigator,
   useBottomTabBarHeight,
 } from "@react-navigation/bottom-tabs";
-const ViewVideo = ({ item, navigation, index, dataVideo }) => {
-  // console.log(dataVideo,'daataa')
+const ViewVideo = ({ item,navigation,index,dataVideo}) => {
+
+
   const [modalVisible, setModalVisible] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   return (
-    
     <View>
       <TouchableOpacity
         onPress={() => {
@@ -47,11 +47,11 @@ const ViewVideo = ({ item, navigation, index, dataVideo }) => {
         }}
       >
         <Video
-          source={{ uri:item.Video }} 
+          source={{ uri:item.Video }} // link tinht
+          // source={require('D:/laptrinhMobileClass/NativeAppp/src/Image/Download.mp4')}
           style={{
             width: "100%",
             height: "100%",
-            flex:1,
             backgroundColor: "black",
           }}
           resizeMode="cover"
