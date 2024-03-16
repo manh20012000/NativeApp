@@ -23,8 +23,7 @@ export default function App() {
     TRANSITIONS[0]
   );
   
-  const [datas, setdata] = useState();
-
+  const [datas, setdata] = useState()
   return (
     <Provider store={store}>
       <SafeAreaView style={{ flex: 1 }}>

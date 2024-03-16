@@ -16,6 +16,7 @@
     ],
     "ios": {
       "supportsTablet": true
+     
     },
     "android": {
       "adaptiveIcon": {
@@ -23,12 +24,14 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.NativeAppp"
+     
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-build-properties"
+      "expo-build-properties",
+    "@react-native-google-signin/google-signin"
     
     ]
   }

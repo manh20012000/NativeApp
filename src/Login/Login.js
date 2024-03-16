@@ -22,8 +22,15 @@ import { login } from "../Redex/Reducer/auth.slice";
 import path from "../config";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import { saveUserToken } from "../../Token_Auth";
+// import { GoogleSignin } from "@react-native-google-signin/google-signin";
+
 const Login = ({ navigation }) => {
+  // useEffect(() => {
+  //   GoogleSignin.configure({
+  //     webClientId:
+  //       "Y798897406401-rdt2dj6q51p79evi6urebjgeettrgv8l.apps.googleusercontent.com", // Thay bằng client ID của bạn
+  //   });
+  // }, []);
   const [emailphone, setName] = useState("");
   const [matkhau, setPass] = useState("");
   const [loading, setLoading] = useState(false);
@@ -68,6 +75,23 @@ const Login = ({ navigation }) => {
   const anhien = () => {
     setHienthi(!hienthi);
   };
+  // const SiginWithGg= async () => {
+  //   try {
+  //     await GoogleSignin.hasPlayServices();
+  //     const userInfo = await GoogleSignin.signIn();
+  //     setState({ userInfo });
+  //   } catch (error) {
+  //     if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+  //       // user cancelled the login flow
+  //     } else if (error.code === statusCodes.IN_PROGRESS) {
+  //       // operation (e.g. sign in) is in progress already
+  //     } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+  //       // play services not available or outdated
+  //     } else {
+  //       // some other error happened
+  //     }
+  //   }
+  // };
   // nhap form ddnag kys
   const sigin = () => {
     navigation.navigate("InforUser");

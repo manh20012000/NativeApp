@@ -496,7 +496,7 @@ const VideoItem = ({ item, action, navigation }) => {
         </View>
         <TouchableOpacity onPress={handleLike} style={styles.verticalItem}>
           <AntDesign name="heart" size={28} color={isLiked ? "red" : "white"} />
-          <Text style={{ fontSize: 13, color: "white", fontWeight: "bold" }}>
+          <Text style={{ fontSize: 10, color: "white", fontWeight: "bold" }}>
             {numberLike >= 1000
               ? (numberLike / 1000).toFixed(1) + "k"
               : numberLike}
@@ -510,8 +510,7 @@ const VideoItem = ({ item, action, navigation }) => {
           }}
         >
           <FontAwesome name="comment" size={24} color="white" />
-
-          <Text style={{ fontSize: 13, color: "white", fontWeight: "bold" }}>
+          <Text style={{ fontSize: 10, color: "white", fontWeight: "bold" }}>
             {soluongCmt >= 1000
               ? (soluongCmt / 1000).toFixed(1) + "k"
               : soluongCmt}
