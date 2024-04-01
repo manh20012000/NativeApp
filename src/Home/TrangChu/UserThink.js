@@ -260,6 +260,7 @@ const UserThink = ({ navigation, route }) => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
+          
           },
         }
       );

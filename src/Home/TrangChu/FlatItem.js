@@ -113,7 +113,7 @@ const FlatItem = memo((props) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const anh = databaiviet.Image;
   // console.log(anh)
-  // const images = anh.map((url) => ({ url }));
+  const images = anh.map((url) => ({ url }));
   const [showImage, setImage] = useState(false);
   const [quyen, setquyen] = useState("");
 
@@ -306,9 +306,8 @@ const FlatItem = memo((props) => {
     //   console.log(err, "log erree");
     // }
     setTimeout(() => {
-      console.log(binhluan,'binh kuan ');
+      console.log(binhluan, "binh kuan ");
     }, 2000);
-    
   };
 
   return (
@@ -318,7 +317,19 @@ const FlatItem = memo((props) => {
           onPress={DetaiHandress}
           style={{ flexDirection: "row" }}
         >
-          <Image source={{ uri: user.Avatar }} style={styles.imges}></Image>
+          <View
+            style={{
+              width: 45,
+              height:45,
+              borderRadius:45,
+              marginHorizontal: 6,
+              backgroundColor:'#888888',
+              marginTop:2,
+            }}
+          >
+            <Image source={{ uri: user.Avatar }} style={styles.imges}></Image>
+          </View>
+
           <View
             style={{
               flexDirection: "row",
@@ -376,6 +387,7 @@ const FlatItem = memo((props) => {
       {showImage == true && (
         <Swiper style={{ position: "relative", height: 450 }} loop={true}>
           {anh.map((image, index) => (
+            
             <View key={index}>
               {/* <SkeletonPlaceholder> */}
               <View style={styles.mapImg}>
@@ -401,7 +413,7 @@ const FlatItem = memo((props) => {
               {isViewerOpen && (
                 <Modal visible={true} transparent={true}>
                   <ImageViewer
-                    imageUrls={anh}
+                    imageUrls={images}
                     index={currentImageIndex}
                     onSwipeDown={() => setIsViewerOpen(false)}
                     enableSwipeDown={true}
@@ -752,10 +764,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   imges: {
-    width: 39,
-    height: 44,
+    width:'100%',
+    height: '100%',
     borderRadius: 100,
-    marginHorizontal: 6,
+   
   },
   viewsa: {
     flexDirection: "row",

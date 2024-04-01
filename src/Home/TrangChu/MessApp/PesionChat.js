@@ -11,8 +11,13 @@ import {
   TextInput,
   StatusBar,
 } from "react-native";
-import React, {useState, useEffect, useCallback, useRef, useContext} from "react";
-import DataOjs from "../../../Data/DataObj";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useContext,
+} from "react";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { Zocial } from "@expo/vector-icons";
@@ -31,75 +36,66 @@ import {
 import path from "../../../config";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import {useSocket} from "../../../socket";
+import { useSocket } from "../../../socket";
 const PesionChat = ({ route, navigation }) => {
   const user = useSelector((state) => state.auth.value);
+
+  const StatusUser = useSelector((state) => state.Status.value);
   const [socketOnline, setSocketOnline] = useState([]);
   const [groupName, setGroupName] = useState("");
   const socket = useSocket();
-
   const { participants, Messages } = route.params;
-  const [data, setData] = useState(DataOjs);
+  // console.log(participants, "tin nhăn:", Messages);
   const [textIcon, setText] = useState("");
   const [messages, setMessages] = useState(Messages);
-
-    useEffect(() => {
-        socket?.on('incomingMessage', (data) => {
-            setMessages((previousMessages) =>
-                GiftedChat.append(previousMessages, {
-                    ...data,
-                    createdAt: new Date(data.createdAt),
-                }),
-            );
-        });
-        return () => {
-            socket?.off('incomingMessage');
-        };
-    }, []);
-
+  const status = StatusUser.includes(participants._id);
+  // console.log(status,participants._id)
   useEffect(() => {
-    // // Gọi API để lấy tin nhắn từ server
-    // const fetchData = async () => {
-    //   try {
-    //     const { data } = await axios.get(`${path}/getMessage/${participants._id}`);
-    //     setMessages(data);
-    //   } catch (error) {
-    //     console.error("Error fetching messages:", error);
-    //   }
-    // };
-    // fetchData();
-  }, [route.params.userId]);
+    socket?.on("newMessage", (data) => {
+      console.log(data, "new messsage");
+      // setMessages((previousMessages) =>
+      //   GiftedChat.append(previousMessages, {
+      //     ...data,
+      //     createdAt: new Date(data.createdAt),
+      //   })
+      // );
+    });
+    return () => {
+      socket?.off("newMessage");
+    };
+  }, []);
 
   // useEffect(() => {
-  //   try {
-  //     const getMessage = async () => {
-  //       const { data } = await axios.get(`${path}/getMessage/${dataRoute._id}`);
-  //       setMessages(data);
-  //     };
-  //     getMessage();
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }, []);
+  //   // // Gọi API để lấy tin nhắn từ server
+  //   // const fetchData = async () => {
+  //   //   try {
+  //   //     const { data } = await axios.get(`${path}/getMessage/${participants._id}`);
+  //   //     setMessages(data);
+  //   //   } catch (error) {
+  //   //     console.error("Error fetching messages:", error);
+  //   //   }
+  //   // };
+  //   // fetchData();
+  // }, [route.params.userId]);
 
   const onSend = useCallback(async (messages = []) => {
     try {
       setMessages((previousMessages) =>
         GiftedChat.append(previousMessages, messages)
       );
-
-      // sendMessage(message);
+      // console.log(messages, "messagaahdj");
+      // sendMessage(messages);
       // Gửi tin nhắn lên server sử dụng Axios
-      const response = await axios.post(`${path}/send/${dataRoute._id}`, {
-        message: messages[0].text,
+      console.log(participants._id);
+      const response = await axios.post(`${path}/send/${participants._id}`, {
+        message: messages[0],
         // Các thông tin khác nếu cần
       });
-
       if (response.data) {
-          socket.emit("sendMessage", {
-              ...messages[0],
-              receiverId: dataRoute._id,
-          });
+        socket.emit("sendMessage", {
+          ...messages[0],
+          receiverId: participants._id,
+        });
       }
       // Cập nhật state để hiển thị tin nhắn trong GiftedChat
 
@@ -155,12 +151,14 @@ const PesionChat = ({ route, navigation }) => {
   const [inputText, setInputText] = useState("");
   const handleInputTextChanged = (text) => {
     setInputText(text);
+    socket?.on("EnterText", () => {});
     if (text === "") {
       setVisible(true);
     }
   };
   const handlerSendMess = async () => {};
   return (
+    // <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
     <View style={{ flex: 1, backgroundColor: "black" }}>
       <StatusBar backgroundColor="#CCCCCC" animated={true} />
       <View style={styles.head}>
@@ -196,35 +194,41 @@ const PesionChat = ({ route, navigation }) => {
               }}
             >
               <Image
-               source={{ uri: participants.Avatar }}
+                source={{ uri: participants.Avatar }}
                 style={{
                   width: 44,
                   height: 44,
                   borderRadius: 44,
                 }}
               ></Image>
+              {status && (
+                <View
+                  style={{
+                    position: "absolute",
+                    left: 35,
+                    bottom: 1,
+                    width: 12,
+                    height: 12,
+                    borderRadius: 10,
+                    backgroundColor: "#00FF00",
+                  }}
+                ></View>
+              )}
             </View>
-
-            <Text
-              style={{
-                color: "#00FF00",
-                fontSize: 64,
-                position: "absolute",
-                right: 92,
-                top: -35,
-              }}
-            >
-              {route.params.trangthai}
-            </Text>
-            <Text
-              style={{
-                fontSize: 18,
-                color: "white",
-                fontWeight: "900",
-              }}
-            >
-             {participants.Hoten}
-            </Text>
+            <View>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: "white",
+                  fontWeight: "900",
+                }}
+              >
+                {participants.Hoten}
+              </Text>
+              {status && (
+                <Text style={{ color: "white", fontSize: 10 }}>Active now</Text>
+              )}
+            </View>
           </TouchableOpacity>
         </View>
         <View
@@ -341,6 +345,7 @@ const PesionChat = ({ route, navigation }) => {
         </View>
       )}
     </View>
+    // </KeyboardAvoidingView>
   );
 };
 export default PesionChat;

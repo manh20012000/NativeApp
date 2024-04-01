@@ -17,25 +17,41 @@ import { GiftedChat } from "react-native-gifted-chat";
 import { useSocket } from "../../../socket";
 const Chat = ({ navigation }) => {
   const user = useSelector((state) => state.auth.value);
-
+  const StatusUser = useSelector((state) => state.Status.value);
+  //  console.log(StatusUser)
   const [filter, setFillter] = useState([]);
   const socket = useSocket();
   useEffect(() => {
-    socket?.on("incomingMessage", () => {
-      SelectUserMessage();
+    socket?.on("newMessage", (data) => {
+      console.log(data, "new messsage");
+      setFillter((previMessage) => {
+        return previMessage.map((mess) => {
+          if (data.user._id === mess.participants._id) {
+            // Nếu user id của tin nhắn mới bằng với user id của tin nhắn trong mảng
+            // Thực hiện push tin nhắn mới vào mảng tin nhắn của đối tượng này
+            return {
+              ...mess,
+              messages: [data, ...mess.messages] // Thêm tin nhắn mới lên đầu mảng
+            };
+          }
+          // Nếu không, giữ nguyên đối tượng không thay đổi
+          return mess;
+        }).reverse(); // Đảo ngược thứ tự của mảng tin nhắn
+      });
     });
+  
     return () => {
-      socket?.off("incomingMessage");
+      socket?.off("newMessage");
     };
   }, []);
   const SelectUserMessage = async () => {
     try {
       const { data } = await axios.get(`${path}/UserRouter`);
+
       setFillter(data);
     } catch (error) {
       console.log(error, "lỗi cho mỗi cuộc chat ");
     } finally {
-      // console.log(dataUserChat)
     }
   };
   const [listbarUser, setListbarUser] = useState([]);
@@ -73,15 +89,34 @@ const Chat = ({ navigation }) => {
     const filterData = filter.filter((value) =>
       value.name.toLowerCase().includes(text.toLowerCase())
     );
-
     setFillter(filterData);
   };
   const chatPersion = (item) => {
-   
     navigation.navigate("PesionChat", {
       participants: item.participants,
       Messages: item.messages,
     });
+  };
+  const NavigateMess = async (user) => {
+    try {
+      const { data } = await axios.get(`${path}/getMessage/${user._id}`);
+      // console.log(data, "dataatin nhan ");
+      if (data.length === 0) {
+        navigation.navigate("PesionChat", {
+          participants: user,
+          Messages: [],
+        });
+      } else {
+        navigation.navigate("PesionChat", {
+          participants: user,
+          Messages: data.messages,
+        });
+      }
+    } catch (error) {
+      console.log(error, "lỗi khi chuyen sang chat detail ");
+    } finally {
+      // console.log(dataUserChat)
+    }
   };
   const str = () => {
     return (
@@ -166,6 +201,8 @@ const Chat = ({ navigation }) => {
             horizontal
             data={listbarUser}
             renderItem={({ item, index }) => {
+              const statusUser = StatusUser.includes(item._id);
+              // console.log(statusUser,item._id)
               return (
                 <TouchableOpacity
                   style={{
@@ -174,6 +211,7 @@ const Chat = ({ navigation }) => {
 
                     marginTop: 5,
                   }}
+                  onPress={() => NavigateMess(item)}
                 >
                   <View style={{ justifyContent: "flex-end" }}>
                     <View
@@ -193,18 +231,21 @@ const Chat = ({ navigation }) => {
                           borderRadius: 50,
                         }}
                       ></Image>
+                      {statusUser && (
+                        <View
+                          style={{
+                            position: "absolute",
+                            left: 40,
+                            bottom: 1,
+                            width: 12,
+                            height: 12,
+                            borderRadius: 10,
+                            backgroundColor: "#00FF00",
+                          }}
+                        ></View>
+                      )}
                     </View>
-                    <Text
-                      style={{
-                        color: "#00FF00",
-                        fontSize: 60,
-                        position: "absolute",
-                        left: 35,
-                        bottom: 10,
-                      }}
-                    >
-                      {item.trangthai}
-                    </Text>
+
                     <Text
                       style={{
                         color: "white",
@@ -238,7 +279,7 @@ const Chat = ({ navigation }) => {
         ListHeaderComponent={seach}
         data={filter}
         renderItem={({ item, index }) => {
-          // console.log(item)
+          const statusUser = StatusUser.includes(item.participants._id);
           return (
             <TouchableOpacity
               style={{
@@ -250,10 +291,10 @@ const Chat = ({ navigation }) => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-               onPress={()=>chatPersion(item)}
+              onPress={() => chatPersion(item)}
             >
-             <View style={{ flex: 0.3 }}>
-               <View
+              <View style={{ flex: 0.3 }}>
+                <View
                   style={{
                     position: "relative",
                     width: 50,
@@ -262,44 +303,56 @@ const Chat = ({ navigation }) => {
                     backgroundColor: "pink",
                   }}
                 >
-                 <Image
+                  <Image
                     source={{ uri: item.participants.Avatar }}
                     style={{
                       width: "100%",
                       height: "100%",
                       borderRadius: 64,
                     }}
-                  >
-                 </Image>
-            {/* // //   //       <Text
-            //         style={{
-            //           color: "#00FF00",
-            //           fontSize: 70,
-            //           position: "absolute",
-            //           bottom: -14,
-            //         }}
-            //       >
-            //         {/* {item.trangthai} */}
-            {/* //       </Text> */} 
+                  ></Image>
+                  {statusUser && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        left: 40,
+                        bottom: 1,
+                        width: 12,
+                        height: 12,
+                        borderRadius: 10,
+                        backgroundColor: "#00FF00",
+                      }}
+                    ></View>
+                  )}
+
+                  <Text
+                    style={{
+                      color: "blue",
+                      fontSize: 170,
+                      position: "absolute",
+                    }}
+                  ></Text>
                 </View>
               </View>
               <View style={{ flex: 0.7, marginLeft: -20 }}>
-               <Text
+                <Text
                   style={{
                     fontSize: 19,
                     color: "white",
                     fontWeight: "800",
                   }}
                 >
-                   {item.participants.Hoten}
+                  {item.participants.Hoten}
                 </Text>
-             <Text style={{ color: "white" }}>
-               {item.messages.senderId === user._id
-                  ? "You"
-                    : item.participants.Hoten}
-                  : {item.messages[0].text}
-                </Text> 
-               </View>
+                {item.messages[0] && (
+                  <Text style={{ color: "white" }}>
+                    {item.messages[0].user._id === user._id
+                      ? "You"
+                      : item.participants.Hoten}
+                    : {item.messages[0].text}
+                  </Text>
+                )}
+              </View>
             </TouchableOpacity>
           );
         }}
@@ -318,3 +371,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 });
+// useEffect(() => {
+//   socket?.on("incomingMessage", () => {
+//     SelectUserMessage();
+//   });
+//   return () => {
+//     socket?.off("incomingMessage");
+//   };
+// }, []);

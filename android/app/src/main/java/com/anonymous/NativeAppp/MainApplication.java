@@ -12,10 +12,12 @@ import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
-
+import io.invertase.firebase.auth.ReactNativeFirebaseAuthPackage;
 import expo.modules.ApplicationLifecycleDispatcher;
 import expo.modules.ReactNativeHostWrapper;
-
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -33,6 +35,10 @@ public class MainApplication extends Application implements ReactApplication {
         List<ReactPackage> packages = new PackageList(this).getPackages();
         // Packages that cannot be autolinked yet can be added manually here, for example:
         // packages.add(new MyReactNativePackage());
+        package.add(new new MainReactPackage())
+         package.add(new ReactNativeFirebaseAuthPackage())
+         packages.add(new RNFirebaseMessagingPackage());
+         packages.add(new RNFirebaseNotificationsPackage());
         return packages;
       }
 

@@ -11,6 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "useNextNotificationsApi": true,
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -19,6 +20,8 @@
      
     },
     "android": {
+      
+      "googleServicesFile": "D:/lapTrinhMobile/NativeApp/android/app/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -30,8 +33,12 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+   
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/crashlytics",
       "expo-build-properties",
-    "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin"
     
     ]
   }

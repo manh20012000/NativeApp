@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">NativeAppp</string>
+    <string name="facebook_app_id">7646286505430226</string>
+    <string name="facebook_client_token">9415c9facc783153901b3bf77aa5e74e</string>
+
 </resources>

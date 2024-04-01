@@ -25,55 +25,62 @@ import { FontAwesome } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CommonActions } from '@react-navigation/native'
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { CommonActions } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+
+import { useSocket } from "../../socket.js";
 const SetTingInfor = ({ navigation }) => {
-    const backdeleteAcyns = async () => {
-        navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [
-                { name: 'Login' }, // hoặc 'BootonGate' tùy thuộc vào màn hình mặc định bạn muốn
-              ],
-            })
-          );
-        await AsyncStorage.removeItem('userToken');
-    }
+  const socket = useSocket();
+  const dispatch = useDispatch();
+  const backdeleteAcyns = async () => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          { name: "Login" }, // hoặc 'BootonGate' tùy thuộc vào màn hình mặc định bạn muốn
+        ],
+      })
+    );
+    await AsyncStorage.removeItem("userToken");
+    socket?.disconnect();
+    socket?.removeAllListeners();
+    socket?.close();
+
+  };
   return (
     <View style={{ flex: 1, backgroundColor: "black" }}>
-     <View
-          style={{
-            flex: 0.08,
+      <View
+        style={{
+          flex: 0.08,
 
+          alignItems: "center",
+          flexDirection: "row",
+          paddingHorizontal: 15,
+          justifyContent: "space-between",
+        }}
+      >
+        <TouchableOpacity>
+          <Ionicons name="chevron-back" size={34} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={backdeleteAcyns}
+          style={{
+            justifyContent: "center",
             alignItems: "center",
-            flexDirection: "row",
-            paddingHorizontal: 15,
-            justifyContent: "space-between",
+            backgroundColor: "red",
+            width: "30%",
+            height: 35,
+            borderRadius: 20,
           }}
         >
-          <TouchableOpacity
-          
-          >
-            <Ionicons name="chevron-back" size={34} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity  onPress={backdeleteAcyns}
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "red",
-              width: '30%',
-              height: 35,
-              borderRadius: 20,
-            }}
-          >
-            <Text style={{ color: "white", fontWeight: "bold", fontSize: 18 }}>
-                      Đăng xuất
-                      
-            </Text>
-          </TouchableOpacity>
-        </View>
+          <Text style={{ color: "white", fontWeight: "bold", fontSize: 18 }}>
+            Đăng xuất
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
-  )
-}
-export default  SetTingInfor;
-const styles = StyleSheet.create({})
+  );
+};
+export default SetTingInfor;
+const styles = StyleSheet.create({});

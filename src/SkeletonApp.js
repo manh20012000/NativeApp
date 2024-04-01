@@ -1,7 +1,9 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View ,useWindowDimensions,} from "react-native";
 import React from "react";
 import Skeleton from "./Skeleton.js";
 const SkeletonApp = ({ trangthai }) => {
+  const { width } = useWindowDimensions();
+  
   // console.log('trangthaia',trangthai)
   return (
     <View
@@ -21,7 +23,7 @@ const SkeletonApp = ({ trangthai }) => {
         </View>
       </View>
       <View style={{ marginTop: 10 }}>
-        <Skeleton width={340} height={300} borderRadius={10} />
+        <Skeleton width={width-40} height={300} borderRadius={10} />
       </View>
       <View
         style={{

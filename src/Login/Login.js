@@ -21,8 +21,11 @@ import { useDispatch } from "react-redux";
 import { login } from "../Redex/Reducer/auth.slice";
 import path from "../config";
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { GoogleSignin } from "@react-native-google-signin/google-signin";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Settings,LoginButton} from "react-native-fbsdk-next";
+// Settings.setAppID("7646286505430226");
 
 const Login = ({ navigation }) => {
   // useEffect(() => {
@@ -96,6 +99,8 @@ const Login = ({ navigation }) => {
   const sigin = () => {
     navigation.navigate("InforUser");
   };
+
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>

@@ -12,7 +12,7 @@ import {
   Modal,
   BackHandler,
   Alert,
-  RefreshControl,
+  RefreshControl,useWindowDimensions, Dimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { React, useState, useEffect, useRef, memo, useCallback } from "react";
@@ -38,6 +38,7 @@ import Skeleton from "../../Skeleton.js";
 const TrangChu = ({ navigation }) => {
   const user = useSelector((state) => state.auth.value);
   // console.log(user)
+  const { width } = useWindowDimensions();
   const [userStory, setUserStory] = useState({}); // danh cho story
   const [data, setData] = useState([{ index: 1 }]);
   const [isLoading, setIsLoading] = useState(true);

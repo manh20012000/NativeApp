@@ -50,11 +50,13 @@ const Infor = ({ navigation, route }) => {
   const selectUser = async () => {
     try {
       console.log(count._id, "ìddd");
-      const { data } = await axios.post(`${path}/userInfor`, { _id: count._id });
+      const { data } = await axios.post(`${path}/userInfor`, {
+        _id: count._id,
+      });
       setUserInfor(data.data);
       // console.log("user", data.data);
     } catch (err) {
-      console.log(err, "log userInfor");
+      console.log(err, "");
     }
   };
   useEffect(() => {
@@ -148,7 +150,6 @@ const Infor = ({ navigation, route }) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-       
               navigation.navigate("EditProfile", inforUser);
             }}
             style={styles.btn1}
