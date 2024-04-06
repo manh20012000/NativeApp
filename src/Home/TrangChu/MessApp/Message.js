@@ -18,7 +18,7 @@ import People from "./PeoPle";
 import Story from "./Story";
 import Chat from "./Chat";
 import axios from "axios";
-import path from "../../../config";
+import path from "../../../confige/config";
 const bottonTad = createBottomTabNavigator();
 const Message = ({ navigation }) => {
   const [dataUserChat, setDataUser] = useState([]);

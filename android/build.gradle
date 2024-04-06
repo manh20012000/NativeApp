@@ -15,14 +15,17 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        jcenter()
     }
     dependencies {
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
         classpath('com.android.tools.build:gradle:7.4.2')
         classpath('com.facebook.react:react-native-gradle-plugin')
         classpath 'com.google.gms:google-services:4.4.1'
-        implementation 'com.google.firebase:firebase-analytics:20.0.1'
-        implementation 'com.google.firebase:firebase-auth:21.0.1'
-        implementation 'com.google.firebase:firebase-messaging:23.0.0'
+        // implementation 'com.google.firebase:firebase-analytics:20.0.1'
+        // implementation 'com.google.firebase:firebase-auth:21.0.1'
+        // implementation 'com.google.firebase:firebase-messaging:23.0.0'
+      
     }
 }
 
@@ -42,5 +45,9 @@ allprojects {
         maven { url 'https://www.jitpack.io' }
     }
 }
+
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'// @generated begin expo-camera-import - expo prebuild (DO NOT MODIFY) sync-f244f4f3d8bf7229102e8f992b525b8602c74770
+def expoCameraMavenPath = new File(["node", "--print", "require.resolve('expo-camera/package.json')"].execute(null, rootDir).text.trim(), "../android/maven")
+allprojects { repositories { maven { url(expoCameraMavenPath) } } }
+// @generated end expo-camera-import

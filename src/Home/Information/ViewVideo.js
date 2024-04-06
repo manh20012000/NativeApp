@@ -19,7 +19,7 @@ import { Tabs, CollapsibleTabView } from "react-native-collapsible-tab-view";
 import { FontAwesome, EvilIcons, AntDesign } from "@expo/vector-icons";
 import { Video, ResizeMode } from "expo-av";
 import { firestore } from "../../../Confige.js";
-import path from "../../config.js";
+import path from "../../confige/config.js";
 import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import {

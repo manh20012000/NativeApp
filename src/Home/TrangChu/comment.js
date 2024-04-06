@@ -20,7 +20,7 @@ import { Entypo } from "@expo/vector-icons";
 import { React, useState, useRef, useEffect, memo } from "react";
 import TimeAgo from "react-native-timeago";
 import { MaterialIcons } from "@expo/vector-icons";
-import path from "../../config";
+import path from "../../confige/config";
 import CommentChildrens from "./CommentChrildrens";
 const CommentPanrent = memo((props) => {
   const [user, setUser] = useState(props.item.User);

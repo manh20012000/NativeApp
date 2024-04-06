@@ -6,47 +6,79 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  useWindowDimensions,
 } from "react-native";
 
 import { React, useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import axios from "axios";
-import path from "../../../config.js";
+import path from "../../../confige/config.js";
 import { useSelector, useDispatch } from "react-redux";
 import { GiftedChat } from "react-native-gifted-chat";
 import { useSocket } from "../../../socket";
 const Chat = ({ navigation }) => {
+  const { width, height } = useWindowDimensions();
   const user = useSelector((state) => state.auth.value);
   const StatusUser = useSelector((state) => state.Status.value);
-  //  console.log(StatusUser)
   const [filter, setFillter] = useState([]);
   const socket = useSocket();
+  // const accessToken = JSON.parse(JSON.stringify(user.accessToken+''));
+  // // console.log(typeof(user.accessToken))
+  // axios.defaults.headers.common['Authorization'] = `Beaer ${accessToken}`;
+  // axios.defaults.headers.common["Content-Type"] = "application/json";
   useEffect(() => {
     socket?.on("newMessage", (data) => {
-      console.log(data, "new messsage");
       setFillter((previMessage) => {
-        return previMessage.map((mess) => {
-          if (data.user._id === mess.participants._id) {
-            // Nếu user id của tin nhắn mới bằng với user id của tin nhắn trong mảng
-            // Thực hiện push tin nhắn mới vào mảng tin nhắn của đối tượng này
-            return {
-              ...mess,
-              messages: [data, ...mess.messages] // Thêm tin nhắn mới lên đầu mảng
+        if (previMessage.length === 0) {
+          const newOneMesage = {
+            messages: [data.messages],
+            participants: data.participants,
+          };
+          return [newOneMesage];
+        } else {
+          const userExists = previMessage.some(
+            (mess) => mess.participants._id === data.participants._id
+          );
+          if (!userExists) {
+            const newOneMesage = {
+              messages: [data.messages],
+              participants: data.participants,
             };
+            return [newOneMesage, ...previMessage];
+          } else {
+            return previMessage
+              .map((mess) => {
+                if (data.participants._id === mess.participants._id) {
+                  return {
+                    ...mess,
+                    messages: [data.messages, ...mess.messages], // Thêm tin nhắn mới lên đầu mảng
+                  };
+                }
+                return mess;
+              })
+              .reverse();
           }
-          // Nếu không, giữ nguyên đối tượng không thay đổi
-          return mess;
-        }).reverse(); // Đảo ngược thứ tự của mảng tin nhắn
+        }
       });
     });
-  
+
     return () => {
       socket?.off("newMessage");
     };
   }, []);
+
   const SelectUserMessage = async () => {
     try {
-      const { data } = await axios.get(`${path}/UserRouter`);
+      const { data } = await axios.get(
+        `${path}/UserRouter`
+        //,
+        // {
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        //   Authorization: `Bearer ${accessToken}`,
+        // },
+        //}
+      );
 
       setFillter(data);
     } catch (error) {
@@ -154,7 +186,6 @@ const Chat = ({ navigation }) => {
       <View
         style={{
           justifyContent: "center",
-
           paddingTop: 5,
         }}
       >
@@ -208,7 +239,6 @@ const Chat = ({ navigation }) => {
                   style={{
                     height: "100%",
                     width: "auto",
-
                     marginTop: 5,
                   }}
                   onPress={() => NavigateMess(item)}
@@ -237,7 +267,7 @@ const Chat = ({ navigation }) => {
                             position: "absolute",
                             left: 40,
                             bottom: 1,
-                            width: 12,
+                            width: width - 374,
                             height: 12,
                             borderRadius: 10,
                             backgroundColor: "#00FF00",
@@ -324,7 +354,6 @@ const Chat = ({ navigation }) => {
                       }}
                     ></View>
                   )}
-
                   <Text
                     style={{
                       color: "blue",
@@ -349,7 +378,14 @@ const Chat = ({ navigation }) => {
                     {item.messages[0].user._id === user._id
                       ? "You"
                       : item.participants.Hoten}
-                    : {item.messages[0].text}
+                    :{" "}
+                    {item.messages[0].text
+                      ? item.messages[0].text
+                      : item.messages[0].video
+                      ? "send Video"
+                      : item.messages[0].image
+                      ? "send Image"
+                      : ""}
                   </Text>
                 )}
               </View>

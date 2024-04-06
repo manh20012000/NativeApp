@@ -1,4 +1,4 @@
-package com.anonymous.NativeAppp;
+package com.anonymous.NativeApp;
 
 import android.app.Application;
 import android.content.res.Configuration;
@@ -32,10 +32,14 @@ public class MainApplication extends Application implements ReactApplication {
       @Override
       protected List<ReactPackage> getPackages() {
         @SuppressWarnings("UnnecessaryLocalVariable")
-        List<ReactPackage> packages = new PackageList(this).getPackages();
+        List<ReactPackage> packages = new PackageList(this).getPackages( 
+           return Arrays.asList(
+           new MainReactPackage(),
+           new ReactNativeFirebaseAppPackage()));
         // Packages that cannot be autolinked yet can be added manually here, for example:
-        // packages.add(new MyReactNativePackage());
+        packages.add(new MyReactNativePackage());
         package.add(new new MainReactPackage())
+        package.add(new ReactNativeFirebaseAppPackage())
          package.add(new ReactNativeFirebaseAuthPackage())
          packages.add(new RNFirebaseMessagingPackage());
          packages.add(new RNFirebaseNotificationsPackage());

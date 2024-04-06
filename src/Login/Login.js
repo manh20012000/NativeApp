@@ -19,7 +19,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Spinner from "react-native-loading-spinner-overlay";
 import { useDispatch } from "react-redux";
 import { login } from "../Redex/Reducer/auth.slice";
-import path from "../config";
+import path from "../confige/config";
 import axios from "axios";
 // import { GoogleSignin } from "@react-native-google-signin/google-signin";
 

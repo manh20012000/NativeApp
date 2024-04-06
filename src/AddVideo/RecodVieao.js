@@ -25,7 +25,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
 import axios from "axios";
-import path from "../config";
+import path from "../confige/config";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useSelector, useDispatch } from "react-redux";
 const RecodViedeo = ({ navigation }) => {
@@ -60,7 +60,7 @@ const RecodViedeo = ({ navigation }) => {
         setTrangThai(2);
         setTypefile("image");
       } else if (result.assets[0].type === "video") {
-        if (result.assets[0].height < 600) {
+        if (result.assets[0].height < 700) {
           setResizeMode(true);
         }
         setFileselect(result.assets[0].uri);

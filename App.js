@@ -13,7 +13,7 @@ import { store } from "./src/Redex/Store";
 import { Provider } from "react-redux";
 const STYLES = ["default", "dark-content", "light-content"];
 const TRANSITIONS = ["fade", "slide", "none"];
-import path from "./src/config";
+import path from "./src/confige/config";
 import axios from "axios";
 import { SocketProvider } from "./src/socket";
 // import messaging from '@react-native-firebase/messaging';
@@ -21,7 +21,7 @@ import { SocketProvider } from "./src/socket";
 // import * as Device from "expo-device";
 // import * as Notifications from "expo-notifications";
 
-// import { HandlerNotification } from "./src/Home/Notifice/HandlerNotification.js";
+import  {HandlerNotification } from "./src/Home/Notification/HandlerNotification.js";
 export default function App() {
   const [hidden, setHidden] = useState(false);
   const [statusBarStyle, setStatusBarStyle] = useState(STYLES[0]);
@@ -30,18 +30,8 @@ export default function App() {
   );
 
   // useEffect(() => {
-  //   // HandlerNotification.checkNotofication();
-  //   async function requestUserPermission() {
-  //     const authStatus = await messaging().requestPermission();
-  //     const enabled =
-  //       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-  //       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-  //     if (enabled) {
-  //       console.log("Authorization status:", authStatus);
-  //     }
-  //   }
-  //   requestUserPermission();
+  //   HandlerNotification.checkNotofication();
+  
   // }, []);
   const [datas, setdata] = useState();
 

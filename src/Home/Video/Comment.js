@@ -26,7 +26,7 @@ import {
   updateDataCommentChildrent,
   getDataCommentChildrent,
 } from "../../Redex/Reducer/updateComentChildren.js";
-import path from "../../config.js";
+import path from "../../confige/config.js";
 import { useSelector, useDispatch } from "react-redux";
 const Comment = memo(
   ({

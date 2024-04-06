@@ -33,7 +33,7 @@ import TimeAgo from "react-native-timeago";
 import { LinearGradient } from "expo-linear-gradient";
 import RenderHtml from "react-native-render-html";
 import { Octicons } from "@expo/vector-icons";
-import path from "../../config.js";
+import path from "../../confige/config.js";
 import uuid from "uuid/v4";
 import { useSelector, useDispatch } from "react-redux";
 // import SkeletonPlaceholder from "react-native-skeleton-placeholder";

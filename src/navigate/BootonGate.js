@@ -14,13 +14,14 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 import Infor from "../Home/Information/Infor.js";
 import { Feather } from "@expo/vector-icons";
-import Notifices from "../Home/Notifice/Notifices.js";
+import Notifices from "../Home/Notification/Notifices.js";
 import { MaterialIcons } from "@expo/vector-icons";
 import RecodViedeo from "../AddVideo/RecodVieao.js";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import VideoHomePage from "../Home/Video/VideoHomePage.js";
+
 const Tab = createBottomTabNavigator();
 const BootonGate = ({ navigation, route }) => {
   // console.log(route.params)

@@ -41,7 +41,7 @@ import {
 } from "react-native-pell-rich-editor";
 import Spinner from "react-native-loading-spinner-overlay";
 import axios from "axios";
-import path from "../config.js";
+import path from "../confige/config.js";
 const PostVideo = ({ navigation, route }) => {
   const count = useSelector((state) => state.auth.value);
   const [dataUser, setData] = useState(count);
@@ -79,7 +79,7 @@ const PostVideo = ({ navigation, route }) => {
     setMention("@" + valueSearch.Hoten);
     if (vConten == null) {
       setVconten(mention);
-    } else setVconten(vConten );
+    } else setVconten(vConten);
 
     if (valueSearch != "") {
       setVisible(!visible);
@@ -106,15 +106,15 @@ const PostVideo = ({ navigation, route }) => {
     let datetime = new Date();
     let datePostTimstemp = await datetime.toISOString().slice(0, -5);
     setLoading(true);
-    console.log(data.fileselect,data.resizeMode)
+    console.log(data.fileselect, data.resizeMode);
     formData.append("Height", data.heightV);
-    formData.append("widthV",data.widthV);
+    formData.append("widthV", data.widthV);
     formData.append("datePost", datePostTimstemp);
     formData.append("videoConten", vConten);
     formData.append("privacy", privacy);
     formData.append("Video", {
-      uri:data.fileselect ,
-      name: `Video${datePostTimstemp}.mp4`, 
+      uri: data.fileselect,
+      name: `Video${datePostTimstemp}.mp4`,
       type: "video/mp4",
     });
     formData.append("resizeMode", data.resizeMode);
@@ -125,7 +125,7 @@ const PostVideo = ({ navigation, route }) => {
     formData.append("positionY", data.positionY);
     formData.append("nameMusic", dataUser.Hoten);
     try {
-      const {status, message,msg} = await axios.post(
+      const { status, message, msg } = await axios.post(
         `${path}/uploadVideo`,
         //`${path}/uploadVideo`,
         formData,
@@ -138,12 +138,12 @@ const PostVideo = ({ navigation, route }) => {
       setVconten(null);
       setPrivacy("public");
       setLocated(null);
-      
-      console.log(data.fileselect)
+
+      console.log(data.fileselect);
       if (status == 200) {
         navigation.navigate("Video");
         setLoading(false);
-        alert('sussecess');
+        alert("sussecess");
       }
     } catch (erro) {
       setLoading(false);
@@ -151,7 +151,7 @@ const PostVideo = ({ navigation, route }) => {
     } finally {
       data.fileselect = null;
     }
-  }; 
+  };
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -506,7 +506,6 @@ const PostVideo = ({ navigation, route }) => {
           }}
           onPress={HanderUploadVideo}
         >
-          
           <View style={{ flexDirection: "row" }}>
             <Ionicons name="push-outline" size={24} color="white" />
             <Text style={{ color: "white", fontWeight: "700" }}> Post</Text>

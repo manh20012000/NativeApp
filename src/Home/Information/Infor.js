@@ -22,7 +22,7 @@ import VideoData from "../../Data/VideoData";
 import FlatItem from "../TrangChu/FlatItem.js";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import path from "../../config.js";
+import path from "../../confige/config.js";
 import { UpdateAuth } from "../../Redex/Reducer/auth.slice.js";
 
 const Infor = ({ navigation, route }) => {

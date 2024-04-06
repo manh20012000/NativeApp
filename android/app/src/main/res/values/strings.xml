@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">NativeAppp</string>
-    <string name="facebook_app_id">7646286505430226</string>
-    <string name="facebook_client_token">9415c9facc783153901b3bf77aa5e74e</string>
-
+  <string name="app_name">NativeApp</string>
+  <string name="facebook_app_id">7646286505430226</string>
+  <string name="facebook_client_token">9415c9facc783153901b3bf77aa5e74e</string>
+  <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
+  <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
 </resources>

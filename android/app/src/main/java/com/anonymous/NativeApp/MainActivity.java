@@ -1,4 +1,4 @@
-package com.anonymous.NativeAppp;
+package com.anonymous.NativeApp;
 
 import android.os.Build;
 import android.os.Bundle;

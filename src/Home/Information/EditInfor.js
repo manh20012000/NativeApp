@@ -30,7 +30,7 @@ import * as ImagePicker from "expo-image-picker";
 import { UpdateAuth, login } from "../../Redex/Reducer/auth.slice";
 import { useSelector, useDispatch } from "react-redux";
 
-import path from "../../config";
+import path from "../../confige/config";
 import axios from "axios";
 import Spinner from "react-native-loading-spinner-overlay";
 import AsyncStorage from "@react-native-async-storage/async-storage";

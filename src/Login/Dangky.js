@@ -22,6 +22,7 @@ import { AntDesign, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { RadioButton } from "react-native-paper";
 import Spinner from "react-native-loading-spinner-overlay";
+import path from "../confige/config.js";
 const Dangky = ({ navigation, route }) => {
   // console.log(route.params[0])
   // lấy gtri cua cac o text;
@@ -33,46 +34,41 @@ const Dangky = ({ navigation, route }) => {
   const Sigin = async () => {
     setLoading(true);
     if (
-      (email == null  || matkhau == null || passC == null) &&
+      (email == null || matkhau == null || passC == null) &&
       matkhau != passC
     ) {
+      console.log("hahah");
       alert("vui lòng kiểm tra nhập thông tin");
     } else if (matkhau === passC) {
       try {
-        const data = await axios.post(
-            `${path}/login`,
-          // "https://nativeapp-vwvi.onrender.com/sigin",
-          {
-            email: email,
-            phone: route.params[0],
-            hoten: route.params[1],
-            birth: route.params[2],
-            gender: route.params[3],
-            taikhoan:email,
-            avatar: route.params[4],
-            matkhau: matkhau,
-          }
-        );
-
+        console.log("hahah1");
+        const { data } = await axios.post(`${path}/sigin`, {
+          email: email,
+          phone: route.params[0],
+          hoten: route.params[1],
+          birth: route.params[2],
+          gender: route.params[3],
+          taikhoan: email,
+          avatar: route.params[4],
+          matkhau: matkhau,
+        });
+        console.log("ahabh");
         if (data.status === 200) {
-
-            setLoading(false);
-            navigation.navigate("Login");
-            setMail(""),
-            setPass(""), setPassC("");
-            console.log("gudshud");
-            setLoading(false);
-        } else if(data.status==404) {
+          setLoading(false);
+          navigation.navigate("Login");
+          setMail(""), setPass(""), setPassC("");
+          console.log("gudshud");
+          setLoading(false);
+        } else if (data.status == 404) {
           alert("dang ky that bai");
         }
       } catch (error) {
         setLoading(false);
-        alert( + " that bai");
+        alert(+" that bai");
       }
     } else {
       alert("mật khẩu xác nhận ko chính xác");
     }
-
   };
 
   // tao check hien thi với radio button
@@ -131,7 +127,6 @@ const Dangky = ({ navigation, route }) => {
             onChangeText={setMail}
           ></TextInput>
 
-
           <TextInput
             style={[styles.textinput, styles.txt1]}
             label="Nhập mật khẩu"
@@ -179,10 +174,10 @@ const Dangky = ({ navigation, route }) => {
             >
               <Text style={styles.btnTxt}>Sign</Text>
               <Spinner
-              visible={loading}
-              textContent={"Đangs tải..."}
-              textStyle={{ color: "#FFF" }}
-            />
+                visible={loading}
+                textContent={"Đangs tải..."}
+                textStyle={{ color: "#FFF" }}
+              />
             </LinearGradient>
             <Spinner
               visible={loading}

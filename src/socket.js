@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import socketIOClient, { io } from "socket.io-client";
-import path from "./config";
+import path from "./confige/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector } from "react-redux";
 export const SocketContext = React.createContext(null);
@@ -19,10 +19,12 @@ export const SocketProvider = ({ children }) => {
       if (user) {
         try {
           const userToken = await AsyncStorage.getItem("userToken");
+
           const userTokenObject = JSON.parse(userToken);
           //  console.log(userTokenObject)
           const accessToken = JSON.parse(userToken)?.accessToken;
           const iduser = JSON.parse(userToken)?._id;
+
           if (!accessToken) {
             throw new Error("JWT token not found");
           }
@@ -46,12 +48,12 @@ export const SocketProvider = ({ children }) => {
           });
           newSocket.on("UserOnline", (userId) => {
             dispatch(Status(userId));
-            
+
             // setUserOnline(prevUsers => [...prevUsers, userId]);
           });
           newSocket.on("server-send-when-has-user-online", (userId) => {
             dispatch(Status(userId));
-            
+
             // setUserOnline(prevUsers => [...prevUsers, userId]);
           });
           // Lắng nghe sự kiện "user-offline" từ máy chủ

@@ -25,7 +25,7 @@ import { Tabs, CollapsibleTabView } from "react-native-collapsible-tab-view";
 import { firestore } from "../../../Confige.js";
 import axios from "axios";
 import { io } from "socket.io-client";
-import path from "../../config.js";
+import path from "../../confige/config.js";
 import { useSelector, useDispatch } from "react-redux";
 const SeeDeTail = ({ route, navigation }) => {
   // console.log(route.params)
@@ -41,13 +41,11 @@ const SeeDeTail = ({ route, navigation }) => {
       const { data } = await axios.get(`${path}/getMessage/${dataRoute._id}`);
       // console.log(data, "dataatin nhan ");
       if (data.length === 0) {
-    
         navigation.navigate("PesionChat", {
           participants: dataRoute,
           Messages: [],
         });
       } else {
-        
         navigation.navigate("PesionChat", {
           participants: dataRoute,
           Messages: data.messages,

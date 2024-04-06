@@ -17,7 +17,7 @@ import { Video, ResizeMode } from "expo-av";
 import { FontAwesome } from "@expo/vector-icons";
 import { firestore } from "../../../Confige.js";
 import { collection, getDocs } from "firebase/firestore";
-import path from "../../config.js";
+import path from "../../confige/config.js";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 // import {

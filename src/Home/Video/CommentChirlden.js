@@ -22,7 +22,7 @@ import TimeAgo from "react-native-timeago";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
-import path from "../../config";
+import path from "../../confige/config";
 const CommentChildren = ({
   index,
   item,

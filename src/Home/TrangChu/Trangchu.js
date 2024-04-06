@@ -32,9 +32,9 @@ import VideoPlayer from "expo-video-player";
 import { useDispatch, useSelector } from "react-redux";
 import { setVideoPlaying } from "../../Redex/Reducer/handlerNaviVideo.js";
 import axios from "axios";
-import path from "../../config.js";
-import SkeletonApp from "../../SkeletonApp.js";
-import Skeleton from "../../Skeleton.js";
+import path from "../../confige/config.js";
+import SkeletonApp from "../../Skeleton/SkeletonApp.js";
+import Skeleton from "../../Skeleton/Skeleton.js";
 const TrangChu = ({ navigation }) => {
   const user = useSelector((state) => state.auth.value);
   // console.log(user)
@@ -464,7 +464,7 @@ const TrangChu = ({ navigation }) => {
   );
 };
 export default TrangChu;
-// // source={require('D:/laptrinhMobileClass/NativeAppp/src/Image/Download.mp4')}
+// source={require('D:/laptrinhMobileClass/NativeAppp/src/Image/Download.mp4')}
 //{isViewerOpen && (
 //                   <Modal
 //                     visible={true}

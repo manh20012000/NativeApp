@@ -17,7 +17,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import VideoItem from "./VideoItem.js";
 import { firestore } from "../../../Confige.js";
 import { collection, getDocs } from "firebase/firestore";
-import path from "../../config.js";
+import path from "../../confige/config.js";
 import axios from "axios";
 import {
   createBottomTabNavigator,

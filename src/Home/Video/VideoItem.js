@@ -33,7 +33,7 @@ import { Entypo } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { MaterialIcons } from "@expo/vector-icons";
 import Comment from "./Comment.js";
-import path from "../../config.js";
+import path from "../../confige/config.js";
 import uuid from "uuid/v4";
 
 import { BottomSheet } from "react-native-btr";
@@ -52,6 +52,7 @@ const VideoItem = ({ item, action, navigation }) => {
   const refVideo2 = useRef(null);
   const refScrollView = useRef(null);
   const [datavideo, setDataVideo] = useState(item);
+    //  console.log(datavideo.Video)
   const user = datavideo.User;
   const videoRef = useRef(null);
   const [play, setPlay] = useState(action);
@@ -65,7 +66,6 @@ const VideoItem = ({ item, action, navigation }) => {
   const [processingTime, setProgress] = useState(0);
   const [commentsUpdatedExtra, setCommentsUpdatedExtra] = useState(0);
   const calculateHeight = () => {
- 
     // console.log(height)
     // Tính toán chiều cao dựa trên độ phân giải của thiết bị
     const calculatedHeight = Math.round(height - 50); // Thay 1920 bằng độ phân giải chiều cao của thiết bị của bạn
@@ -408,22 +408,21 @@ const VideoItem = ({ item, action, navigation }) => {
 
   return (
     <TouchableWithoutFeedback style={{ flex: 1 }} onPress={handleScreenTouch}>
-    <View
-      style={{
-        // width: "100%",
-        // // position: "relative",
-        // height: "100%",
-        flex:1,
-        backgroundColor: "black",
-      }}
-    >
-     
+      <View
+        style={{
+          // width: "100%",
+          // // position: "relative",
+          // height: "100%",
+          flex: 1,
+          backgroundColor: "black",
+        }}
+      >
         <Video
           source={{ uri: datavideo.Video }}
           style={{
-             flex:1,
-            // height: 758,  
-            height:height-49,  
+            flex: 1,
+            // height: 758,
+            height: height - 49,
             // position: "absolute",
             top: 0,
             left: 0,
@@ -440,374 +439,378 @@ const VideoItem = ({ item, action, navigation }) => {
           shouldPlay={play}
           useNativeControls={false}
         />
-      
-      {showControls && (
-        <View
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            justifyContent: "center",
-            alignItems: "center",
-            opacity: 0.5,
-          }}
-        >
-          <MaterialIcons name="play-arrow" size={60} color="white" />
-        </View>
-      )}
-      <View style={styles.BottomSelect}>
-        <View style={styles.BootomLeftSelection}>
-          <Text style={styles.chanelName}> {user.Hoten}</Text>
 
-          <View style={styles.BootomLeftSelection1}>
-            {/* <HTML
+        {showControls && (
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              justifyContent: "center",
+              alignItems: "center",
+              opacity: 0.5,
+            }}
+          >
+            <MaterialIcons name="play-arrow" size={60} color="white" />
+          </View>
+        )}
+        <View style={styles.BottomSelect}>
+          <View style={styles.BootomLeftSelection}>
+            <Text style={styles.chanelName}> {user.Hoten}</Text>
+
+            <View style={styles.BootomLeftSelection1}>
+              {/* <HTML
             source={{ html: datavideo.VideoConten }}
             contentWidth={width}
             renderers={renderers}
           /> */}
-            <Text style={styles.caption}>{datavideo.VideoConten}</Text>
+              <Text style={styles.caption}>{datavideo.VideoConten}</Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.musicContainer}>
-          <Image
-            style={styles.musicIcon}
-            source={require("D:/LaptrinhMobile/NativeApp/src/Image/music-note.png")}
-          />
-          <Text style={styles.musicName}>nền nhạc-{datavideo.MusicName}</Text>
-        </View>
-        <View style={styles.bottomRightSelection}>
-          <Animated.View style={[styles.MusicDisc, discAnimation]}>
-            <MaterialCommunityIcons
-              name="music-circle"
-              size={40}
-              color="white"
+          <View style={styles.musicContainer}>
+            <Image
+              style={styles.musicIcon}
+              source={require("D:/LaptrinhMobile/NativeApp/src/Image/music-note.png")}
             />
-          </Animated.View>
-        </View>
-      </View>
-      <View style={styles.verticalBar}>
-        <View style={[styles.verticalItem, styles.avatarContainer]}>
-          <Image style={styles.avatar} source={{ uri: user.Avatar }}></Image>
-          <View style={styles.buttonFlow}>
-            <Ionicons name="add-circle" size={20} color="red" />
+            <Text style={styles.musicName}>nền nhạc-{datavideo.MusicName}</Text>
+          </View>
+          <View style={styles.bottomRightSelection}>
+            <Animated.View style={[styles.MusicDisc, discAnimation]}>
+              <MaterialCommunityIcons
+                name="music-circle"
+                size={40}
+                color="white"
+              />
+            </Animated.View>
           </View>
         </View>
-        <TouchableOpacity onPress={handleLike} style={styles.verticalItem}>
-          <AntDesign name="heart" size={28} color={isLiked ? "red" : "white"} />
-          <Text style={{ fontSize: 10, color: "white", fontWeight: "bold" }}>
-            {numberLike >= 1000
-              ? (numberLike / 1000).toFixed(1) + "k"
-              : numberLike}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.verticalItem}
-          onPress={() => {
-            toggleModal2();
-            selectCmt();
-          }}
-        >
-          <FontAwesome name="comment" size={24} color="white" />
-          <Text style={{ fontSize: 10, color: "white", fontWeight: "bold" }}>
-            {soluongCmt >= 1000
-              ? (soluongCmt / 1000).toFixed(1) + "k"
-              : soluongCmt}
-          </Text>
-        </TouchableOpacity>
-        <View style={styles.verticalItem}>
-          <MaterialCommunityIcons name="share" size={28} color="white" />
-          <Text style={styles.verticalBarText}>Share</Text>
+        <View style={styles.verticalBar}>
+          <View style={[styles.verticalItem, styles.avatarContainer]}>
+            <Image style={styles.avatar} source={{ uri: user.Avatar }}></Image>
+            <View style={styles.buttonFlow}>
+              <Ionicons name="add-circle" size={20} color="red" />
+            </View>
+          </View>
+          <TouchableOpacity onPress={handleLike} style={styles.verticalItem}>
+            <AntDesign
+              name="heart"
+              size={28}
+              color={isLiked ? "red" : "white"}
+            />
+            <Text style={{ fontSize: 10, color: "white", fontWeight: "bold" }}>
+              {numberLike >= 1000
+                ? (numberLike / 1000).toFixed(1) + "k"
+                : numberLike}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.verticalItem}
+            onPress={() => {
+              toggleModal2();
+              selectCmt();
+            }}
+          >
+            <FontAwesome name="comment" size={24} color="white" />
+            <Text style={{ fontSize: 10, color: "white", fontWeight: "bold" }}>
+              {soluongCmt >= 1000
+                ? (soluongCmt / 1000).toFixed(1) + "k"
+                : soluongCmt}
+            </Text>
+          </TouchableOpacity>
+          <View style={styles.verticalItem}>
+            <MaterialCommunityIcons name="share" size={28} color="white" />
+            <Text style={styles.verticalBarText}>Share</Text>
+          </View>
         </View>
-      </View>
-      <Modal
-        visible={isVisible2}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={toggleModal2}
-      >
-        <View
-          style={{
-            borderRadius: 10,
-            flex: 1,
-            justifyContent: "flex-end",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
+        <Modal
+          visible={isVisible2}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={toggleModal2}
         >
-          <TouchableWithoutFeedback onPress={handleBackdropPress2e}>
-            <View style={{ flex: 0.4 }}></View>
-          </TouchableWithoutFeedback>
-
           <View
             style={{
-              flex: 0.6,
-              backgroundColor: "white",
-              justifyContent: "flex-end",
               borderRadius: 10,
+              flex: 1,
+              justifyContent: "flex-end",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
             }}
           >
+            <TouchableWithoutFeedback onPress={handleBackdropPress2e}>
+              <View style={{ flex: 0.4 }}></View>
+            </TouchableWithoutFeedback>
+
             <View
               style={{
-                height: 40,
-                justifyContent: "center",
-                alignItems: "center",
+                flex: 0.6,
+                backgroundColor: "white",
+                justifyContent: "flex-end",
+                borderRadius: 10,
               }}
             >
-              <Text
-                style={{ fontSize: 15, color: "black", fontWeight: "bold" }}
+              <View
+                style={{
+                  height: 40,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
               >
-                {soluongCmt >= 10000
-                  ? (soluongCmt / 1000).toFixed(1) + "k"
-                  : soluongCmt}{" "}
-                Comments
-              </Text>
-            </View>
-            <View style={{ flex: 1, position: "relative" }}>
-              {loading == true && (
-                <View
-                  style={{
-                    position: "absolute",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    width: 40,
-                    height: 40,
-                    alignItems: "center",
-                    top: 120,
-                    left: 160,
-                  }}
+                <Text
+                  style={{ fontSize: 15, color: "black", fontWeight: "bold" }}
                 >
-                  <Animated.View
+                  {soluongCmt >= 10000
+                    ? (soluongCmt / 1000).toFixed(1) + "k"
+                    : soluongCmt}{" "}
+                  Comments
+                </Text>
+              </View>
+              <View style={{ flex: 1, position: "relative" }}>
+                {loading == true && (
+                  <View
                     style={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: 15,
-                      backgroundColor: "red",
-                      transform: [
-                        {
-                          rotate: redCircle.interpolate({
-                            inputRange: [0, 180],
-                            outputRange: ["0deg", "180deg"],
-                          }),
-                        },
-                      ],
+                      position: "absolute",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      width: 40,
+                      height: 40,
+                      alignItems: "center",
+                      top: 120,
+                      left: 160,
                     }}
-                  />
-                  <Animated.View
-                    style={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: 15,
-                      backgroundColor: "black",
-                      transform: [
-                        {
-                          rotate: blackCircle.interpolate({
-                            inputRange: [0, 180],
-                            outputRange: ["0deg", "180deg"],
-                          }),
-                        },
-                      ],
+                  >
+                    <Animated.View
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 15,
+                        backgroundColor: "red",
+                        transform: [
+                          {
+                            rotate: redCircle.interpolate({
+                              inputRange: [0, 180],
+                              outputRange: ["0deg", "180deg"],
+                            }),
+                          },
+                        ],
+                      }}
+                    />
+                    <Animated.View
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 15,
+                        backgroundColor: "black",
+                        transform: [
+                          {
+                            rotate: blackCircle.interpolate({
+                              inputRange: [0, 180],
+                              outputRange: ["0deg", "180deg"],
+                            }),
+                          },
+                        ],
+                      }}
+                    />
+                  </View>
+                )}
+                <View style={{ flex: 0.8 }}>
+                  <FlatList
+                    data={comment}
+                    key={commentsUpdatedExtra}
+                    initialNumToRender={8}
+                    extraData={commentsUpdatedExtra}
+                    showsVerticalScrollIndicator={false}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item, index }) => {
+                      return (
+                        <Comment
+                          item={item}
+                          index={index}
+                          onDeleteComment={deleteComment}
+                          handleTextInputChange={handleTextInputChange}
+                          setParentId={handleSetParentId}
+                          setLoading={setLoading}
+                          statusLoad={setStatusLoad}
+                          setSoluongcomemtChidrent={setSoluongcomemtChidrent}
+                          navigation={navigation}
+                          sendComemtChildren={sendComemtChildren}
+                          setqualityComment={setSoluongcmt}
+                          QualityComment={soluongCmt}
+                          updateQualityComemnt={updateQualityComemnt}
+                          Skipcomemnt={Skipcomemnt}
+                        />
+                      );
                     }}
+                    removeClippedSubviews
+                    onEndReached={selectCmt}
+                    onEndReachedThreshold={(0, 5)}
                   />
                 </View>
-              )}
-              <View style={{ flex: 0.8 }}>
-                <FlatList
-                  data={comment}
-                  key={commentsUpdatedExtra}
-                  initialNumToRender={8}
-                  extraData={commentsUpdatedExtra}
-                  showsVerticalScrollIndicator={false}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item, index }) => {
-                    return (
-                      <Comment
-                        item={item}
-                        index={index}
-                        onDeleteComment={deleteComment}
-                        handleTextInputChange={handleTextInputChange}
-                        setParentId={handleSetParentId}
-                        setLoading={setLoading}
-                        statusLoad={setStatusLoad}
-                        setSoluongcomemtChidrent={setSoluongcomemtChidrent}
-                        navigation={navigation}
-                        sendComemtChildren={sendComemtChildren}
-                        setqualityComment={setSoluongcmt}
-                        QualityComment={soluongCmt}
-                        updateQualityComemnt={updateQualityComemnt}
-                        Skipcomemnt={Skipcomemnt}
-                      />
-                    );
-                  }}
-                  removeClippedSubviews
-                  onEndReached={selectCmt}
-                  onEndReachedThreshold={(0, 5)}
-                />
               </View>
             </View>
-          </View>
-          <Animated.View
-            style={{
-              width: "100%",
-              height: textInputHeight + 60,
-              position: "absolute",
-              bottom: 0,
-              backgroundColor: "pink",
-            }}
-          >
-            <View style={{ width: "100%", height: 12 }}></View>
-            <View
+            <Animated.View
               style={{
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexDirection: "row",
-                marginHorizontal: 10,
-                marginTop: -10,
-                marginBottom: 5,
+                width: "100%",
+                height: textInputHeight + 60,
+                position: "absolute",
+                bottom: 0,
+                backgroundColor: "pink",
               }}
             >
-              <TouchableOpacity>
-                <Text style={{ fontSize: 22 }}>😍</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text style={{ fontSize: 22 }}>🤣</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text style={{ fontSize: 22 }}>😊</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text style={{ fontSize: 22 }}>👍</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text style={{ fontSize: 22 }}>👌</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text style={{ fontSize: 22 }}>😒</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text style={{ fontSize: 22 }}>❤️</Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                justifyContent: "space-between",
-                flexDirection: "row",
-                flex: 0.9,
-              }}
-            >
-              <Image
+              <View style={{ width: "100%", height: 12 }}></View>
+              <View
                 style={{
-                  width: 35,
-                  height: 35,
-                  borderRadius: 100,
-                  marginLeft: 2,
-                  marginBottom: 1,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  marginHorizontal: 10,
+                  marginTop: -10,
+                  marginBottom: 5,
                 }}
-                source={{ uri: dataUser.Avatar }}
-              ></Image>
-              {PopupTextinput == true && (
-                <View
+              >
+                <TouchableOpacity>
+                  <Text style={{ fontSize: 22 }}>😍</Text>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Text style={{ fontSize: 22 }}>🤣</Text>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Text style={{ fontSize: 22 }}>😊</Text>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Text style={{ fontSize: 22 }}>👍</Text>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Text style={{ fontSize: 22 }}>👌</Text>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Text style={{ fontSize: 22 }}>😒</Text>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Text style={{ fontSize: 22 }}>❤️</Text>
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  justifyContent: "space-between",
+                  flexDirection: "row",
+                  flex: 0.9,
+                }}
+              >
+                <Image
                   style={{
-                    flexDirection: "row",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                    width: "85%",
-                    backgroundColor: "#DDDDDD",
-                    borderRadius: 10,
-                    marginRight: 10,
-                    height: 45,
+                    width: 35,
+                    height: 35,
+                    borderRadius: 100,
+                    marginLeft: 2,
+                    marginBottom: 1,
                   }}
-                >
-                  <TouchableOpacity
-                    onPress={toggleModal3}
-                    style={{ width: "70%" }}
-                  >
-                    <Text style={{ color: "#999999" }}> Add comment ...</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity>
-                    <Text style={{ fontSize: 24, fontWeight: "500" }}>@</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity>
-                    <Entypo name="emoji-happy" size={24} color="black" />
-                  </TouchableOpacity>
-                  <TouchableOpacity>
-                    <AntDesign name="gift" size={24} color="black" />
-                  </TouchableOpacity>
-                </View>
-              )}
-              {PopupTextinput == false && (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                    width: "85%",
-                    backgroundColor: "#DDDDDD",
-                    borderRadius: 10,
-                    marginRight: 10,
-                    height: textInputHeight + 15,
-                  }}
-                >
-                  <TextInput
-                    style={{ width: "70%", padding: 5, height: "auto" }}
-                    multiline
-                    ref={inputRef}
-                    autoFocus={true}
-                    value={conten}
-                    placeholder="  Add comment..."
-                    autoFocus={true}
-                    onContentSizeChange={(e) => {
-                      const { height } = e.nativeEvent.contentSize;
-                      setTextInputHeight(height);
+                  source={{ uri: dataUser.Avatar }}
+                ></Image>
+                {PopupTextinput == true && (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                      width: "85%",
+                      backgroundColor: "#DDDDDD",
+                      borderRadius: 10,
+                      marginRight: 10,
+                      height: 45,
                     }}
-                    onChangeText={handleTextInputChange}
-                  ></TextInput>
-
-                  <TouchableOpacity>
-                    <Text style={{ fontSize: 24, fontWeight: "500" }}>@</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity>
-                    <Entypo name="emoji-happy" size={24} color="black" />
-                  </TouchableOpacity>
-                  {Popsend === false && (
+                  >
+                    <TouchableOpacity
+                      onPress={toggleModal3}
+                      style={{ width: "70%" }}
+                    >
+                      <Text style={{ color: "#999999" }}> Add comment ...</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      <Text style={{ fontSize: 24, fontWeight: "500" }}>@</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      <Entypo name="emoji-happy" size={24} color="black" />
+                    </TouchableOpacity>
                     <TouchableOpacity>
                       <AntDesign name="gift" size={24} color="black" />
                     </TouchableOpacity>
-                  )}
+                  </View>
+                )}
+                {PopupTextinput == false && (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                      width: "85%",
+                      backgroundColor: "#DDDDDD",
+                      borderRadius: 10,
+                      marginRight: 10,
+                      height: textInputHeight + 15,
+                    }}
+                  >
+                    <TextInput
+                      style={{ width: "70%", padding: 5, height: "auto" }}
+                      multiline
+                      ref={inputRef}
+                      autoFocus={true}
+                      value={conten}
+                      placeholder="  Add comment..."
+                      autoFocus={true}
+                      onContentSizeChange={(e) => {
+                        const { height } = e.nativeEvent.contentSize;
+                        setTextInputHeight(height);
+                      }}
+                      onChangeText={handleTextInputChange}
+                    ></TextInput>
 
-                  {Popsend === true && (
-                    <TouchableOpacity onPress={SendComment}>
-                      <AntDesign name="arrowup" size={24} color="red" />
+                    <TouchableOpacity>
+                      <Text style={{ fontSize: 24, fontWeight: "500" }}>@</Text>
                     </TouchableOpacity>
-                  )}
-                </View>
-              )}
-            </View>
-          </Animated.View>
-        </View>
-      </Modal>
-      {isSeekBarVisible && (
-        <View
-          style={{
-            position: "absolute",
-            width: "95%",
-            height: 2,
-            backgroundColor: "#888888",
-            bottom: 0,
-            marginHorizontal: 10,
-          }}
-        >
+                    <TouchableOpacity>
+                      <Entypo name="emoji-happy" size={24} color="black" />
+                    </TouchableOpacity>
+                    {Popsend === false && (
+                      <TouchableOpacity>
+                        <AntDesign name="gift" size={24} color="black" />
+                      </TouchableOpacity>
+                    )}
+
+                    {Popsend === true && (
+                      <TouchableOpacity onPress={SendComment}>
+                        <AntDesign name="arrowup" size={24} color="red" />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                )}
+              </View>
+            </Animated.View>
+          </View>
+        </Modal>
+        {isSeekBarVisible && (
           <View
             style={{
               position: "absolute",
-              width: `${processingTime}%`,
-              height: 3,
-              backgroundColor: "white",
-              zIndex: 1,
+              width: "95%",
+              height: 2,
+              backgroundColor: "#888888",
+              bottom: 0,
+              marginHorizontal: 10,
             }}
-          ></View>
-        </View>
-      )}
+          >
+            <View
+              style={{
+                position: "absolute",
+                width: `${processingTime}%`,
+                height: 3,
+                backgroundColor: "white",
+                zIndex: 1,
+              }}
+            ></View>
+          </View>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
