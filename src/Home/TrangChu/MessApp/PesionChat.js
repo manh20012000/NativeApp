@@ -56,7 +56,7 @@ const PesionChat = ({ route, navigation }) => {
     ImagePicker.useMediaLibraryPermissions();
   const user = useSelector((state) => state.auth.value);
   const { width, height } = useWindowDimensions();
-  console.log(width, height);
+
   const StatusUser = useSelector((state) => state.Status.value);
   const [socketOnline, setSocketOnline] = useState([]);
   const [groupName, setGroupName] = useState("");
@@ -75,12 +75,12 @@ const PesionChat = ({ route, navigation }) => {
     setchooseLibrary(true);
     socket?.on("newMessage", (data) => {
       console.log(data, "new messsage");
-      // setMessages((previousMessages) =>
-      //   GiftedChat.append(previousMessages, {
-      //     ...data,
-      //     createdAt: new Date(data.createdAt),
-      //   })
-      // );
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, {
+          ...data,
+          createdAt: new Date(data.createdAt),
+        })
+      );
     });
     return () => {
       socket?.off("newMessage");
@@ -526,8 +526,8 @@ const PesionChat = ({ route, navigation }) => {
               >
                 <View
                   style={{
-                    width: width - 340,
-                    height: height - 763,
+                    width: 45,
+                    height: 45,
                     borderRadius: 45,
                     marginHorizontal: 6,
                     backgroundColor: "white",
@@ -536,8 +536,8 @@ const PesionChat = ({ route, navigation }) => {
                   <Image
                     source={{ uri: participants.Avatar }}
                     style={{
-                      width: width - 340,
-                      height: height - 763,
+                      width: 45,
+                      height: 45,
                       borderRadius: 45,
                     }}
                   ></Image>
@@ -581,10 +581,20 @@ const PesionChat = ({ route, navigation }) => {
                 width: width - 250,
               }}
             >
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("ViewCall", {
+                    participants: participants,
+                  });
+                }}
+              >
                 <Ionicons name="call" size={24} color="#6600FF" />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("ViewCall", participants);
+                }}
+              >
                 <FontAwesome name="video-camera" size={24} color="#6600FF" />
               </TouchableOpacity>
               <TouchableOpacity onPress={pickImages}>
@@ -599,53 +609,52 @@ const PesionChat = ({ route, navigation }) => {
               justifyContent: "flex-end",
             }}
           > */}
-            <GiftedChat
-              messages={messages}
-              onSend={(newMessages) =>
-                onSend(newMessages, setVisible(!isVisible))
-              }
-              user={{
-                _id: user._id,
-                name: user.Hoten,
-                avatar: user.Avatar,
-              }}
-              onInputTextChanged={(text) => this.setCustomText("hihi")}
-              renderInputToolbar={(props) =>
-                !isVisible ? <InputToolbar {...props} /> : null
-              }
-              renderMessageImage={renderMessageImage}
-              renderMessageVideo={renderMessageVideo}
-              renderBubble={renderBubble}
-              alwaysShowSend={false}
-              renderSend={renderSend}
-              scrollToBottom
-              renderTime={() => null}
-              isLoadingEarlier
-              bottomOffset={30}
-              // parsePatterns={(linkStyle) => [
-              //   {
-              //     pattern: /#(\w+)/,
-              //     style: linkStyle,
-              //     onPress: (tag) => console.log(`Pressed on hashtag: ${tag}`),
-              //   },
-            // ]}
+          <GiftedChat
+            messages={messages}
+            onSend={(newMessages) =>
+              onSend(newMessages, setVisible(!isVisible))
+            }
+            user={{
+              _id: user._id,
+              name: user.Hoten,
+              avatar: user.Avatar,
+            }}
+            // onInputTextChanged={(text) => this.setCustomText("hihi")}
+            renderInputToolbar={(props) =>
+              !isVisible ? <InputToolbar {...props} /> : null
+            }
+            renderMessageImage={renderMessageImage}
+            renderMessageVideo={renderMessageVideo}
+            renderBubble={renderBubble}
+            alwaysShowSend={false}
+            renderSend={renderSend}
+            scrollToBottom
+            renderTime={() => null}
+            isLoadingEarlier
+            bottomOffset={30}
             parsePatterns={(linkStyle) => [
-              { type: 'phone', style: linkStyle, onPress: this.onPressPhoneNumber },
-              { pattern: /#(\w+)/, style: { ...linkStyle, styles.hashtag }, onPress: this.onPressHashtag },
+              {
+                pattern: /#(\w+)/,
+                style: linkStyle,
+                onPress: (tag) => console.log(`Pressed on hashtag: ${tag}`),
+              },
             ]}
-         
-              textInputStyle={{
-                borderRadius: 22,
+            // parsePatterns={(linkStyle) => [
+            //   { type: 'phone', style: linkStyle, onPress: this.onPressPhoneNumber },
+            //   { pattern: /#(\w+)/, style: { ...linkStyle, styles.hashtag }, onPress: this.onPressHashtag },
+            // ]}
 
-                marginHorizontal: 18,
-                paddingHorizontal: 16,
-                backgroundColor: "#666666",
-              }}
-              isCustomViewBottom={true}
-              onInputTextChanged={handleInputTextChanged}
-              isKeyboardInternallyHandled={false}
-              renderActions={handlerSendMess}
-            />
+            textInputStyle={{
+              borderRadius: 22,
+              marginHorizontal: 18,
+              paddingHorizontal: 16,
+              backgroundColor: "#666666",
+            }}
+            isCustomViewBottom={true}
+            onInputTextChanged={handleInputTextChanged}
+            isKeyboardInternallyHandled={false}
+            renderActions={handlerSendMess}
+          />
           {/* </LinearGradient> */}
           {isVisible && (
             <View
@@ -672,8 +681,8 @@ const PesionChat = ({ route, navigation }) => {
               <View
                 style={{
                   borderBlockColor: "#666666",
-                  height: height - 772,
-                  width: width - 200,
+                  height: 35,
+                  width: 200,
                   borderRadius: 13,
                   backgroundColor: "#888888",
                   flexDirection: "row",

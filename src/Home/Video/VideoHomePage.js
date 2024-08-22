@@ -6,7 +6,7 @@ import {
   FlatList,
   StatusBar,
   AppState,
-  RefreshControl,
+  RefreshControl, useWindowDimensions,
 } from "react-native";
 import { React, useState, useEffect, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
@@ -24,7 +24,7 @@ import VideoLocation from "./VideoLocation.js";
 
 const Tab = createMaterialTopTabNavigator();
 const VideoHomePage = () => {
-
+  const { width, height } = useWindowDimensions();
   return (
     <View style={{ flex: 1, position: "relative",backgroundColor:'black' }}>
       <View
@@ -59,7 +59,7 @@ const VideoHomePage = () => {
           tabBarActiveTintColor: 'white',
            tabBarInactiveTintColor: '#CCCCCC',
           tabBarLabelStyle: {
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: "bold",
             textTransform: "none",
           },
@@ -67,7 +67,7 @@ const VideoHomePage = () => {
             backgroundColor: "transparent",
             position: "absolute",
             top: -5,
-            left: 33,
+            left:width-350,
             right: 0,
             margin: 0,
           },

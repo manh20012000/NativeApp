@@ -52,7 +52,7 @@ const VideoItem = ({ item, action, navigation }) => {
   const refVideo2 = useRef(null);
   const refScrollView = useRef(null);
   const [datavideo, setDataVideo] = useState(item);
-    //  console.log(datavideo.Video)
+  //  console.log(datavideo.Video)
   const user = datavideo.User;
   const videoRef = useRef(null);
   const [play, setPlay] = useState(action);
@@ -211,7 +211,7 @@ const VideoItem = ({ item, action, navigation }) => {
       if (content.includes("@") || content.includes("#")) {
         textStyle.fontWeight = "bold";
       }
-      return <p style={textStyle}>{content}</p>;
+      return <p style={textStyle}> {content} </p>;
     },
   };
   // thực hiện vơis phần comment
@@ -433,13 +433,14 @@ const VideoItem = ({ item, action, navigation }) => {
             backgroundColor: "black",
           }}
           ref={videoRef}
-          resizeMode={datavideo.resizeMode ? ResizeMode.CONTAIN : "cover"}
+          resizeMode={
+            datavideo.resizeMode ? ResizeMode.CONTAIN : ResizeMode.CONTAIN
+          }
           // resizeMode={ResizeMode.CONTAIN}
           isLooping
           shouldPlay={play}
           useNativeControls={false}
         />
-
         {showControls && (
           <View
             style={{
@@ -458,23 +459,24 @@ const VideoItem = ({ item, action, navigation }) => {
         )}
         <View style={styles.BottomSelect}>
           <View style={styles.BootomLeftSelection}>
-            <Text style={styles.chanelName}> {user.Hoten}</Text>
-
+            <Text style={styles.chanelName}> {user.Hoten} </Text>
             <View style={styles.BootomLeftSelection1}>
               {/* <HTML
-            source={{ html: datavideo.VideoConten }}
-            contentWidth={width}
-            renderers={renderers}
-          /> */}
-              <Text style={styles.caption}>{datavideo.VideoConten}</Text>
+                            source={{ html: datavideo.VideoConten }}
+                            contentWidth={width}
+                            renderers={renderers}
+                          /> */}
+              <Text style={styles.caption}> {datavideo.VideoConten} </Text>
             </View>
           </View>
           <View style={styles.musicContainer}>
-            <Image
+            {/* <Image
               style={styles.musicIcon}
               source={require("D:/LaptrinhMobile/NativeApp/src/Image/music-note.png")}
-            />
-            <Text style={styles.musicName}>nền nhạc-{datavideo.MusicName}</Text>
+            /> */}
+            <Text style={styles.musicName}>
+              nền nhạc - {datavideo.MusicName}
+            </Text>
           </View>
           <View style={styles.bottomRightSelection}>
             <Animated.View style={[styles.MusicDisc, discAnimation]}>
@@ -488,9 +490,21 @@ const VideoItem = ({ item, action, navigation }) => {
         </View>
         <View style={styles.verticalBar}>
           <View style={[styles.verticalItem, styles.avatarContainer]}>
-            <Image style={styles.avatar} source={{ uri: user.Avatar }}></Image>
+            <View
+              style={{
+                backgroundColor: "#988888",
+                width: 50,
+                height: 50,
+                borderRadius: 50,
+              }}
+            >
+              <Image
+                style={{ width: 50, height: 50, borderRadius: 50 }}
+                source={{ uri: user.Avatar }}
+              ></Image>
+            </View>
             <View style={styles.buttonFlow}>
-              <Ionicons name="add-circle" size={20} color="red" />
+              <Ionicons name="add-circle" size={24} color="red" />
             </View>
           </View>
           <TouchableOpacity onPress={handleLike} style={styles.verticalItem}>
@@ -521,7 +535,7 @@ const VideoItem = ({ item, action, navigation }) => {
           </TouchableOpacity>
           <View style={styles.verticalItem}>
             <MaterialCommunityIcons name="share" size={28} color="white" />
-            <Text style={styles.verticalBarText}>Share</Text>
+            <Text style={styles.verticalBarText}> Share </Text>
           </View>
         </View>
         <Modal
@@ -539,9 +553,8 @@ const VideoItem = ({ item, action, navigation }) => {
             }}
           >
             <TouchableWithoutFeedback onPress={handleBackdropPress2e}>
-              <View style={{ flex: 0.4 }}></View>
+              <View style={{ flex: 0.4 }}> </View>
             </TouchableWithoutFeedback>
-
             <View
               style={{
                 flex: 0.6,
@@ -562,7 +575,7 @@ const VideoItem = ({ item, action, navigation }) => {
                 >
                   {soluongCmt >= 10000
                     ? (soluongCmt / 1000).toFixed(1) + "k"
-                    : soluongCmt}{" "}
+                    : soluongCmt}
                   Comments
                 </Text>
               </View>
@@ -658,7 +671,7 @@ const VideoItem = ({ item, action, navigation }) => {
                 backgroundColor: "pink",
               }}
             >
-              <View style={{ width: "100%", height: 12 }}></View>
+              <View style={{ width: "100%", height: 12 }}> </View>
               <View
                 style={{
                   justifyContent: "space-between",
@@ -670,25 +683,25 @@ const VideoItem = ({ item, action, navigation }) => {
                 }}
               >
                 <TouchableOpacity>
-                  <Text style={{ fontSize: 22 }}>😍</Text>
+                  <Text style={{ fontSize: 22 }}> 😍 </Text>
                 </TouchableOpacity>
                 <TouchableOpacity>
-                  <Text style={{ fontSize: 22 }}>🤣</Text>
+                  <Text style={{ fontSize: 22 }}> 🤣 </Text>
                 </TouchableOpacity>
                 <TouchableOpacity>
-                  <Text style={{ fontSize: 22 }}>😊</Text>
+                  <Text style={{ fontSize: 22 }}> 😊 </Text>
                 </TouchableOpacity>
                 <TouchableOpacity>
-                  <Text style={{ fontSize: 22 }}>👍</Text>
+                  <Text style={{ fontSize: 22 }}> 👍 </Text>
                 </TouchableOpacity>
                 <TouchableOpacity>
-                  <Text style={{ fontSize: 22 }}>👌</Text>
+                  <Text style={{ fontSize: 22 }}> 👌 </Text>
                 </TouchableOpacity>
                 <TouchableOpacity>
-                  <Text style={{ fontSize: 22 }}>😒</Text>
+                  <Text style={{ fontSize: 22 }}> 😒 </Text>
                 </TouchableOpacity>
                 <TouchableOpacity>
-                  <Text style={{ fontSize: 22 }}>❤️</Text>
+                  <Text style={{ fontSize: 22 }}> ❤️ </Text>
                 </TouchableOpacity>
               </View>
               <View
@@ -725,7 +738,7 @@ const VideoItem = ({ item, action, navigation }) => {
                       onPress={toggleModal3}
                       style={{ width: "70%" }}
                     >
-                      <Text style={{ color: "#999999" }}> Add comment ...</Text>
+                      <Text style={{ color: "#999999" }}> Add comment... </Text>
                     </TouchableOpacity>
                     <TouchableOpacity>
                       <Text style={{ fontSize: 24, fontWeight: "500" }}>@</Text>
@@ -758,14 +771,12 @@ const VideoItem = ({ item, action, navigation }) => {
                       autoFocus={true}
                       value={conten}
                       placeholder="  Add comment..."
-                      autoFocus={true}
                       onContentSizeChange={(e) => {
                         const { height } = e.nativeEvent.contentSize;
                         setTextInputHeight(height);
                       }}
                       onChangeText={handleTextInputChange}
                     ></TextInput>
-
                     <TouchableOpacity>
                       <Text style={{ fontSize: 24, fontWeight: "500" }}>@</Text>
                     </TouchableOpacity>
@@ -777,7 +788,6 @@ const VideoItem = ({ item, action, navigation }) => {
                         <AntDesign name="gift" size={24} color="black" />
                       </TouchableOpacity>
                     )}
-
                     {Popsend === true && (
                       <TouchableOpacity onPress={SendComment}>
                         <AntDesign name="arrowup" size={24} color="red" />
@@ -908,13 +918,14 @@ const styles = StyleSheet.create({
     marginBottom: 48,
   },
   avatar: {
-    width: 48,
+    width: 50,
     height: 48,
     borderRadius: 24,
   },
   buttonFlow: {
     position: "absolute",
-    bottom: -8,
+    top: 35,
+    right: 10,
   },
   floatMusicNote: {
     position: "absolute",
@@ -1059,28 +1070,28 @@ const styles = StyleSheet.create({
 // // trang thai của của vide
 {
   /* <VideoPlayer
-        videoProps={{
-          shouldPlay: action,
-          // resizeMode: "cover",
-          resizeMode: ResizeMode.CONTAIN,
-          isLooping: true,
-          source: {
-            uri: datavideo.Video,
-          },
-        }}
+          videoProps={{
+            shouldPlay: action,
+            // resizeMode: "cover",
+            resizeMode: ResizeMode.CONTAIN,
+            isLooping: true,
+            source: {
+              uri: datavideo.Video,
+            },
+          }}
 
-        hideControlsOnStart={true}
-        slider={{
-          visible: false,
-        }}
-        fullscreen={{
-          visible: false,
-        }}
-        timeVisible={true}
-        style={{
-          height: 758
-        }}
-      ></VideoPlayer> */
+          hideControlsOnStart={true}
+          slider={{
+            visible: false,
+          }}
+          fullscreen={{
+            visible: false,
+          }}
+          timeVisible={true}
+          style={{
+            height: 758
+          }}
+        ></VideoPlayer> */
 }
 {
   /* <Video
@@ -1491,7 +1502,7 @@ const VideoItem = ({ item, action }) => {
 //         <Text style={{ fontSize: 15, color: "black", fontWeight: "400" }}>
 //           {soluongCmt >= 1000
 //             ? (soluongCmt / 1000).toFixed(1) + "k"
-//             : soluongCmt}{" "}
+//             : soluongCmt}
 //           Comments
 //         </Text>
 //       </View>

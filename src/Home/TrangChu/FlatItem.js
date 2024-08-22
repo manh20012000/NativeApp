@@ -39,11 +39,13 @@ import { useSelector, useDispatch } from "react-redux";
 // import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 const FlatItem = memo((props) => {
   const user = props.item.User; //
+
   const [databaiviet, setdatabaiviet] = useState(props.item);
   const [isLiked, setIsLiked] = useState("");
   const [arrlike, setArrlike] = useState(databaiviet.Like);
   const [isVisible2, setIsVisible2] = useState(false);
   const userCurent = useSelector((state) => state.auth.value);
+
   const toggleModal2 = () => {
     setIsVisible2(!isVisible2);
   };
@@ -56,11 +58,23 @@ const FlatItem = memo((props) => {
   };
   useEffect(() => {
     const listLike = async () => {
-      const { data } = await axios.post(
-        "https://nativeapp-vwvi.onrender.com/selectLike",
-        { _idBaiviet: databaiviet._id }
-      );
-      setArrlike(data);
+      try {
+        const { data } = await axios.post(`${path}/selectLike`, {
+          _idBaiviet: databaiviet._id,
+        });
+        setArrlike(data);
+      } catch (err) {
+        if (err.response) {
+          // Phản hồi trả về mã lỗi không thành công (status code không 2xx)
+          console.log(`Request failed with status ${err.response.status}`);
+        } else if (err.request) {
+          // Yêu cầu không được gửi đi hoặc không có phản hồi từ server
+          console.error("Request was made but no response was received");
+        } else {
+          // Các loại lỗi khác
+          console.error("Error:", err.message);
+        }
+      }
     };
     listLike();
   }, []);
@@ -102,7 +116,7 @@ const FlatItem = memo((props) => {
       });
       console.log("nhay dbusjd");
     } catch (err) {
-      console.log(err);
+      console.log(err, "lõi với tymoist flatitem");
     }
   };
   const DetaiHandress = () => {
@@ -172,12 +186,17 @@ const FlatItem = memo((props) => {
   };
   const selectCmt = async () => {
     console.log(databaiviet._id);
-    const { data } = await axios.post(`${path}/selectDataCmt`, {
-      //const { data } = await axios.post(`https://nativeapp-vwvi.onrender.com/selectDataCmt`, {
-      idbaiviet: databaiviet._id,
-      skip: 10,
-    });
-    setBinhLuan(data.data);
+    try {
+      const { data } = await axios.post(`${path}/selectDataCmt`, {
+        //const { data } = await axios.post(`https://nativeapp-vwvi.onrender.com/selectDataCmt`, {
+        idbaiviet: databaiviet._id,
+        skip: 10,
+      });
+      setBinhLuan(data.data);
+    } catch (error) {
+      console.log(error, "logerroflatitem selectCmt");
+    }
+
     // console.log(JSON.stringify(data.data), 'consso;edataacmt')
   };
   // cho phép gữi ảnh với bình luận // sendcomment
@@ -310,6 +329,21 @@ const FlatItem = memo((props) => {
     }, 2000);
   };
 
+  const handleDeleteAticarl = async () => {
+    console.log("haha");
+    try {
+      const { data } = await axios.delete(
+        `${path}/deleteAticarl/${databaiviet._id}`
+      );
+      alert("thoong baso ");
+    } catch (err) {
+      if (err.response) {
+        console.log("loi voiws xoa bai viet", err.response.status);
+      } else {
+        console.log("loi voiws xoa bai viet", err);
+      }
+    }
+  };
   return (
     <View style={styles.contain}>
       <View style={styles.bottomgradien}>
@@ -320,11 +354,11 @@ const FlatItem = memo((props) => {
           <View
             style={{
               width: 45,
-              height:45,
-              borderRadius:45,
+              height: 45,
+              borderRadius: 45,
               marginHorizontal: 6,
-              backgroundColor:'#888888',
-              marginTop:2,
+              backgroundColor: "#888888",
+              marginTop: 2,
             }}
           >
             <Image source={{ uri: user.Avatar }} style={styles.imges}></Image>
@@ -387,7 +421,6 @@ const FlatItem = memo((props) => {
       {showImage == true && (
         <Swiper style={{ position: "relative", height: 450 }} loop={true}>
           {anh.map((image, index) => (
-            
             <View key={index}>
               {/* <SkeletonPlaceholder> */}
               <View style={styles.mapImg}>
@@ -688,6 +721,23 @@ const FlatItem = memo((props) => {
                     Quản trị feed
                   </Text>
                 </TouchableOpacity>
+                {user._id === userCurent._id && (
+                  <TouchableOpacity
+                    onPress={handleDeleteAticarl}
+                    style={[styles.touchcmt, styles.toucb2]}
+                  >
+                    <AntDesign name="delete" size={20} color="black" />
+                    <Text
+                      style={{
+                        marginLeft: 20,
+                        fontSize: 20,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Delete
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           </View>
@@ -764,10 +814,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   imges: {
-    width:'100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     borderRadius: 100,
-   
   },
   viewsa: {
     flexDirection: "row",

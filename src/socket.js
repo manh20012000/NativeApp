@@ -19,7 +19,6 @@ export const SocketProvider = ({ children }) => {
       if (user) {
         try {
           const userToken = await AsyncStorage.getItem("userToken");
-
           const userTokenObject = JSON.parse(userToken);
           //  console.log(userTokenObject)
           const accessToken = JSON.parse(userToken)?.accessToken;
@@ -56,12 +55,7 @@ export const SocketProvider = ({ children }) => {
 
             // setUserOnline(prevUsers => [...prevUsers, userId]);
           });
-          // Lắng nghe sự kiện "user-offline" từ máy chủ
-          // socket.on("user-offline", (userId) => {
-          //   setUserOnline((prevUsers) =>
-          //     prevUsers.filter((user) => user !== userId)
-          //   );
-          // });
+
           setSocket(newSocket);
         } catch (error) {
           console.error("Error connecting to Socket.IO server:", error);
@@ -87,7 +81,6 @@ import path from "./config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { connectSocket } from "./Redex/Reducer/SocketConnection";
-
 const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const dispatch = useDispatch();

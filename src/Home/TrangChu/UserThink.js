@@ -275,7 +275,7 @@ const UserThink = ({ navigation, route }) => {
       }
     } catch (erro) {
       setLoading(false);
-      console.log(erro + "->>catch lỗi ");
+      console.log(erro + "->>catch lỗi userThink HanderUpload ");
     }
   };
   // console.log(selectedImages)

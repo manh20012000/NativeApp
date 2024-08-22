@@ -56,7 +56,7 @@ const Message = ({ navigation }) => {
               navigation.navigate("BootonGate");
             }}
           >
-            <Ionicons name="ios-arrow-back" size={24} color="white" />
+          <Ionicons name="arrow-back-outline" size={24} color="white" />
           </TouchableOpacity>
           <Text style={{ fontSize: 20, color: "white", fontWeight: "800" }}>
             Chats

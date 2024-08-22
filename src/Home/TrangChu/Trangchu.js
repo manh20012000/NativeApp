@@ -37,7 +37,7 @@ import SkeletonApp from "../../Skeleton/SkeletonApp.js";
 import Skeleton from "../../Skeleton/Skeleton.js";
 const TrangChu = ({ navigation }) => {
   const user = useSelector((state) => state.auth.value);
-  // console.log(user)
+  console.log(user)
   const { width } = useWindowDimensions();
   const [userStory, setUserStory] = useState({}); // danh cho story
   const [data, setData] = useState([{ index: 1 }]);
@@ -64,7 +64,7 @@ const TrangChu = ({ navigation }) => {
       setDataStory(data.data);
       setSakeIload2(true);
     } catch (err) {
-      console.log(err);
+      console.log(err,'lỗi với trang chủ handlerSelectVideoStory');
     } finally {
     }
   };
@@ -79,7 +79,7 @@ const TrangChu = ({ navigation }) => {
       setData(data.data);
       setSakeIload(true);
     } catch (err) {
-      console.log(err);
+      console.log(err,'lôi với trang chủ =>fetchdata');
     }
   };
   useEffect(() => {
@@ -318,18 +318,26 @@ const TrangChu = ({ navigation }) => {
                     resizeMode="cover"
                     isLooping
                   />
-                  <Image
+              
+                    <View style={{ width: 34,
+                      height: 35,
+                      borderRadius: 35,
+                      marginHorizontal: 6,
+                      marginLeft: 10,
+                      position: "absolute",
+                    top: 5,
+                  backgroundColor:'#888888'}} >
+                     <Image
                     source={{ uri: item.User.Avatar }}
                     style={{
                       width: 34,
                       height: 34,
                       borderRadius: 34,
-                      marginHorizontal: 6,
-                      marginLeft: 10,
-                      position: "absolute",
-                      top: 5,
+                      flex:1,
                     }}
                   ></Image>
+                  </View>
+                 
                   <Text
                     style={{
                       bottom: 4,

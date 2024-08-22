@@ -35,11 +35,11 @@ const SeeDeTail = ({ route, navigation }) => {
   };
   const [dataRoute, setDataRote] = useState(route.params);
   const [baiviet, setBaiviet] = useState([]);
-  // console.log(route.params)
+
   const NavigateMess = async () => {
     try {
       const { data } = await axios.get(`${path}/getMessage/${dataRoute._id}`);
-      // console.log(data, "dataatin nhan ");
+      console.log(data, "dataatin nhan ");
       if (data.length === 0) {
         navigation.navigate("PesionChat", {
           participants: dataRoute,
@@ -48,11 +48,11 @@ const SeeDeTail = ({ route, navigation }) => {
       } else {
         navigation.navigate("PesionChat", {
           participants: dataRoute,
-          Messages: data.messages,
+          Messages: data,
         });
       }
     } catch (error) {
-      console.log(error, "lỗi khi chuyen sang chat detail ");
+      console.log(error, "lỗi khi chuyen sang chat sseedetail NavigateMess");
     } finally {
       // console.log(dataUserChat)
     }
@@ -66,7 +66,7 @@ const SeeDeTail = ({ route, navigation }) => {
       });
       console.log(message, "message");
     } catch (err) {
-      console.log(err, "lỗi với addfriend");
+      console.log(err, "lỗi với addfriend message handlePress");
     }
   };
   useEffect(() => {

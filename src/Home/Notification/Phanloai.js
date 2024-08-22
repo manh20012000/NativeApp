@@ -8,56 +8,63 @@ const data = [
     { label: 'my', value: '3' },
     { label: 'tháilan', value: '4' },
     { label: 'pháp', value: '5' },
-    { label: 'nhật', value: '5' },
-    { label: 'anh', value: '5' },
-    { label: 'nga', value: '5' },
-    { label: 'lào', value: '5' },
+    { label: 'nhật', value: '6' },
+    { label: 'anh', value: '7' },
+    { label: 'nga', value: '8' },
+    { label: 'lào', value: '9' },
 
 ];
 
 const PhanLoai = () => {
     const [value, setValue] = useState(null);
 
-  const renderItem = item => {
-    return (
-      <View style={styles.item}>
-        <Text style={styles.textItem}>{item.label}</Text>
-        {item.value === value && (
-          <AntDesign
-            style={styles.icon}
-            color="black"
-            name="Safety"
-            size={20}
-          />
-        )}
-      </View>
-    );
-  };
+    const renderItem = item => {
+        return ( <
+            View style = { styles.item } >
+            <
+            Text style = { styles.textItem } > { item.label } < /Text> {
+                item.value === value && ( <
+                    AntDesign style = { styles.icon }
+                    color = "black"
+                    name = "Safety"
+                    size = { 20 }
+                    />
+                )
+            } <
+            /View>
+        );
+    };
 
-  return (
-    <Dropdown
-      style={styles.dropdown}
-      placeholderStyle={styles.placeholderStyle}
-      selectedTextStyle={styles.selectedTextStyle}
-      inputSearchStyle={styles.inputSearchStyle}
-      iconStyle={styles.iconStyle}
-      data={data}
-      search
-      maxHeight={300}
-      labelField="label"
-      valueField="value"
-      placeholder="xuất sứ"
-      searchPlaceholder="Search..."
-      value={value}
-      onChange={item => {
-        setValue(item.value);
-      }}
-      renderLeftIcon={() => (
-        <AntDesign style={styles.icon} color="black" name="Safety" size={30} />
-      )}
-      renderItem={renderItem}
-    />
-  );
+    return ( <
+        Dropdown style = { styles.dropdown }
+        placeholderStyle = { styles.placeholderStyle }
+        selectedTextStyle = { styles.selectedTextStyle }
+        inputSearchStyle = { styles.inputSearchStyle }
+        iconStyle = { styles.iconStyle }
+        data = { data }
+        search maxHeight = { 300 }
+        labelField = "label"
+        valueField = "value"
+        placeholder = "xuất sứ"
+        searchPlaceholder = "Search..."
+        value = { value }
+        onChange = {
+            item => {
+                setValue(item.value);
+            }
+        }
+        renderLeftIcon = {
+            () => ( <
+                AntDesign style = { styles.icon }
+                color = "black"
+                name = "Safety"
+                size = { 30 }
+                />
+            )
+        }
+        renderItem = { renderItem }
+        />
+    );
 
 };
 

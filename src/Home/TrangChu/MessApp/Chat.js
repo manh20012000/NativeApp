@@ -18,6 +18,7 @@ import { GiftedChat } from "react-native-gifted-chat";
 import { useSocket } from "../../../socket";
 const Chat = ({ navigation }) => {
   const { width, height } = useWindowDimensions();
+  
   const user = useSelector((state) => state.auth.value);
   const StatusUser = useSelector((state) => state.Status.value);
   const [filter, setFillter] = useState([]);
@@ -141,7 +142,7 @@ const Chat = ({ navigation }) => {
       } else {
         navigation.navigate("PesionChat", {
           participants: user,
-          Messages: data.messages,
+          Messages: data,
         });
       }
     } catch (error) {

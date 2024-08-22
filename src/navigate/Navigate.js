@@ -26,7 +26,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../Redex/Reducer/auth.slice.js";
 import { jwtDecode } from "jwt-decode";
 import { encode, decode } from "js-base64";
-
+import ViewCall from "../Home/TrangChu/MessApp/ViewCall.js";
 const Stack = createNativeStackNavigator();
 const Navigete = () => {
   const dispath = useDispatch();
@@ -39,7 +39,7 @@ const Navigete = () => {
       const userTokenString = await AsyncStorage.getItem("userToken");
       if (userTokenString !== null) {
         const userTokenObject = JSON.parse(userTokenString);
-        const decoded = decode(userTokenObject.accessToken);
+        const decoded = jwtDecode(userTokenObject.accessToken);
         const isTokenExpired = decoded.exp * 1000 < Date.now();
         if (isTokenExpired) {
           setIsLoggedIn(false);
@@ -84,6 +84,7 @@ const Navigete = () => {
           <Stack.Screen name="EditerVideo" component={EditerVideo} />
           <Stack.Screen name="SeemVideo" component={SeemVideo} />
           <Stack.Screen name="SetTingInfor" component={SetTingInfor} />
+          <Stack.Screen name="ViewCall" component={ViewCall} />
           {/* <Stack.Screen
         name='PostWithCamera'
         component={PostWithCamera}

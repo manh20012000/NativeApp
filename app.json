@@ -3,6 +3,7 @@
     "name": "NativeApp",
     "slug": "NativeApp",
     "version": "1.0.0",
+    "sdkVersion": "51.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -11,7 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    // "useNextNotificationsApi": true,
+    
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
