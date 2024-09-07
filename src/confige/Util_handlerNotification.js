@@ -72,7 +72,7 @@ export class HandlerNotification {
         token = `${e}`;
       }
       if (token) {
-        // await AsyncStorage.setItem("fcmtoken", token);
+        await AsyncStorage.setItem("fcmtoken", token);
         await AsyncStorage.removeItem("fcmtoken");
         await this.updateTokenForUser(token);
       }
@@ -83,21 +83,24 @@ export class HandlerNotification {
 
   static updateTokenForUser = async (token) => {
     if (this.userData) {
-      console.log(this.userData._id, this.userData.expoPushToken);
-      const { expoPushToken } = this.userData;
-      console.log(token, "giá trị token222");
+      // console.log(this.userData._id, this.userData.expoPushToken);
+      const expoPushToken = this.userData.expoPushToken;
+      console.log(expoPushToken, "giá trị token222");
       if (expoPushToken && !expoPushToken.includes(token)) {
-        expoPushToken.push(token);
-        await this.updateExpoPushToken(expoPushToken);
+        console.log(token, "giá tr");
+        //      expoPushToken.push(token);
+        const updatedExpoPushToken = [...expoPushToken, token];
+
+        await this.updateExpoPushToken(updatedExpoPushToken, this.userData._id);
       }
     }
   };
 
-  static updateExpoPushToken = async (expoPushToken) => {
+  static updateExpoPushToken = async (expoPushToken, id) => {
     try {
-      console.log(this.userData._id);
+      console.log(id, expoPushToken);
       const { data } = await axios.put(
-        `${path}/user/upadateFCMtoken/${this.userData._id}`,
+        `${path}/user/upadateFCMtoken/${id}`,
         { expoPushToken },
         {
           headers: {
@@ -105,7 +108,11 @@ export class HandlerNotification {
           },
         }
       );
-      console.log("upadte thanh cong", data);
+
+      const userDataString = JSON.stringify(data.data);
+      await AsyncStorage.setItem("userToken", userDataString);
+      await AsyncStorage.removeItem("userToken");
+
       await AsyncStorage.setItem("userData", JSON.stringify(data.data));
       await AsyncStorage.removeItem("userData");
     } catch (err) {

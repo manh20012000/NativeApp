@@ -15,7 +15,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { collection, getDocs } from "firebase/firestore";
-import { HandlerNotification } from "../../confige/Util_handlerNotification.js";
+
 import { Tabs, CollapsibleTabView } from "react-native-collapsible-tab-view";
 import VideoData from "../../Data/VideoData";
 import FlatItem from "../TrangChu/FlatItem.js";
@@ -23,7 +23,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import path from "../../confige/config.js";
 import { UpdateAuth } from "../../Redex/Reducer/auth.slice.js";
-
+import { HandlerNotification } from "../../confige/Util_handlerNotification.js";
 const Infor = ({ navigation, route }) => {
   const count = useSelector((state) => state.auth.value);
   // console.log(count,'usser counet')
@@ -48,11 +48,11 @@ const Infor = ({ navigation, route }) => {
   );
   const selectUser = async () => {
     try {
-      console.log(count._id, "ìddd");
+     
       const { data } = await axios.post(`${path}/userInfor`, {
         _id: count._id,
       });
-      console.log(data.data);
+     
       setUserInfor(data.data);
       // console.log("user", data.data);
     } catch (err) {
@@ -157,7 +157,7 @@ const Infor = ({ navigation, route }) => {
             <Text style={styles.txt1}>Edit Profile</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate("SetTingInfor")}
+            onPress={() => navigation.navigate("SetTingInfor", inforUser)}
             style={styles.btn2}
           >
             <Text style={styles.txt1}>...</Text>

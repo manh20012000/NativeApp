@@ -69,9 +69,9 @@ const Login = ({ navigation }) => {
            JSON.stringify(userData.refreshToken)
          );
         setLoading(false);
-        // navigation.navigate("BootonGate", userData);
-        // setPass("");
-        // setName("");
+        navigation.navigate("BootonGate", userData);
+        setPass("");
+        setName("");
       } else {
         alert("tài khoản hoặc mật khẩu không chính xác");
       }

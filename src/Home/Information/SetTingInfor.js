@@ -28,11 +28,16 @@ import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CommonActions } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-
+import { HandlerNotification } from "../../confige/Util_handlerNotification.js";
 import { useSocket } from "../../socket.js";
-const SetTingInfor = ({ navigation }) => {
+const SetTingInfor = ({ navigation, route }) => {
+  // console.log(route.params, "giá trị");
   const socket = useSocket();
   const dispatch = useDispatch();
+  const user = route.params;
+  const handlerArrayfcmToken = (fcmtoken) => {
+    return user.fcmToken.filter((token) => token !== fcmtoken);
+  };
   const backdeleteAcyns = async () => {
     navigation.dispatch(
       CommonActions.reset({
@@ -42,12 +47,19 @@ const SetTingInfor = ({ navigation }) => {
         ],
       })
     );
+    const fcmtoken = await AsyncStorage.getItem("fcmtoken");
     await AsyncStorage.removeItem("userToken");
-     await AsyncStorage.removeItem("fcmtoken");
+    await AsyncStorage.removeItem("fcmtoken");
+    HandlerNotification.updateExpoPushToken(
+      handlerArrayfcmToken(fcmtoken),
+      user._id
+    );
+   
+    await AsyncStorage.removeItem("accessToken");
+    await AsyncStorage.removeItem("refreshToken");
     socket?.disconnect();
     socket?.removeAllListeners();
     socket?.close();
-
   };
   return (
     <View style={{ flex: 1, backgroundColor: "black" }}>
