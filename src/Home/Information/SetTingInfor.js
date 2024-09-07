@@ -43,6 +43,7 @@ const SetTingInfor = ({ navigation }) => {
       })
     );
     await AsyncStorage.removeItem("userToken");
+     await AsyncStorage.removeItem("fcmtoken");
     socket?.disconnect();
     socket?.removeAllListeners();
     socket?.close();

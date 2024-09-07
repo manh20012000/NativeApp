@@ -13,7 +13,7 @@ import BootonGate from "./BootonGate.js";
 import Message from "../Home/TrangChu/MessApp/Message.js";
 import PesionChat from "../Home/TrangChu/MessApp/PesionChat.js";
 import UserThink from "../Home/TrangChu/UserThink.js";
-import InforUser from "../Login/InforUser.js";
+import InforLogin from "../Login/InforLogin.js";
 import PostWithCamera from "../Home/TrangChu/PostWithCamera.js";
 import Coment from "../Home/TrangChu/comment.js";
 import EditProfile from "../Home/Information/EditInfor.js";
@@ -37,9 +37,10 @@ const Navigete = () => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       const userTokenString = await AsyncStorage.getItem("userToken");
+      const userTokenObject = JSON.parse(userTokenString);
+      // console.log(userTokenObject);
       if (userTokenString !== null) {
-        const userTokenObject = JSON.parse(userTokenString);
-        const decoded = jwtDecode(userTokenObject.accessToken);
+        const decoded = jwtDecode(userTokenObject.refreshToken);
         const isTokenExpired = decoded.exp * 1000 < Date.now();
         if (isTokenExpired) {
           setIsLoggedIn(false);
@@ -77,7 +78,7 @@ const Navigete = () => {
           <Stack.Screen name="Mess" component={Message} />
           <Stack.Screen name="PesionChat" component={PesionChat} />
           <Stack.Screen name="UserThink" component={UserThink} />
-          <Stack.Screen name="InforUser" component={InforUser} />
+          <Stack.Screen name="InforLogin" component={InforLogin} />
           <Stack.Screen name="Coment" component={Coment} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
           <Stack.Screen name="PostVideo" component={PostVideo} />

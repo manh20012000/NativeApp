@@ -2,40 +2,29 @@ import {
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
   TouchableOpacity,
   TextInput,
-  Form,
-  Button,
   ScrollView,
   ImageBackground,
-  DatePickerAndroid,
-  Modal,
-  Keyboard,
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
 } from "react-native";
-import React, { Component, useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+
 import { Ionicons } from "@expo/vector-icons";
 import { RadioButton } from "react-native-paper";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { FontAwesome } from "@expo/vector-icons";
+
 import { FontAwesome5 } from "@expo/vector-icons";
-import { AntDesign, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { set } from "lodash";
-const InforUser = ({ navigation }) => {
-  const back = () => {
-    navigation.navigate("Login");
-  };
+import { AntDesign } from "@expo/vector-icons";
+const InforLogin = ({ navigation }) => {
   //cac thanh phan state của textinpur
   const [phone, setPhone] = useState();
   const [Name, setName] = useState();
   const [Birth, setBirth] = useState();
   const [gender, setGender] = useState();
   const [avatar, setAvatar] = useState();
+  const back = () => {
+    navigation.navigate("Login");
+  };
   const handleGenderChange = (value) => {
     setGender(value);
     if (value === "male") {
@@ -68,16 +57,15 @@ const InforUser = ({ navigation }) => {
     hideDatePicker();
   };
   // chon nam hay nữ với ảnh đại đien
-  const chonGender = () => {};
   // bắt đầu thực hiện gữi các thông tin lần 1 tới trang tiếp theo
   const data = [phone, Name, Birth, gender, avatar];
   const handpressNext = () => {
     if (
-      phone == null ||
-      Name == null ||
-      Birth == null ||
-      gender == null ||
-      avatar == null
+      phone === null ||
+      Name === null ||
+      Birth === null ||
+      gender === null ||
+      avatar === null
     ) {
       alert("vui lòng nhập đủ thông tin");
     } else {
@@ -93,16 +81,14 @@ const InforUser = ({ navigation }) => {
   };
 
   return (
-    <ScrollView
-    contentContainerStyle={{ flexGrow: 1 }}
-    >
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <ImageBackground
         source={{
           uri: "https://i.pinimg.com/originals/90/c7/1b/90c71b954a7e0a34bf0c0e2b558d5171.jpg",
         }}
         style={{
           resizeMode: "cover",
-          height:'100%',
+          height: "100%",
         }}
       >
         <View
@@ -121,13 +107,11 @@ const InforUser = ({ navigation }) => {
         </View>
         <View
           style={{
-           
             alignItems: "center",
             width: "100%",
-            marginVertical:20,
-            flexDirection: 'column',
+            marginVertical: 20,
+            flexDirection: "column",
             justifyContent: "space-around",
-          
           }}
         >
           <Text
@@ -148,14 +132,14 @@ const InforUser = ({ navigation }) => {
             alignItems: "center",
             flexDirection: "column",
             justifyContent: "space-around",
-           
-            height:500,
+
+            height: 500,
           }}
         >
           <TextInput
             style={{
               width: "80%",
-              height:60,
+              height: 60,
               backgroundColor: "white",
               paddingHorizontal: 14,
               borderRadius: 20,
@@ -167,20 +151,20 @@ const InforUser = ({ navigation }) => {
           <TextInput
             style={{
               width: "80%",
-              height:60,
+              height: 60,
               backgroundColor: "white",
               paddingHorizontal: 14,
               borderRadius: 20,
             }}
             placeholder="nhập số phone"
             value={phone}
-              keyboardType="number-pad"
+            keyboardType="number-pad"
             onChangeText={setPhone}
           ></TextInput>
           <View
             style={{
               width: "80%",
-              height:80,
+              height: 80,
               backgroundColor: "white",
               paddingHorizontal: 14,
               borderRadius: 20,
@@ -194,7 +178,6 @@ const InforUser = ({ navigation }) => {
                 color: "black",
               }}
             >
-              {" "}
               Chọn giới tính
             </Text>
             <RadioButton.Group
@@ -214,7 +197,7 @@ const InforUser = ({ navigation }) => {
           <View
             style={{
               width: "80%",
-              height:60,
+              height: 60,
               backgroundColor: "white",
               paddingHorizontal: 14,
               borderRadius: 20,
@@ -233,7 +216,7 @@ const InforUser = ({ navigation }) => {
                 backgroundColor: "pink",
                 width: "20%",
                 alignItems: "center",
-                height:40
+                height: 40,
               }}
             >
               <Text>Lich</Text>
@@ -241,7 +224,10 @@ const InforUser = ({ navigation }) => {
             <DateTimePickerModal
               isVisible={isDatePickerVisible}
               mode="date"
-              onConfirm={handleConfirm}
+              onConfirm={(e) => {
+                console.log(e);
+                handleConfirm(e);
+              }}
               onCancel={hideDatePicker}
             />
           </View>
@@ -250,7 +236,7 @@ const InforUser = ({ navigation }) => {
             onPress={handpressNext}
             style={{
               width: "40%",
-              height:50,
+              height: 50,
               backgroundColor: "blue",
               borderRadius: 10,
               justifyContent: "center",
@@ -308,8 +294,8 @@ const InforUser = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </ImageBackground>
-      </ScrollView>
+    </ScrollView>
   );
 };
-export default InforUser;
+export default InforLogin;
 const styles = StyleSheet.create({});

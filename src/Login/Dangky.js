@@ -24,7 +24,7 @@ import { RadioButton } from "react-native-paper";
 import Spinner from "react-native-loading-spinner-overlay";
 import path from "../confige/config.js";
 const Dangky = ({ navigation, route }) => {
-  // console.log(route.params[0])
+  console.log(route.params);
   // lấy gtri cua cac o text;
 
   const [email, setMail] = useState();
@@ -64,7 +64,7 @@ const Dangky = ({ navigation, route }) => {
         }
       } catch (error) {
         setLoading(false);
-        alert(+" that bai");
+        alert(" that bai" + error);
       }
     } else {
       alert("mật khẩu xác nhận ko chính xác");

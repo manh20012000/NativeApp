@@ -21,10 +21,12 @@ import { useDispatch } from "react-redux";
 import { login } from "../Redex/Reducer/auth.slice";
 import path from "../confige/config";
 import axios from "axios";
+import { HandlerNotification } from "../confige/Util_handlerNotification";
 // import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Settings,LoginButton} from "react-native-fbsdk-next";
+import { Settings, LoginButton } from "react-native-fbsdk-next";
+// } from "@react-native-google-signin/google-signin";
 // Settings.setAppID("7646286505430226");
 
 const Login = ({ navigation }) => {
@@ -52,16 +54,24 @@ const Login = ({ navigation }) => {
         { taikhoan: emailphone, matkhau: matkhau }
       );
       if (data.status == 200) {
-        const datas = data;
-        const userData = datas.data;
-        console.log("userData");
+        const userData = data.data;
+
+        await HandlerNotification.checkNotificationPermission(userData);
         const userDataString = JSON.stringify(userData);
         await AsyncStorage.setItem("userToken", userDataString);
         dispath(login(userData));
+         await AsyncStorage.setItem(
+           "accessToken",
+           JSON.stringify(userData.accessToken)
+         );
+         await AsyncStorage.setItem(
+           "refreshToken",
+           JSON.stringify(userData.refreshToken)
+         );
         setLoading(false);
-        navigation.navigate("BootonGate", userData);
-        setPass("");
-        setName("");
+        // navigation.navigate("BootonGate", userData);
+        // setPass("");
+        // setName("");
       } else {
         alert("tài khoản hoặc mật khẩu không chính xác");
       }
@@ -70,7 +80,7 @@ const Login = ({ navigation }) => {
       if (eror == 403) {
         alert("tai khoan mât khẩu không chình xác");
       } else {
-        alert(eror + "tai khoan mât khẩu không chình xác");
+        console.log(eror + "tai khoan mât khẩu không chình xác");
       }
     }
   };
@@ -78,28 +88,10 @@ const Login = ({ navigation }) => {
   const anhien = () => {
     setHienthi(!hienthi);
   };
-  // const SiginWithGg= async () => {
-  //   try {
-  //     await GoogleSignin.hasPlayServices();
-  //     const userInfo = await GoogleSignin.signIn();
-  //     setState({ userInfo });
-  //   } catch (error) {
-  //     if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-  //       // user cancelled the login flow
-  //     } else if (error.code === statusCodes.IN_PROGRESS) {
-  //       // operation (e.g. sign in) is in progress already
-  //     } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-  //       // play services not available or outdated
-  //     } else {
-  //       // some other error happened
-  //     }
-  //   }
-  // };
-  // nhap form ddnag kys
+
   const sigin = () => {
     navigation.navigate("InforUser");
   };
-
 
   return (
     <View style={styles.container}>

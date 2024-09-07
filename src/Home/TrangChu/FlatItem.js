@@ -31,7 +31,7 @@ import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import TimeAgo from "react-native-timeago";
 import { LinearGradient } from "expo-linear-gradient";
-import RenderHtml from "react-native-render-html";
+// import RenderHtml from "react-native-render-html";
 import { Octicons } from "@expo/vector-icons";
 import path from "../../confige/config.js";
 import uuid from "uuid/v4";
@@ -488,7 +488,7 @@ const FlatItem = memo((props) => {
           <AntDesign
             name="heart"
             size={24}
-            color="white"
+          
             color={isLiked ? "red" : "white"}
             // color={databaiviet.Like.filter(x => x._id == props.userDn).length > 0 ? "red" : "white"}
           />

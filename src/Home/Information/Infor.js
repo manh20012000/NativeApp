@@ -15,9 +15,8 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { collection, getDocs } from "firebase/firestore";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { HandlerNotification } from "../../confige/Util_handlerNotification.js";
 import { Tabs, CollapsibleTabView } from "react-native-collapsible-tab-view";
-import { FontAwesome, EvilIcons, AntDesign } from "@expo/vector-icons";
 import VideoData from "../../Data/VideoData";
 import FlatItem from "../TrangChu/FlatItem.js";
 import { useSelector, useDispatch } from "react-redux";
@@ -53,6 +52,7 @@ const Infor = ({ navigation, route }) => {
       const { data } = await axios.post(`${path}/userInfor`, {
         _id: count._id,
       });
+      console.log(data.data);
       setUserInfor(data.data);
       // console.log("user", data.data);
     } catch (err) {

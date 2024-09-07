@@ -3,6 +3,11 @@
     "name": "NativeApp",
     "slug": "NativeApp",
     "version": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "d3b46c22-50d6-46ef-b4b5-05e7ff29d2bb"
+      }
+    },
     "sdkVersion": "51.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,20 +17,20 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    
+
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "googleServicesFile": "D:/lapTrinhMobile/NativeApp/android/google-services.json",
+      "googleServicesFile": "./android/app/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.NativeApp",
       "versionCode": 1,
-      "compileSdkVersion": 31
+      "compileSdkVersion": 33
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -35,7 +40,9 @@
       "@react-native-firebase/auth",
       "@react-native-firebase/crashlytics",
       "expo-build-properties",
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin",
+      "expo-camera"
+     
     ]
   }
 }

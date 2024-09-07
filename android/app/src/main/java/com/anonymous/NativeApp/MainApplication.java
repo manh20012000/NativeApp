@@ -3,7 +3,6 @@ package com.anonymous.NativeApp;
 import android.app.Application;
 import android.content.res.Configuration;
 import androidx.annotation.NonNull;
-
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
@@ -19,6 +18,8 @@ import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import java.util.List;
+import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
+import io.invertase.firebase.notifications.ReactNativeFirebaseNotificationsPackage;;
 
 public class MainApplication extends Application implements ReactApplication {
 

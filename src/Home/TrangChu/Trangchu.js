@@ -37,7 +37,7 @@ import SkeletonApp from "../../Skeleton/SkeletonApp.js";
 import Skeleton from "../../Skeleton/Skeleton.js";
 const TrangChu = ({ navigation }) => {
   const user = useSelector((state) => state.auth.value);
-  console.log(user)
+  // console.log(user)
   const { width } = useWindowDimensions();
   const [userStory, setUserStory] = useState({}); // danh cho story
   const [data, setData] = useState([{ index: 1 }]);

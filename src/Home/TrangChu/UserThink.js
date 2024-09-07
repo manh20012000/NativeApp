@@ -28,7 +28,7 @@ import { Entypo } from "@expo/vector-icons";
 import { BottomSheet } from "react-native-btr";
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { Camera, CameraType } from "expo-camera";
+import { Camera, CameraType } from "expo-camera/legacy";
 import Swiper from "react-native-swiper";
 import * as MediaLibrary from "expo-media-library";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -39,10 +39,10 @@ import { Constants } from "expo";
 import DistrictScreen from "./DistricScreen.js";
 import Spinner from "react-native-loading-spinner-overlay";
 import Countries from "../../public/selectTed.js";
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from "react-redux";
 
 const UserThink = ({ navigation, route }) => {
-  const count = useSelector((state) => state.auth.value)
+  const count = useSelector((state) => state.auth.value);
   const [Hienthi, setHienthi] = useState(true);
   const HandeHienthi = () => {
     setHienthi(true);
@@ -98,7 +98,7 @@ const UserThink = ({ navigation, route }) => {
   // set trang thai cho text thay đoi
   const [isText, setIsText] = useState();
   const onchangerTexT = (value) => {
-      setIsText(value);
+    setIsText(value);
     if (value == "" && selectedImages.length == 0) {
       setIsSelectable(false);
     } else if (value == "" && selectedImages.length > 0) {
@@ -107,7 +107,7 @@ const UserThink = ({ navigation, route }) => {
       setIsSelectable(true);
     }
   };
- 
+
   const XoaAnh = (image, index) => {
     // console.log(image,index)
     const newImages = [...selectedImages];
@@ -234,7 +234,6 @@ const UserThink = ({ navigation, route }) => {
   const formData = new FormData();
 
   const HanderUpload = async () => {
-    
     setLoading(true);
     let datetime = new Date();
     let datePostTimstemp = await datetime.toISOString().slice(0, -5);
@@ -244,12 +243,12 @@ const UserThink = ({ navigation, route }) => {
     formData.append("permission", permission);
     formData.append("vitri", vitri);
     formData.append("idLogin", data._id);
-    
+
     for (let i = 0; i < selectedImages.length; i++) {
-      console.log(selectedImages[i])
+      console.log(selectedImages[i]);
       formData.append("ArayImages", {
         uri: selectedImages[i],
-        name: `image_${i}.jpeg`, 
+        name: `image_${i}.jpeg`,
         type: "image/jpeg",
       });
     }
@@ -260,7 +259,6 @@ const UserThink = ({ navigation, route }) => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-          
           },
         }
       );
@@ -595,7 +593,7 @@ const UserThink = ({ navigation, route }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  setHienthi(false); 
+                  setHienthi(false);
                   __startCamera();
                 }}
                 style={{}}
@@ -686,7 +684,7 @@ const UserThink = ({ navigation, route }) => {
                   alignItems: "center",
                   paddingHorizontal: 10,
                   flexDirection: "row",
-                   marginTop:'50'
+                  marginTop: "50",
                 }}
               >
                 <TouchableOpacity onPress={toggleCameraType}>
@@ -807,7 +805,7 @@ const UserThink = ({ navigation, route }) => {
                     height: 70,
                     borderRadius: 50,
                     backgroundColor: "#fff",
-                  marginTop:20
+                    marginTop: 20,
                   }}
                 />
               </View>
