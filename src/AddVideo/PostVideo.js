@@ -42,6 +42,7 @@ import {
 import Spinner from "react-native-loading-spinner-overlay";
 import axios from "axios";
 import path from "../confige/config.js";
+import ParsedText from "react-native-parsed-text";
 const PostVideo = ({ navigation, route }) => {
   const count = useSelector((state) => state.auth.value);
   const [dataUser, setData] = useState(count);
@@ -76,15 +77,16 @@ const PostVideo = ({ navigation, route }) => {
   };
 
   const handleValueModal = (valueSearch) => {
-    setMention("@" + valueSearch.Hoten);
-    if (vConten == null) {
-      setVconten(mention);
-    } else setVconten(vConten);
-
-    if (valueSearch != "") {
+    // console.log(valueSearch);
+    if (vConten === null) {
+      setVconten((Vconten) => "" + "@" + valueSearch.Hoten);
+      setVisible(!visible);
+    } else if (valueSearch !== "") {
+      setVconten((Vconten) => Vconten + "@" + valueSearch.Hoten);
       setVisible(!visible);
     }
   };
+
   const handlerChangerText = (value) => {
     setVconten(value);
   };
@@ -106,25 +108,34 @@ const PostVideo = ({ navigation, route }) => {
     let datetime = new Date();
     let datePostTimstemp = await datetime.toISOString().slice(0, -5);
     setLoading(true);
-    console.log(data.fileselect, data.resizeMode);
+    console.log(
+      data.fileselect,
+      data.resizeMode,
+      "may log ra réivnod cho tao "
+    );
     formData.append("Height", data.heightV);
     formData.append("widthV", data.widthV);
-    formData.append("datePost", datePostTimstemp);
-    formData.append("videoConten", vConten);
-    formData.append("privacy", privacy);
+    formData.append("Videos", data.fileselect);
+    // formData.append("datePost", datePostTimstemp);
+    // formData.append("privacy", privacy);
+    // formData.append("resizeMode", data.resizeMode);
+    // formData.append("userId", dataUser._id);
+    // formData.append("located", located);
+    // formData.append("nameMusic", dataUser.Hoten);
     formData.append("Video", {
-      uri: data.fileselect,
+      uri:
+        data.fileselect ??
+        "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540levanmanh20012000%252Fnativeapp/ImagePicker/c3a97e3a-662d-4ab6-91de-1b913a01956f.mp4",
       name: `Video${datePostTimstemp}.mp4`,
       type: "video/mp4",
     });
-    formData.append("resizeMode", data.resizeMode);
-    formData.append("userId", dataUser._id);
-    formData.append("located", located);
-    formData.append("textinLocation", data.inputText);
-    formData.append("positionX", data.positionX);
-    formData.append("positionY", data.positionY);
-    formData.append("nameMusic", dataUser.Hoten);
+    setLoading(false);
     try {
+      // Dùng getParts() để log từng phần tử
+      const parts = formData.getParts();
+      parts.forEach((part) => {
+        console.log(part.fieldName, part);
+      });
       const { status, message, msg } = await axios.post(
         `${path}/uploadVideo`,
         //`${path}/uploadVideo`,
@@ -135,11 +146,11 @@ const PostVideo = ({ navigation, route }) => {
           },
         }
       );
-      setVconten(null);
-      setPrivacy("public");
-      setLocated(null);
+      // setVconten(null);
+      // setPrivacy("public");
+      // setLocated(null);
 
-      console.log(data.fileselect);
+      // console.log(data.fileselect);
       if (status == 200) {
         navigation.navigate("Video");
         setLoading(false);
@@ -147,11 +158,33 @@ const PostVideo = ({ navigation, route }) => {
       }
     } catch (erro) {
       setLoading(false);
-      console.log(erro + "->>catch lỗi ");
+      console.log(erro.message + "->>catch lỗi ");
     } finally {
       data.fileselect = null;
     }
   };
+  // const handleUrlPress = (url, matchIndex /*: number*/) => {
+  //   LinkingIOS.openURL(url);
+  // };
+  // const handlePhonePress = (phone, matchIndex /*: number*/) => {
+  //   AlertIOS.alert(`${phone} has been pressed!`);
+  // };
+
+  // const handleNamePress = (name, matchIndex /*: number*/) => {
+  //   AlertIOS.alert(`Hello ${name}`);
+  // };
+
+  // const handleEmailPress = (email, matchIndex /*: number*/) => {
+  //   AlertIOS.alert(`send email to ${email}`);
+  // };
+
+  // const renderText = (matchingString, matches) => {
+  //   // matches => ["[@michel:5455345]", "@michel", "5455345"]
+  //   let pattern = /\[(@[^:]+):([^\]]+)\]/i;
+  //   let match = matchingString.match(pattern);
+  //   return `^^${match[1]}^^`;
+  // };
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -167,7 +200,7 @@ const PostVideo = ({ navigation, route }) => {
           onPress={() => navigation.navigate(" ")}
           style={{ justifyContent: "center" }}
         >
-          <Ionicons name="md-arrow-back-sharp" size={24} color="black" />
+          <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
         <View
           style={{
@@ -401,7 +434,6 @@ const PostVideo = ({ navigation, route }) => {
           <View style={{ flexDirection: "row" }}>
             <MaterialIcons name="public" size={24} color="#333333" />
             <Text style={{ fontWeight: "500" }}>
-              {" "}
               Everyone can you this post
             </Text>
           </View>
@@ -623,5 +655,39 @@ const styles = StyleSheet.create({
     flex: 0.32,
     borderTopStartRadius: 25,
     borderTopEndRadius: 25,
+  },
+  textDisplay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding: 10,
+  },
+  textContainer: {
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  mention: {
+    color: "blue", // Định dạng cho @mention
+    fontWeight: "bold",
+  },
+  hashtag: {
+    color: "green", // Định dạng cho #hashtag
+    fontWeight: "bold",
+  },
+  normalText: {
+    color: "black", // Văn bản thông thường
+  },
+  textInput: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding: 10,
+    opacity: 0, // Ẩn TextInput nhưng vẫn cho phép nhập liệu
+    fontSize: 16,
+    lineHeight: 24,
   },
 });

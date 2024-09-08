@@ -12,11 +12,15 @@ import {
   Text,
   TextInput,
   Animated,
+  useWindowDimensions,
+  KeyboardAvoidingView,
 } from "react-native";
+import { v4 as uuidv4 } from "uuid";
+import Feather from "@expo/vector-icons/Feather";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
 import NewRecode from "./NewRecode";
-import { Camera, CameraType } from "expo-camera";
+import { Camera, CameraType } from "expo-camera/legacy";
 import Swiper from "react-native-swiper";
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -27,8 +31,11 @@ import { Octicons } from "@expo/vector-icons";
 import axios from "axios";
 import path from "../confige/config";
 import Spinner from "react-native-loading-spinner-overlay";
+import * as FileSystem from "expo-file-system";
 import { useSelector, useDispatch } from "react-redux";
+import { FFmpegKit, FFmpegKitConfig } from "ffmpeg-kit-react-native";
 const RecodViedeo = ({ navigation }) => {
+  const { height, width } = useWindowDimensions();
   const [autoPlays, setAutoplay] = useState(false);
   const [trangThai, setTrangThai] = useState(1);
   const [thanhBar, setThanhBar] = useState(1);
@@ -104,45 +111,106 @@ const RecodViedeo = ({ navigation }) => {
   };
   const textRef = useRef(null);
 
-  const [positionX, setPositionX] = useState(0);
-  const [positionY, setPositionY] = useState(0);
+  const [positionX, setPositionX] = useState(50);
+  const [positionY, setPositionY] = useState(100);
   const [loading, setLoading] = useState(false);
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponder: () => true, // Kích hoạt khi có hành động kéo
       onPanResponderMove: (event, gestureState) => {
         const { dx, dy } = gestureState;
 
+        // Tính toán vị trí mới của X và Y nhưng giới hạn trong màn hình
+        const newX = Math.max(-150, Math.min(positionX + dx, width - 0)); // Giới hạn X
+        const newY = Math.max(0, Math.min(positionY + dy, height - 0)); // Giới hạn Y
+
+        // Cập nhật vị trí mới cho text
         textRef.current.setNativeProps({
-          style: { transform: [{ translateX: dx }, { translateY: dy }] },
+          style: { left: newX, top: newY },
         });
+        console.log(newX, newY);
+        setPositionX(newX); // Cập nhật X
+        setPositionY(newY); // Cập nhật Y
       },
-      onPanResponderMove: (event, gestureState) => {
-        const { dx, dy } = gestureState;
-        textRef.current.setNativeProps({
-          style: { transform: [{ translateX: dx }, { translateY: dy }] },
-        });
-        console.log(dy);
-        setPositionX(dx);
-        setPositionY(dy);
+      onPanResponderRelease: () => {
+        // Sau khi người dùng thả text, không cần cập nhật gì thêm ở đây
       },
     })
   ).current;
+  const uploadToCloudinary = async (videoUri) => {
+    try {
+      const randomUUID = uuidv4();
+
+      const data = new FormData();
+      data.append("file", {
+        uri: videoUri,
+        type: "video/mp4",
+        name: `${randomUUID}.mp4`,
+      });
+      data.append("upload_preset", "uploadvideotiktok");
+      data.append(
+        "transformation",
+        JSON.stringify([
+          {
+            overlay: {
+              font_family: "Arial",
+              font_size: 24,
+              text: "Hello World",
+            },
+            gravity: "south",
+            x: 40,
+            y: 70,
+          },
+        ])
+      );
+
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/dzdf3rcbr/video/upload`,
+        {
+          method: "POST",
+          body: data,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Cloudinary error: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log("Upload successful:", result.secure_url);
+      return result.secure_url;
+    } catch (error) {
+      console.error("Error uploading video to Cloudinary: ", error);
+      throw error;
+    }
+  };
 
   const ContinuteDegin = async () => {
     setAutoplay(false);
-    navigation.navigate("PostVideo", {
-      inputText,
-      positionX,
-      positionY,
-      typefile,
-      fileselect,
-      widthV,
-      heightV,
-      resizeMode,
-    });
-  };
+    const randomUUID = uuidv4();
+    try {
+      // Đường dẫn file video hiện có
+      const videoUri = `${FileSystem.documentDirectory}${randomUUID}.mp4`;
 
+      // Gọi hàm tải video lên Cloudinary và chỉnh sửa video
+      // const processedVideoUrl = await uploadToCloudinary(fileselect);
+
+      // Chuyển hướng đến màn hình khác với đường dẫn video đã xử lý
+      console.log(fileselect, "chuyẻn sang màn kia ");
+      navigation.navigate("PostVideo", {
+        fileselect: fileselect,
+        widthV: widthV, // Kích thước tùy chỉnh
+        heightV: heightV, // Kích thước tùy chỉnh
+        resizeMode: resizeMode,
+        typefile: typefile,
+      });
+    } catch (error) {
+      console.error("Error processing video: ", error);
+    }
+  };
   const HanderUploadVideo = async () => {
     const formData = new FormData();
     let datetime = new Date();
@@ -153,17 +221,16 @@ const RecodViedeo = ({ navigation }) => {
     formData.append("widthV", widthV);
     formData.append("datePost", datePostTimstemp);
     // formData.append("videoConten", inputText);
-    // formData.append("privacy", privacy);
+    formData.append("privacy", privacy);
     formData.append("Story", {
-      uri:fileselect,
-      name:`Story${datePostTimstemp}.mp4`,
-      type:"video/mp4",
+      uri: fileselect,
+      name: `Story${datePostTimstemp}.mp4`,
+      type: "video/mp4",
     });
     formData.append("resizeMode", resizeMode);
     formData.append("userId", dataUser._id);
     formData.append("textinLocation", inputText);
-    formData.append("positionX", positionX);
-    formData.append("positionY", positionY);
+    
     // formData.append("nameMusic", dataUser.Hoten);
     try {
       const { status, message, msg } = await axios.post(
@@ -176,8 +243,8 @@ const RecodViedeo = ({ navigation }) => {
           },
         }
       );
-      // setVconten(null);
-      // setPrivacy("public");
+      setVconten(null);
+      setPrivacy("public");
       // setLocated(null);
 
       console.log(fileselect);
@@ -191,10 +258,17 @@ const RecodViedeo = ({ navigation }) => {
       console.log(erro + "->>catch lỗi ");
     } finally {
       setAutoplay(false);
-       setFileselect(null);
+      setFileselect(null);
     }
   };
   return (
+    // <KeyboardAvoidingView
+    //   style={{
+    //     flex: 1,
+    //   }}
+    //   behavior={Platform.OS === "android" ? "height" : "padding"} // Android sử dụng "height"
+    //   keyboardVerticalOffset={Platform.OS === "android" ? 100 : 0} // Điều chỉnh offset cho Android
+    // >
     <View
       style={{
         flex: 1,
@@ -416,6 +490,7 @@ const RecodViedeo = ({ navigation }) => {
               height: "40%",
               width: 50,
               top: "3%",
+              flex: 1,
 
               alignItems: "center",
               justifyContent: "space-around",
@@ -458,7 +533,7 @@ const RecodViedeo = ({ navigation }) => {
                 justifyContent: "space-around",
               }}
             >
-              <Ionicons name="ios-text" size={18} color="white" />
+              <Feather name="file-text" size={18} color="white" />
               <Text style={{ color: "white", fontSize: 8 }}>Text</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -487,7 +562,7 @@ const RecodViedeo = ({ navigation }) => {
               />
               <Text style={{ color: "white", fontSize: 8 }}>starg</Text>
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{
                 alignItems: "center",
                 justifyContent: "space-around",
@@ -495,7 +570,7 @@ const RecodViedeo = ({ navigation }) => {
             >
               <Ionicons name="ios-color-filter" size={18} color="white" />
               <Text style={{ color: "white", fontSize: 8 }}>filter</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity
               style={{
                 alignItems: "center",
@@ -506,7 +581,7 @@ const RecodViedeo = ({ navigation }) => {
               <Text style={{ color: "white", fontSize: 8 }}>template</Text>
             </TouchableOpacity>
           </View>
-          <Text
+          <Animated.Text
             ref={textRef}
             {...panResponder.panHandlers}
             style={{
@@ -514,13 +589,16 @@ const RecodViedeo = ({ navigation }) => {
               color: "white",
               padding: 10,
               fontWeight: "500",
+              zIndex: 1,
+              left: positionX,
+              top: positionY,
             }}
           >
             {inputText}
-          </Text>
+          </Animated.Text>
           <Video
             source={{ uri: selectedVideo }}
-            style={{ width: "100%", height: "60%" }}
+            style={{ width: "100%", height: "85%", marginBottom: "20%" }}
             useNativeControls
             resizeMode="cover"
             isLooping
@@ -534,7 +612,7 @@ const RecodViedeo = ({ navigation }) => {
               alignItems: "center",
               justifyContent: "space-around",
               position: "absolute",
-              bottom: 10,
+              bottom: 0,
             }}
           >
             <TouchableOpacity
@@ -610,15 +688,24 @@ const RecodViedeo = ({ navigation }) => {
             <View
               style={{
                 backgroundColor: "white",
-                padding: 20,
+                paddingHorizontal: "2%",
                 borderRadius: 10,
                 width: "80%",
+                height: "5%",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
               <TextInput
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
                 placeholder="Enter your text"
                 value={inputText}
                 onChangeText={(text) => setInputText(text)}
+                multiline={true}
+                // placeholderTextColor={"ma"}
               />
             </View>
           </View>
@@ -630,6 +717,7 @@ const RecodViedeo = ({ navigation }) => {
         textStyle={{ color: "#FFF" }}
       />
     </View>
+    // </KeyboardAvoidingView>
   );
 };
 export default RecodViedeo;

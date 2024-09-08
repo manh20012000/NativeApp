@@ -10,6 +10,7 @@ buildscript {
         kotlinVersion = findProperty('android.kotlinVersion') ?: '1.8.10'
         frescoVersion = findProperty('expo.frescoVersion') ?: '2.5.0'
         ndkVersion = "23.1.7779620"
+        ffmpegKitPackage = "full-gpl"
     }
     repositories {
         google()
