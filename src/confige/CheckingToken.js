@@ -11,11 +11,14 @@ export class checkingToken {
       const decoded = jwtDecode(token.accessToken);
       const isTokenExpired = decoded.exp * 1000 < Date.now();
 
+      // Nếu token hết hạn
       if (isTokenExpired) {
-        // nếu nhu hết hạn
-        this.refreshToken(freshtoken.refreshtoken);
+        const refreshToken = await AsyncStorage.getItem("refreshToken");
+        return this.refreshToken(refreshToken); // Làm mới token
       }
+      return true; // Token hợp lệ
     }
+    return false; // Token không tồn tại
   };
   static refreshToken = async (refreshToken) => {
     try {
@@ -29,7 +32,6 @@ export class checkingToken {
           },
         }
       );
-
       // Nếu refresh token hợp lệ, trả về token mới
       if (response.status === 200 && response.data) {
         // Giả sử server phản hồi với đối tượng mới
@@ -42,9 +44,12 @@ export class checkingToken {
           JSON.stringify(response.data.refreshtoken)
         );
         // console.log(response.data);
+        const userDataString = JSON.stringify(response.data);
+        await AsyncStorage.setItem("userToken", userDataString);
         dispath(login(response.data));
+        return true;
       } else {
-        return null;
+        return false;
       }
     } catch (error) {
       console.error("Lỗi khi làm mới token:", error);
