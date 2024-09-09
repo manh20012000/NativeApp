@@ -4,22 +4,30 @@ import axios from "axios";
 import path from "./config";
 import { login } from "../Redex/Reducer/auth.slice";
 import { useDispatch } from "react-redux";
+
 export class checkingToken {
   static dispath = useDispatch();
+
+  // Kiểm tra token
   static checking = async (token) => {
     if (token !== null) {
       const decoded = jwtDecode(token.accessToken);
       const isTokenExpired = decoded.exp * 1000 < Date.now();
 
+      // Nếu token hết hạn
       if (isTokenExpired) {
-        // nếu nhu hết hạn
-        this.refreshToken(freshtoken.refreshtoken);
+        const refreshToken = await AsyncStorage.getItem("refreshToken");
+        return this.refreshToken(refreshToken); // Làm mới token
       }
+      return true; // Token hợp lệ
     }
+    return false; // Token không tồn tại
   };
+
+  // Làm mới token
   static refreshToken = async (refreshToken) => {
     try {
-      const url = `${path}/user/refreshToken`; // Sửa lỗi chính tả trong đường dẫn URL
+      const url = `${path}/user/refreshToken`; // Sửa đường dẫn URL nếu cần
       const response = await axios.post(
         url,
         { refreshToken },
@@ -30,9 +38,9 @@ export class checkingToken {
         }
       );
 
-      // Nếu refresh token hợp lệ, trả về token mới
+      // Kiểm tra phản hồi từ server
       if (response.status === 200 && response.data) {
-        // Giả sử server phản hồi với đối tượng mới
+        // Lưu token mới vào AsyncStorage
         await AsyncStorage.setItem(
           "accessToken",
           JSON.stringify(response.data.ascesstoken)
@@ -41,14 +49,19 @@ export class checkingToken {
           "refreshToken",
           JSON.stringify(response.data.refreshtoken)
         );
-        // console.log(response.data);
-        dispath(login(response.data));
+        const userDataString = JSON.stringify(response.data);
+        await AsyncStorage.setItem("userToken", userDataString);
+
+        // Cập nhật Redux với dữ liệu mới
+        this.dispath(login(response.data));
+
+        return true; // Làm mới token thành công
       } else {
-        return null;
+        return false; // Làm mới thất bại
       }
     } catch (error) {
       console.error("Lỗi khi làm mới token:", error);
-      return null;
+      return false; // Trả về false khi có lỗi
     }
   };
 }
