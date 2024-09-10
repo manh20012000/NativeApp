@@ -20,7 +20,12 @@ export const SocketProvider = ({ children }) => {
         try {
           const userToken = await AsyncStorage.getItem("userToken");
           const userTokenObject = JSON.parse(userToken);
-          //  console.log(userTokenObject)
+          // console.log(
+          //   JSON.parse(userToken)?.accessToken,
+          //   "parestoken ",
+          //   userTokenObject
+          // );
+
           const accessToken = JSON.parse(userToken)?.accessToken;
           const iduser = JSON.parse(userToken)?._id;
 

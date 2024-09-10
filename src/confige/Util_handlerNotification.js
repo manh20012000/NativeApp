@@ -6,6 +6,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useRef } from "react";
 import path from "./config";
+import { ref } from "@firebase/storage";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -85,22 +86,21 @@ export class HandlerNotification {
     if (this.userData) {
       // console.log(this.userData._id, this.userData.expoPushToken);
       const expoPushToken = this.userData.expoPushToken;
-      console.log(expoPushToken, "giá trị token222");
+
       if (expoPushToken && !expoPushToken.includes(token)) {
         console.log(token, "giá tr");
         //      expoPushToken.push(token);
         const updatedExpoPushToken = [...expoPushToken, token];
 
-        await this.updateExpoPushToken(updatedExpoPushToken, this.userData._id);
+        await this.updateExpoPushToken(updatedExpoPushToken, this.userData);
       }
     }
   };
 
-  static updateExpoPushToken = async (expoPushToken, id) => {
+  static updateExpoPushToken = async (expoPushToken, userData) => {
     try {
-      console.log(id, expoPushToken);
       const { data } = await axios.put(
-        `${path}/user/upadateFCMtoken/${id}`,
+        `${path}/user/upadateFCMtoken/${userData._id}`,
         { expoPushToken },
         {
           headers: {
@@ -108,13 +108,22 @@ export class HandlerNotification {
           },
         }
       );
-
-      const userDataString = JSON.stringify(data.data);
+      console.log(data.data, "giá trị sau khi tải về ");
+      // const acesstoken = await AsyncStorage.getIem("accessToken");
+      // const freshtoken = await AsyncStorage.getItem("refreshToken");
+      const dataUser = {
+        id: data.data._id,
+        Hoten: data.data.Hoten,
+        Avatar: data.data.Avatar,
+        email: data.data.email,
+        expoPushToken: expoPushToken,
+        accessToken: userData.accessToken,
+        refreshToken: userData.refreshToken,
+      };
+     
+      const userDataString = JSON.stringify(dataUser);
       await AsyncStorage.setItem("userToken", userDataString);
-      await AsyncStorage.removeItem("userToken");
-
-      await AsyncStorage.setItem("userData", JSON.stringify(data.data));
-      await AsyncStorage.removeItem("userData");
+      
     } catch (err) {
       console.log("Failed to update token", err);
     }

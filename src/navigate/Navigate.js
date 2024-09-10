@@ -38,7 +38,7 @@ const Navigete = () => {
     const checkLoginStatus = async () => {
       const userTokenString = await AsyncStorage.getItem("userToken");
       const userTokenObject = JSON.parse(userTokenString);
-      // console.log(userTokenObject);
+      // console.log(userTokenObject, "giá trị sau khi navigate ");
       if (userTokenString !== null) {
         const decoded = jwtDecode(userTokenObject.refreshToken);
         const isTokenExpired = decoded.exp * 1000 < Date.now();

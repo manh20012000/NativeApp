@@ -56,18 +56,18 @@ const Login = ({ navigation }) => {
       if (data.status == 200) {
         const userData = data.data;
 
-        await HandlerNotification.checkNotificationPermission(userData);
         const userDataString = JSON.stringify(userData);
         await AsyncStorage.setItem("userToken", userDataString);
+        await HandlerNotification.checkNotificationPermission(userData);
         dispath(login(userData));
-         await AsyncStorage.setItem(
-           "accessToken",
-           JSON.stringify(userData.accessToken)
-         );
-         await AsyncStorage.setItem(
-           "refreshToken",
-           JSON.stringify(userData.refreshToken)
-         );
+        await AsyncStorage.setItem(
+          "accessToken",
+          JSON.stringify(userData.accessToken)
+        );
+        await AsyncStorage.setItem(
+          "refreshToken",
+          JSON.stringify(userData.refreshToken)
+        );
         setLoading(false);
         navigation.navigate("BootonGate", userData);
         setPass("");

@@ -52,9 +52,9 @@ const SetTingInfor = ({ navigation, route }) => {
     await AsyncStorage.removeItem("fcmtoken");
     HandlerNotification.updateExpoPushToken(
       handlerArrayfcmToken(fcmtoken),
-      user._id
+      user
     );
-   
+
     await AsyncStorage.removeItem("accessToken");
     await AsyncStorage.removeItem("refreshToken");
     socket?.disconnect();
