@@ -13,7 +13,7 @@ import {
   TextInput,
   Animated,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
+ import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
 import NewRecode from "./NewRecode";
 import { Camera, CameraType } from "expo-camera";
@@ -73,6 +73,7 @@ const RecodViedeo = ({ navigation }) => {
         setTypefile("video");
       }
     }
+    
   };
   // setCamera
   const cameraRef = useRef();
