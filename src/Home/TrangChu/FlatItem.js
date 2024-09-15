@@ -35,16 +35,29 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Octicons } from "@expo/vector-icons";
 import path from "../../confige/config.js";
 import uuid from "uuid/v4";
+import { login } from "../../Redex/Reducer/auth.slice.js";
+import { checkingToken } from "../../confige/CheckingToken.js";
 import { useSelector, useDispatch } from "react-redux";
 // import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 const FlatItem = memo((props) => {
-  const user = props.item.User; //
-
-  const [databaiviet, setdatabaiviet] = useState(props.item);
-  const [isLiked, setIsLiked] = useState("");
-  const [arrlike, setArrlike] = useState(databaiviet.Like);
-  const [isVisible2, setIsVisible2] = useState(false);
   const userCurent = useSelector((state) => state.auth.value);
+  const dispath = useDispatch();
+  // console.log(userCurent);
+  const user = props.item.User; //
+  // console.log(props.item);
+  const dataContenpost = props.item;
+  const [isLiked, setIsLiked] = useState(
+    dataContenpost.Like.some((like) => {
+      // console.log(like.User, props.userDn);
+      // console.log(like.User === props.userDn);
+      return like.User === props.userDn; // Kiểm tra dựa trên ID của người dùng
+    })
+  );
+
+  // Đoạn code tiếp theo liên quan đến render hoặc xử lý
+
+  const [arrlike, setArrlike] = useState(dataContenpost.Like);
+  const [isVisible2, setIsVisible2] = useState(false);
 
   const toggleModal2 = () => {
     setIsVisible2(!isVisible2);
@@ -56,46 +69,13 @@ const FlatItem = memo((props) => {
   const handleBackdropPress2e = () => {
     setIsVisible2(false);
   };
-  useEffect(() => {
-    const listLike = async () => {
-      try {
-        const { data } = await axios.post(`${path}/selectLike`, {
-          _idBaiviet: databaiviet._id,
-        });
-        setArrlike(data);
-      } catch (err) {
-        if (err.response) {
-          // Phản hồi trả về mã lỗi không thành công (status code không 2xx)
-          console.log(`Request failed with status ${err.response.status}`);
-        } else if (err.request) {
-          // Yêu cầu không được gửi đi hoặc không có phản hồi từ server
-          console.error("Request was made but no response was received");
-        } else {
-          // Các loại lỗi khác
-          console.error("Error:", err.message);
-        }
-      }
-    };
-    listLike();
-  }, []);
 
-  useEffect(() => {
-    const trangthai = () => {
-      databaiviet.Like.forEach((item) => {
-        if (item.User === props.userDn) {
-          setIsLiked(item.Trangthai);
-        }
-      });
-    };
-    trangthai();
-  }, []);
-
-  const [numberLike, setNumber] = useState(databaiviet.SoluongTym);
+  const [numberLike, setNumber] = useState(dataContenpost.SoluongTym);
   const index = props.index;
   let soluongTim = numberLike;
 
   const handleLike = async () => {
-    // console.log('njabnjsd')
+    // hàm này thực hiện cho việc kiểm tra xem kile hay bỏ like bài viết đó đi
     let Liked = !isLiked;
     setIsLiked(Liked);
     if (isLiked == false) {
@@ -108,26 +88,47 @@ const FlatItem = memo((props) => {
       }
     }
     try {
-      const { data } = await axios.post(`${path}/tymPost`, {
-        idUser: props.userDn,
-        idBaiPost: databaiviet._id,
-        Soluong: soluongTim,
-        Trangthai: Liked,
-      });
-      console.log("nhay dbusjd");
+      // console.log("nahfy van", userCurent.accessToken, userCurent.refreshToken);
+      const isChecked = await checkingToken.checking(userCurent);
+      // console.log(userCurent.accessToken);
+      // console.log(isChecked, "gias tri sau checked");
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+
+        const { data } = await axios.post(
+          `${path}/tymPost`,
+          {
+            idUser: props.userDn,
+            idBaiPost: dataContenpost._id,
+            Soluong: soluongTim,
+            Trangthai: Liked, // trạng thái đã like hay chưa
+            nameLike: dataContenpost.User.Hoten,
+            screen: "Trang chủ",
+          },
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+              Authorization: `Bearer ${isChecked.accessToken}`,
+            },
+          }
+        );
+        console.log(data);
+      }
+      return 0;
     } catch (err) {
       console.log(err, "lõi với tymoist flatitem");
     }
   };
   const DetaiHandress = () => {
-    props.navigation.navigate("SeeDeTail", databaiviet.User);
+    props.navigation.navigate("SeeDeTail", dataContenpost.User);
   };
   // set phongd to màn hinhg
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const anh = databaiviet.Image;
+  const anh = dataContenpost.Image;
   // console.log(anh)
-  const images = anh.map((url) => ({ url }));
+  const images = dataContenpost.Image.map((url) => ({ url }));
   const [showImage, setImage] = useState(false);
   const [quyen, setquyen] = useState("");
 
@@ -176,23 +177,39 @@ const FlatItem = memo((props) => {
     setIsVisible(false);
   };
   //binh luan
-  const [soluongCmt, setSoluongcmt] = useState(databaiviet.SoluongCmt);
+  const [soluongCmt, setSoluongcmt] = useState(dataContenpost.SoluongCmt);
   const [Noidung, setNoiDung] = useState("");
-  const [binhluan, setBinhLuan] = useState(databaiviet.Comment);
+  const [binhluan, setBinhLuan] = useState(dataContenpost.Comment);
   const [parentId, setParentId] = useState(null);
   const handleTextInputChange = (text) => {
     const parts = text.split("@");
     setNoiDung(text);
   };
   const selectCmt = async () => {
-    console.log(databaiviet._id);
+    console.log(dataContenpost._id);
     try {
-      const { data } = await axios.post(`${path}/selectDataCmt`, {
-        //const { data } = await axios.post(`https://nativeapp-vwvi.onrender.com/selectDataCmt`, {
-        idbaiviet: databaiviet._id,
-        skip: 10,
-      });
-      setBinhLuan(data.data);
+      // console.log("nahfy van", userCurent.accessToken, userCurent.refreshToken);
+      const isChecked = await checkingToken.checking(userCurent);
+      // console.log(userCurent.accessToken);
+      // console.log(isChecked, "gias tri sau checked");
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        const { data } = await axios.post(
+          `${path}/selectDataCmt`,
+          {
+            //const { data } = await axios.post(`https://nativeapp-vwvi.onrender.com/selectDataCmt`, {
+            idbaiviet: dataContenpost._id,
+            skip: 10,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        setBinhLuan(data.data);
+      }
     } catch (error) {
       console.log(error, "logerroflatitem selectCmt");
     }
@@ -251,7 +268,7 @@ const FlatItem = memo((props) => {
     if (parentId == null) {
       const newComment = {
         _id: myId,
-        idBaiviet: databaiviet._id,
+        idBaiviet: dataContenpost._id,
         Content: noidung,
         Soluongcmt: soluong,
         SoluongCommentChildrent: 0,
@@ -265,7 +282,7 @@ const FlatItem = memo((props) => {
     } else {
       const newComment = {
         _id: myId,
-        idBaiviet: databaiviet._id,
+        idBaiviet: dataContenpost._id,
         Content: noidung,
         Soluongcmt: soluong,
         createdAt: new Date().toISOString(),
@@ -295,7 +312,7 @@ const FlatItem = memo((props) => {
     // try {
     //   formData.append("_id", myId);
     //   formData.append("UserCmt", props.userDn);
-    //   formData.append("idBaiviet", databaiviet._id);
+    //   formData.append("idBaiviet", dataContenpost._id);
     //   formData.append("Noidung", noidung);
     //   formData.append("Soluongcmt", soluong);
     //   formData.append("parentId", JSON.stringify(parentId));
@@ -332,10 +349,21 @@ const FlatItem = memo((props) => {
   const handleDeleteAticarl = async () => {
     console.log("haha");
     try {
-      const { data } = await axios.delete(
-        `${path}/deleteAticarl/${databaiviet._id}`
-      );
-      alert("thoong baso ");
+      // console.log("nahfy van", userCurent.accessToken, userCurent.refreshToken);
+      const isChecked = await checkingToken.checking(userCurent);
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        const { data } = await axios.delete(
+          `${path}/deleteAticarl/${dataContenpost._id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        alert("thoong baso ");
+      }
     } catch (err) {
       if (err.response) {
         console.log("loi voiws xoa bai viet", err.response.status);
@@ -343,6 +371,106 @@ const FlatItem = memo((props) => {
         console.log("loi voiws xoa bai viet", err);
       }
     }
+  };
+  // Hàm phân tích cú pháp của đoạn text từ server
+  const parseText = (text) => {
+    const regex = /\@\[(.*?)\]\(id:(.*?)\)|https?:\/\/[^\s]+/g; // Regex để tìm @ và URL
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+
+    // Dùng regex để tìm các đoạn text và link
+    while ((match = regex.exec(text)) !== null) {
+      const beforeText = text.slice(lastIndex, match.index); // Phần trước regex
+      if (beforeText) parts.push({ text: beforeText, user: null, link: null });
+
+      if (match[0].startsWith("http")) {
+        // Trường hợp là URL
+        parts.push({ text: match[0], user: null, link: match[0] });
+      } else {
+        // Trường hợp là @mention
+        const userName = match[1];
+        const userId = match[2];
+        parts.push({ text: userName, user: userId, link: null });
+      }
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Thêm phần cuối nếu có
+    if (lastIndex < text.length) {
+      parts.push({ text: text.slice(lastIndex), user: null, link: null });
+    }
+
+    return parts;
+  };
+
+  const renderParsedText = (text) => {
+    const parsedParts = parseText(text); // Phân tích đoạn text
+    return (
+      <Text>
+        {parsedParts.map((part, index) => {
+          if (part.user) {
+            console.log(part.user, "hahahah");
+            return (
+              <Text
+                style={{ color: "blue", fontWeight: "bold" }}
+                key={index}
+                onPress={async () => {
+                  try {
+                    // console.log("nahfy van", userCurent.accessToken, userCurent.refreshToken);
+                    const isChecked = await checkingToken.checking(userCurent);
+                    if (typeof isChecked === "object" && isChecked !== null) {
+                      dispath(login(isChecked));
+                      const { data } = await axios.post(
+                        `${path}/userfind`,
+                        {
+                          _id: part.user,
+                        },
+
+                        {
+                          headers: {
+                            "Content-Type": "application/json",
+                            authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+                          },
+                        }
+                      );
+                      // console.log(data);
+                      props.navigation.navigate("SeeDeTail", data.data);
+                    }
+                  } catch (err) {
+                    if (err.response) {
+                      console.log(
+                        "loi voiws xoa bai viet",
+                        err.response.status
+                      );
+                    } else {
+                      console.log("loi voiws xoa bai viet", err);
+                    }
+                  }
+                }}
+              >
+                {part.text}
+              </Text>
+            );
+          } else if (part.link) {
+            // Nếu là URL, hiển thị như link
+            return (
+              <Text
+                style={{ color: "blue" }}
+                key={index}
+                onPress={() => Linking.openURL(part.link)} // Mở URL khi nhấn vào
+              >
+                {part.text}
+              </Text>
+            );
+          } else {
+            // Nếu là text bình thường
+            return <Text key={index}>{part.text}</Text>;
+          }
+        })}
+      </Text>
+    );
   };
   return (
     <View style={styles.contain}>
@@ -378,7 +506,7 @@ const FlatItem = memo((props) => {
               <Text style={styles.title}>{user.Hoten}</Text>
               <TimeAgo
                 style={{ fontSize: 12, color: "blue" }}
-                time={databaiviet.createdAt}
+                time={dataContenpost.createdAt}
               />
             </View>
             {/* <View
@@ -389,8 +517,8 @@ const FlatItem = memo((props) => {
               }}
             >
               <MaterialIcons name={quyen} size={20} color="black" />
-              {databaiviet.Loaction != null ? (
-                <Text>-Bạn đang ở {databaiviet.Loaction}</Text>
+              {dataContenpost.Loaction != null ? (
+                <Text>-Bạn đang ở {dataContenpost.Loaction}</Text>
               ) : null}
             </View> */}
           </View>
@@ -411,11 +539,13 @@ const FlatItem = memo((props) => {
         </TouchableOpacity>
       </View>
       <View style={{ marginBottom: 10, paddingHorizontal: 6 }}>
-        <Text style={{ fontSize: 16, fontWeight: "500" }}>
-          {databaiviet.Trangthai}
-        </Text>
+        {renderParsedText(dataContenpost.Trangthai)}
+        {/* Render đoạn văn bản đã phân tích */}
+        {/* <Text style={{ fontSize: 16, fontWeight: "500" }}>
+          {dataContenpost.Trangthai}
+        </Text> */}
         <Text style={{ fontSize: 14, fontWeight: "400" }}>
-          {databaiviet.Fell}
+          {dataContenpost.Fell}
         </Text>
       </View>
       {showImage == true && (
@@ -460,14 +590,12 @@ const FlatItem = memo((props) => {
       )}
       <View style={styles.viewsa}>
         <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-          {" "}
           {numberLike >= 1000
             ? (numberLike / 1000).toFixed(1) + "k"
             : numberLike}{" "}
           Like
         </Text>
         <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-          {" "}
           {soluongCmt} Bình luận
         </Text>
       </View>
@@ -488,9 +616,8 @@ const FlatItem = memo((props) => {
           <AntDesign
             name="heart"
             size={24}
-          
             color={isLiked ? "red" : "white"}
-            // color={databaiviet.Like.filter(x => x._id == props.userDn).length > 0 ? "red" : "white"}
+            // color={dataContenpost.Like.filter(x => x._id == props.userDn).length > 0 ? "red" : "white"}
           />
           <Text style={{ color: "white" }}> Like</Text>
         </TouchableOpacity>
@@ -552,7 +679,7 @@ const FlatItem = memo((props) => {
                       userdn={props.userDn}
                       navigation={props.navigation}
                       handleTextInputChange={handleTextInputChange}
-                      idbaiviet={databaiviet._id}
+                      idbaiviet={dataContenpost._id}
                       setParentId={setParentId}
                       setCommentArr={handleSetCommentArr}
                       handleComemntData={handleComemntData}
@@ -877,3 +1004,27 @@ const styles = StyleSheet.create({
     color: "black",
   },
 });
+// useEffect(() => {
+//   const listLike = async () => {
+//     try {
+//       const { data } = await axios.post(`${path}/selectLike`, {
+//         _idBaiviet: dataContenpost._id,
+//       });
+//       setArrlike(data);
+//     } catch (err) {
+//       if (err.response) {
+//         // Phản hồi trả về mã lỗi không thành công (status code không 2xx)
+//         console.log(
+//           `Request failed with status màn hình flatitem${err.response.status}`
+//         );
+//       } else if (err.request) {
+//         // Yêu cầu không được gửi đi hoặc không có phản hồi từ server
+//         console.error("Request was made but no response was received");
+//       } else {
+//         // Các loại lỗi khác
+//         console.error("Error màn flatitem:", err.message);
+//       }
+//     }
+//   };
+//   listLike();
+// }, []);

@@ -2,35 +2,30 @@ import { jwtDecode } from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import path from "./config";
-import { login } from "../Redex/Reducer/auth.slice";
-import { useDispatch } from "react-redux";
-const dispath = useDispatch();
+
 export class checkingToken {
- 
-
   // Kiểm tra token
-  static checking = async (token) => {
-    if (token !== null) {
-      const decoded = jwtDecode(token.accessToken);
+  static checking = async (user) => {
+    if (user !== null) {
+      const decoded = jwtDecode(user.accessToken);
       const isTokenExpired = decoded.exp * 1000 < Date.now();
-
       // Nếu token hết hạn
       if (isTokenExpired) {
-        const refreshToken = await AsyncStorage.getItem("refreshToken");
-        return this.refreshToken(refreshToken); // Làm mới token
+        // console.log("hahaha");
+        return await this.handlerrefreshToken(user); // Làm mới token
       }
-      return true; // Token hợp lệ
+      return user; // Token hợp lệ
     }
     return false; // Token không tồn tại
   };
 
   // Làm mới token
-  static refreshToken = async (refreshToken) => {
+  static handlerrefreshToken = async (user) => {
     try {
-      const url = `${path}/user/refreshToken`; // Sửa đường dẫn URL nếu cần
+      console.log("làm mới token");
       const response = await axios.post(
-        url,
-        { refreshToken },
+        `${path}/user/refreshToken`,
+        { refreshToken: user.refreshToken },
         {
           headers: {
             "Content-Type": "application/json",
@@ -38,24 +33,20 @@ export class checkingToken {
         }
       );
 
-      // Kiểm tra phản hồi từ server
+      const data = response.data;
+      console.log("làm mới token checking");
       if (response.status === 200 && response.data) {
         // Lưu token mới vào AsyncStorage
-        await AsyncStorage.setItem(
-          "accessToken",
-          JSON.stringify(response.data.ascesstoken)
-        );
-        await AsyncStorage.setItem(
-          "refreshToken",
-          JSON.stringify(response.data.refreshtoken)
-        );
-        const userDataString = JSON.stringify(response.data);
+
+        const userDataString = JSON.stringify(data.data);
+        const accessTokennew = JSON.stringify(data.data.accessToken);
+        const refreshtokenNew = JSON.stringify(data.data.refreshToken);
+
+        await AsyncStorage.setItem("accessToken", accessTokennew);
+        await AsyncStorage.setItem("refreshToken", refreshtokenNew);
         await AsyncStorage.setItem("userToken", userDataString);
 
-        // Cập nhật Redux với dữ liệu mới
-        dispath(login(response.data));
-
-        return true; // Làm mới token thành công
+        return data.data; // Làm mới token thành công
       } else {
         return false; // Làm mới thất bại
       }

@@ -45,7 +45,7 @@ const Friender = ({ navigation }) => {
       setLeng(leng + 5);
       setData((prevData) => prevData.concat(data.data));
     } catch (err) {
-      console.log(err);
+      console.log(err, "màn hình friend1");
     }
   };
   useEffect(() => {
@@ -89,10 +89,10 @@ const Friender = ({ navigation }) => {
         setData([]);
         setData(data.data);
       } catch (err) {
-        console.log(err);
+        console.log(err, "màn hình friend2");
       }
     } catch (err) {
-      console.log(err);
+      console.log(err, "màn hình friend3");
     } finally {
       // Kết thúc setRefreshing sau một khoảng thời gian
       setTimeout(() => {

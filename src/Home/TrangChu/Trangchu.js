@@ -12,7 +12,9 @@ import {
   Modal,
   BackHandler,
   Alert,
-  RefreshControl,useWindowDimensions, Dimensions,
+  RefreshControl,
+  useWindowDimensions,
+  Dimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { React, useState, useEffect, useRef, memo, useCallback } from "react";
@@ -37,7 +39,7 @@ import SkeletonApp from "../../Skeleton/SkeletonApp.js";
 import Skeleton from "../../Skeleton/Skeleton.js";
 const TrangChu = ({ navigation }) => {
   const user = useSelector((state) => state.auth.value);
-  // console.log(user)
+  // console.log(user);
   const { width } = useWindowDimensions();
   const [userStory, setUserStory] = useState({}); // danh cho story
   const [data, setData] = useState([{ index: 1 }]);
@@ -64,7 +66,7 @@ const TrangChu = ({ navigation }) => {
       setDataStory(data.data);
       setSakeIload2(true);
     } catch (err) {
-      console.log(err,'lỗi với trang chủ handlerSelectVideoStory');
+      console.log(err, "lỗi với trang chủ handlerSelectVideoStory");
     } finally {
     }
   };
@@ -72,14 +74,12 @@ const TrangChu = ({ navigation }) => {
   const [isSakeIload, setSakecheck] = useState(true);
   const fetchdata = async () => {
     try {
-      const { data } = await axios.get(
-        `${path}/selectBaiViet`
-      );
+      const { data } = await axios.get(`${path}/selectBaiViet`);
 
       setData(data.data);
       setSakeIload(true);
     } catch (err) {
-      console.log(err,'lôi với trang chủ =>fetchdata');
+      console.log(err, "lôi với trang chủ =>fetchdata");
     }
   };
   useEffect(() => {
@@ -318,26 +318,30 @@ const TrangChu = ({ navigation }) => {
                     resizeMode="cover"
                     isLooping
                   />
-              
-                    <View style={{ width: 34,
+
+                  <View
+                    style={{
+                      width: 34,
                       height: 35,
                       borderRadius: 35,
                       marginHorizontal: 6,
                       marginLeft: 10,
                       position: "absolute",
-                    top: 5,
-                  backgroundColor:'#888888'}} >
-                     <Image
-                    source={{ uri: item.User.Avatar }}
-                    style={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: 34,
-                      flex:1,
+                      top: 5,
+                      backgroundColor: "#888888",
                     }}
-                  ></Image>
+                  >
+                    <Image
+                      source={{ uri: item.User.Avatar }}
+                      style={{
+                        width: 34,
+                        height: 34,
+                        borderRadius: 34,
+                        flex: 1,
+                      }}
+                    ></Image>
                   </View>
-                 
+
                   <Text
                     style={{
                       bottom: 4,
@@ -359,9 +363,19 @@ const TrangChu = ({ navigation }) => {
                   height: 150,
                 }}
               >
-                <Skeleton width={120} height={150} borderRadius={10} trangthai={ isSakeIload} />
-                <Skeleton width={120} height={150} borderRadius={10} trangthai={ isSakeIload}/>
-          </View>
+                <Skeleton
+                  width={120}
+                  height={150}
+                  borderRadius={10}
+                  trangthai={isSakeIload}
+                />
+                <Skeleton
+                  width={120}
+                  height={150}
+                  borderRadius={10}
+                  trangthai={isSakeIload}
+                />
+              </View>
             );
           }}
         />
@@ -380,7 +394,7 @@ const TrangChu = ({ navigation }) => {
           keyExtractor={(item, index) => index.toString()}
           removeClippedSubviews={true}
           renderItem={({ item, index }) => {
-            // console.log(SakeIload)
+            // console.log(user._id);
             return SakeIload ? (
               <FlatItem
                 item={item}
@@ -389,7 +403,7 @@ const TrangChu = ({ navigation }) => {
                 navigation={navigation} //width={120}height={100}style={{borderRadius:10}}
               />
             ) : (
-              <SkeletonApp trangthai={ isSakeIload}/>
+              <SkeletonApp trangthai={isSakeIload} />
             );
           }}
           refreshControl={

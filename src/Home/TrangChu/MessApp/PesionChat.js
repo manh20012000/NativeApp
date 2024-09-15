@@ -37,7 +37,6 @@ import {
 } from "react-native-gifted-chat";
 import path from "../../../confige/config";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
 import { useSocket } from "../../../socket";
 import * as ImagePicker from "expo-image-picker";
 import { Camera, CameraType } from "expo-camera";
@@ -50,8 +49,13 @@ import uuid from "uuid/v4";
 import ImageViewer from "react-native-image-zoom-viewer";
 import { FlatGrid } from "react-native-super-grid";
 import { LinearGradient } from "expo-linear-gradient";
+import { checkingToken } from "../../../confige/CheckingToken";
+import { login } from "../../../Redex/Reducer/auth.slice";
+import { useSelector, useDispatch } from "react-redux";
 const PesionChat = ({ route, navigation }) => {
   const myId = uuid();
+  const dispath = useDispatch();
+
   const [StatusPemission, requestPermission] =
     ImagePicker.useMediaLibraryPermissions();
   const user = useSelector((state) => state.auth.value);
@@ -219,60 +223,66 @@ const PesionChat = ({ route, navigation }) => {
       GiftedChat.append(previousMessages, messages)
     );
     try {
-      const message = new FormData();
-      setchooseLibrary(true);
-      if (typefile == "image") {
-        let datetime = new Date();
-        let datePostTimstemp = await datetime.toISOString().slice(0, -5);
-        for (let i = 0; i < selectedImages.length; i++) {
-          message.append("ArayImages", {
-            uri: selectedImages[i],
-            name: `image_${i}.jpeg`,
-            type: "image/jpeg",
+      const isChecked = await checkingToken.checking(user);
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        const message = new FormData();
+        setchooseLibrary(true);
+        if (typefile == "image") {
+          let datetime = new Date();
+          let datePostTimstemp = await datetime.toISOString().slice(0, -5);
+          for (let i = 0; i < selectedImages.length; i++) {
+            message.append("ArayImages", {
+              uri: selectedImages[i],
+              name: `image_${i}.jpeg`,
+              type: "image/jpeg",
+            });
+          }
+          message.append("createdAt", datePostTimstemp);
+          message.append("text", null);
+          message.append("video", null);
+          message.append("userId", user._id);
+          message.append("username", user.Hoten);
+          message.append("avatar", user.Avatar);
+          const response = await axios.post(
+            `${path}/ChatImage/${participants._id}`,
+            message,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                authorization: `Bearer ${isChecked.accessToken}`,
+              },
+            }
+          );
+        } else if (typefile == "video") {
+          let datetime = new Date();
+          let datePostTimstemp = await datetime.toISOString().slice(0, -5);
+          message.append("Video", {
+            uri: selectedVideo,
+            name: `Video${datePostTimstemp}.mp4`,
+            type: "video/mp4",
           });
+          message.append("createdAt", datePostTimstemp);
+          message.append("text", null);
+          message.append("image", null);
+          message.append("userId", user._id);
+          message.append("username", user.Hoten);
+          message.append("avatar", user.Avatar);
+          const response = await axios.post(
+            `${path}/ChatVideo/${participants._id}`,
+
+            message,
+
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                authorization: `Bearer ${isChecked.accessToken}`,
+              },
+            }
+          );
         }
-        message.append("createdAt", datePostTimstemp);
-        message.append("text", null);
-        message.append("video", null);
-        message.append("userId", user._id);
-        message.append("username", user.Hoten);
-        message.append("avatar", user.Avatar);
-        const response = await axios.post(
-          `${path}/ChatImage/${participants._id}`,
-          message,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-      } else if (typefile == "video") {
-        let datetime = new Date();
-        let datePostTimstemp = await datetime.toISOString().slice(0, -5);
-        message.append("Video", {
-          uri: selectedVideo,
-          name: `Video${datePostTimstemp}.mp4`,
-          type: "video/mp4",
-        });
-        message.append("createdAt", datePostTimstemp);
-        message.append("text", null);
-        message.append("image", null);
-        message.append("userId", user._id);
-        message.append("username", user.Hoten);
-        message.append("avatar", user.Avatar);
-        const response = await axios.post(
-          `${path}/ChatVideo/${participants._id}`,
-
-          message,
-
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        setVisible(true);
       }
-      setVisible(true);
     } catch (error) {
       console.error("Error sending message to server:", error.message);
     }

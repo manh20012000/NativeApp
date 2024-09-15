@@ -32,7 +32,9 @@ import { Camera, CameraType } from "expo-camera/legacy";
 import Swiper from "react-native-swiper";
 import * as MediaLibrary from "expo-media-library";
 import { MaterialIcons } from "@expo/vector-icons";
+import path from "../../confige/config.js";
 import axios from "axios";
+
 import * as Location from "expo-location";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Constants } from "expo";
@@ -40,7 +42,7 @@ import DistrictScreen from "./DistricScreen.js";
 import Spinner from "react-native-loading-spinner-overlay";
 import Countries from "../../public/selectTed.js";
 import { useSelector, useDispatch } from "react-redux";
-
+import Editor, { EU } from "react-native-mentions-editor";
 const UserThink = ({ navigation, route }) => {
   const count = useSelector((state) => state.auth.value);
   const [Hienthi, setHienthi] = useState(true);
@@ -231,13 +233,53 @@ const UserThink = ({ navigation, route }) => {
   // thưc hien lay du lieu gui len axios
   const [feel, setFell] = useState(null);
   // tạo  1 đôis tượng form đa ta
-  const formData = new FormData();
+
+  const [initialValue] = useState(""); // Giá trị khởi tạo cho input
+  const [showEditor, setShowEditor] = useState(true); // Kiểm soát hiển thị Editor
+  const [message, setMessage] = useState(null); // Lưu nội dung tin nhắn
+  const [clearInput, setClearInput] = useState(false); // Xóa input sau khi gửi
+  const [showMentions, setShowMentions] = useState(false); // Hiển thị danh sách mentions
+  const [arrUserSer, setArrayUser] = useState([]); // State lưu danh sách người dùng từ API
+  const handleSearch = async (text) => {
+    console.log(`Searching for: ${text}`); // In ra log để kiểm tra tìm kiếm
+    try {
+      const { data } = await axios.post(`${path}/SearchMention`, {
+        Textseach: text, // Gửi text tìm kiếm lên server
+      });
+      console.log("Users found:", data.data); // Log dữ liệu người dùng
+      setArrayUser(data.data); // Cập nhật danh sách người dùng dựa trên kết quả API
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const onChangeHandler = (messageObj) => {
+    const value = messageObj.text; // Lấy text từ object message
+
+    // Tìm vị trí ký tự '@'
+    const atSymbolIndex = value.lastIndexOf("@");
+
+    // Nếu có ký tự '@' và không có khoảng trắng ngay sau đó
+    if (atSymbolIndex !== -1 && value[atSymbolIndex + 1] !== " ") {
+      const searchQuery = value.substring(atSymbolIndex + 1).trim(); // Lấy phần text sau '@'
+
+      // Nếu có văn bản sau '@', thì tìm kiếm người dùng
+      if (searchQuery.length > 0) {
+        handleSearch(searchQuery); // Gọi hàm tìm kiếm với tagname
+      }
+    }
+    console.log(value, "gái trị valuw");
+    setMessage(value); // Cập nhật lại nội dung message
+  };
+
+  // Hàm render từng tin nhắn trong danh sách
 
   const HanderUpload = async () => {
     setLoading(true);
+    const formData = new FormData();
     let datetime = new Date();
     let datePostTimstemp = await datetime.toISOString().slice(0, -5);
-    formData.append("trangThai", isText);
+    formData.append("trangThai", message);
     formData.append("datePost", datePostTimstemp);
     formData.append("feel", feel);
     formData.append("permission", permission);
@@ -253,15 +295,11 @@ const UserThink = ({ navigation, route }) => {
       });
     }
     try {
-      const { status, msg } = await axios.post(
-        "http://192.168.188.136:8080/uploadAnh",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const { status, msg } = await axios.post(`${path}/uploadAnh`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setFell(null);
       setPermission("public");
       setLocation(null);
@@ -452,13 +490,25 @@ const UserThink = ({ navigation, route }) => {
             {viewHienthi == 1 && (
               <View
                 style={{
-                  backgroundColor: "#444444",
+                  backgroundColor: "#888888",
                   width: "100%",
                   height: 600,
                   padding: 10,
                 }}
               >
-                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <Editor
+                  list={arrUserSer} // Truyền danh sách người dùng từ API vào Editor
+                  initialValue={initialValue}
+                  clearInput={clearInput}
+                  onChange={onChangeHandler}
+                  showEditor={showEditor}
+                  toggleEditor={() => setShowEditor(false)}
+                  showMentions={showMentions}
+                  onHideMentions={() => setShowMentions(false)}
+                  placeholder="You can write here..."
+                  onSearch={handleSearch} // Gọi API khi người dùng nhập @
+                />
+                {/* <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                   <TextInput
                     placeholder="What on your mind ?"
                     placeholderTextColor={"white"}
@@ -468,21 +518,34 @@ const UserThink = ({ navigation, route }) => {
                     underlineColorAndroid="transparent"
                     value={isText}
                   ></TextInput>
-                  <Text style={{ color: "white", fontSize: 16 }}> {feel}</Text>
-                </ScrollView>
+                  // 
+                </ScrollView> */}
+                <Text style={{ color: "white", fontSize: 16 }}> {feel}</Text>
               </View>
             )}
             {viewHienthi == 2 && (
               <View
                 style={{
-                  backgroundColor: "#444444",
+                  backgroundColor: "#888888",
                   width: "100%",
                   height: "74%",
                   paddingTop: 10,
                 }}
               >
+                <Editor
+                  list={arrUserSer} // Truyền danh sách người dùng từ API vào Editor
+                  initialValue={initialValue}
+                  clearInput={clearInput}
+                  onChange={onChangeHandler}
+                  showEditor={showEditor}
+                  toggleEditor={() => setShowEditor(false)}
+                  showMentions={showMentions}
+                  onHideMentions={() => setShowMentions(false)}
+                  placeholder="You can write here..."
+                  onSearch={handleSearch} // Gọi API khi người dùng nhập @
+                />
                 <ScrollView>
-                  <TextInput
+                  {/* <TextInput
                     placeholder="What you think ?"
                     placeholderTextColor={"white"}
                     style={{
@@ -493,14 +556,9 @@ const UserThink = ({ navigation, route }) => {
                     multiline
                     value={isText}
                     onChangeText={onchangerTexT}
-                  ></TextInput>
+                  ></TextInput> */}
                   <Text style={{ color: "white", fontSize: 16 }}>{feel}</Text>
-                  <Swiper
-                    style={{
-                      height: "95%",
-                    }}
-                    loop={true}
-                  >
+                  <Swiper style={{ backgroundColor: "#555555" }} loop={true}>
                     {selectedImages.map((image, index) => (
                       <View key={index} style={{ position: "relative" }}>
                         <TouchableOpacity
@@ -515,21 +573,29 @@ const UserThink = ({ navigation, route }) => {
                         >
                           <Text
                             style={{
-                              fontSize: 30,
-                              fontWeight: "300",
+                              fontSize: 24,
+                              fontWeight: "bold",
                               color: "white",
                             }}
                           >
                             x
                           </Text>
-                          <Text>
+                          <Text
+                            style={{
+                              fontSize: 10,
+                              fontWeight: "bold",
+                              color: "white",
+                            }}
+                          >
                             {index}/{selectedImages.length}
                           </Text>
                         </TouchableOpacity>
+
                         <Image
                           key={index}
                           source={{ uri: image }}
-                          style={{ width: "100%", height: "100%" }}
+                          style={{ width: "100%", height: "80%" }}
+                          resizeMode="contain"
                         />
                       </View>
                     ))}
@@ -540,7 +606,7 @@ const UserThink = ({ navigation, route }) => {
             {viewHienthi == 3 && (
               <View
                 style={{
-                  backgroundColor: "#444444",
+                  backgroundColor: "#888888",
                   width: "100%",
                   height: 600,
                   paddingTop: 10,

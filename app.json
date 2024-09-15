@@ -42,7 +42,6 @@
       "expo-build-properties",
       "@react-native-google-signin/google-signin",
       "expo-camera"
-     
     ]
   }
 }

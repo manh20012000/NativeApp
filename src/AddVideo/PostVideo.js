@@ -43,9 +43,14 @@ import Spinner from "react-native-loading-spinner-overlay";
 import axios from "axios";
 import path from "../confige/config.js";
 import ParsedText from "react-native-parsed-text";
+import { login } from "../Redex/Reducer/auth.slice.js";
+import { checkingToken } from "../confige/CheckingToken.js";
 const PostVideo = ({ navigation, route }) => {
-  const count = useSelector((state) => state.auth.value);
-  const [dataUser, setData] = useState(count);
+  const dispatch = useDispatch();
+
+  const [dataUser, setData] = useState(
+    useSelector((state) => state.auth.value)
+  );
 
   const data = route.params;
   const dataLocation = [
@@ -100,67 +105,66 @@ const PostVideo = ({ navigation, route }) => {
   const [Music, setMusic] = useState("");
   const handleSave = () => {
     // Xử lý lưu nội dung đã nhập (htmlContent) vào cơ sở dữ liệu hoặc thực hiện hành động mong muốn.
-    console.log(htmlContent);
+    console.log(htmlContent, "-> mã html");
   };
-  const formData = new FormData();
 
   const HanderUploadVideo = async () => {
-    let datetime = new Date();
-    let datePostTimstemp = await datetime.toISOString().slice(0, -5);
-    setLoading(true);
-    console.log(
-      data.fileselect,
-      data.resizeMode,
-      "may log ra réivnod cho tao "
-    );
-    formData.append("Height", data.heightV);
-    formData.append("widthV", data.widthV);
-    formData.append("Videos", data.fileselect);
-    // formData.append("datePost", datePostTimstemp);
-    // formData.append("privacy", privacy);
-    // formData.append("resizeMode", data.resizeMode);
-    // formData.append("userId", dataUser._id);
-    // formData.append("located", located);
-    // formData.append("nameMusic", dataUser.Hoten);
-    formData.append("Video", {
-      uri:
-        data.fileselect ??
-        "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540levanmanh20012000%252Fnativeapp/ImagePicker/c3a97e3a-662d-4ab6-91de-1b913a01956f.mp4",
-      name: `Video${datePostTimstemp}.mp4`,
-      type: "video/mp4",
-    });
-    setLoading(false);
     try {
-      // Dùng getParts() để log từng phần tử
-      const parts = formData.getParts();
-      parts.forEach((part) => {
-        console.log(part.fieldName, part);
+      const formData = new FormData();
+      console.log(data.fileselect, "jaaahahah");
+      let datetime = new Date();
+      let datePostTimstemp = await datetime.toISOString().slice(0, -5);
+      // setLoading(true);
+      // formData.append("Height", data.heightV);
+      // formData.append("widthV", data.widthV);
+      // formData.append("datePost", datePostTimstemp);
+      // formData.append("privacy", privacy);
+      // formData.append("resizeMode", data.resizeMode);
+      // formData.append("userId", dataUser._id);
+      // formData.append("located", located);
+      formData.append("nameMusic", dataUser.Hoten);
+      formData.append("Video", {
+        uri: data.fileselect,
+        type: "video/mp4",
+        name: `Video${datePostTimstemp}.mp4`,
       });
-      const { status, message, msg } = await axios.post(
-        `${path}/uploadVideo`,
-        //`${path}/uploadVideo`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      // setVconten(null);
-      // setPrivacy("public");
-      // setLocated(null);
 
-      // console.log(data.fileselect);
-      if (status == 200) {
-        navigation.navigate("Video");
-        setLoading(false);
-        alert("sussecess");
+      const isChecked = await checkingToken.checking(dataUser);
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispatch(login(isChecked));
+        const parts = formData.getParts();
+        parts.forEach((part) => {
+          console.log(part.fieldName, part, "màn hình post video1");
+        });
+        console.log("bắt đầu vào form data ");
+        const { status, message, msg, config } = await axios.post(
+          `${path}/uploadVideo`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              authorization: `Bearer ${isChecked.accessToken}`,
+            },
+          }
+        );
+        console.log("config", config);
+        // setVconten(null);
+        // setPrivacy("public");
+        // setLocated(null);
+        // setLoading(false);
+
+        if (status === 200) {
+          // console.log(data.fileselect, "ket quả log file select");
+          // alert("sussecess", data);
+          // // navigation.navigate("Video");
+          // setLoading(false);
+        }
       }
-    } catch (erro) {
+    } catch (error) {
       setLoading(false);
-      console.log(erro.message + "->>catch lỗi ");
+      console.log(error + "->>catch lỗi màn hình postVideo");
     } finally {
-      data.fileselect = null;
+      // data.fileselect = null;
     }
   };
   // const handleUrlPress = (url, matchIndex /*: number*/) => {
@@ -285,7 +289,7 @@ const PostVideo = ({ navigation, route }) => {
               <Text style={{ fontWeight: "500" }}>video</Text>
             </TouchableOpacity>
           </View>
-          <View style={{ height: 150 }}>
+          <View style={{}}>
             {/* <RichEditor
               multiline={true}
               placeholder="Nhập thông tin mô tả với hơn 4000 ký tự"

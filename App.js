@@ -97,7 +97,7 @@ export default function App() {
     // Listener khi người dùng tương tác với thông báo
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
+        console.log(response,'responted app.js');
       });
 
     return () => {

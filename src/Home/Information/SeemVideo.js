@@ -33,24 +33,24 @@ const SeemVideo = ({ navigation, route }) => {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [action, setAction] = useState(false);
-  const { selectedVideo, dataVideo,index } = route.params;
+  const { selectedVideo, dataVideo, index } = route.params;
   const [data, setData] = useState([]);
   useEffect(() => {
     const addVideo = () => {
-      console.log('hjajaja')
+      console.log("hjajaja");
       setData((prevData) => [...prevData, selectedVideo]);
     };
     addVideo();
   }, []);
   useFocusEffect(
     useCallback(() => {
+      console.log(data, "data", selectedVideo);
       // Thay đổi action để phát video đầu tiên
       setAction(true); // hoặc setAction(indexCuaVideoDauTien);
       return () => {
         // Reset lại action khi rời khỏi màn hình TikTok
         setAction(false);
       };
-      console.log(data,'data',selectedVideo)
     }, [])
   );
   useEffect(() => {
@@ -61,19 +61,16 @@ const SeemVideo = ({ navigation, route }) => {
   const handlerSelectVideo = async () => {
     try {
       const lim = 15; // Định nghĩa giá trị lim
-      const { data } = await axios.post(
-        `${path}/selectedVideoId`,
-        {
-          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-          skip: leng,
-          id:count._id,
-        }
-      );
+      const { data } = await axios.post(`${path}/selectedVideoId`, {
+        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+        skip: leng,
+        id: count._id,
+      });
       setLeng(leng + 3);
       // setData((prevData) => prevData.concat(data.data));
-      setData[data.data]
+      setData[data.data];
     } catch (err) {
-      console.log(err);
+      console.log(err, "màn hình video seemVideo");
     }
   };
   useEffect(() => {
@@ -88,7 +85,7 @@ const SeemVideo = ({ navigation, route }) => {
   };
   const [currentViewableItemIndex, setCurrentViewableItemIndex] = useState(0);
   const viewabilityConfig = { viewAreaCoveragePercentThreshold: 50 };
-  const onViewableItemsChanged = ({ viewableItems }: any) => {
+  const onViewableItemsChanged = ({ viewableItems }) => {
     if (viewableItems.length > 0) {
       setCurrentViewableItemIndex(viewableItems[0].index ?? 0);
     }
@@ -150,14 +147,12 @@ const SeemVideo = ({ navigation, route }) => {
         </TouchableOpacity>
       </View>
       <FlatList
-       
         data={data}
         pagingEnabled
         initialNumToRender={4}
         keyExtractor={(item, index) => index.toString()}
         maxToRenderPerBatch={5}
         renderItem={({ item, index }) => {
-       
           return (
             <VideoItem
               item={item}
@@ -176,11 +171,10 @@ const SeemVideo = ({ navigation, route }) => {
         //   );
         //   setAction(index);
         // }}
-        showsVerticalScrollIndicator={false}
+
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-       
         onEndReached={handlerSelectVideo}
         onEndReachedThreshold={(0, 5)}
       />

@@ -45,7 +45,7 @@ const Folowing=({ navigation})=> {
       setLeng(leng + 5);
       setData((prevData) => prevData.concat(data.data));
     } catch (err) {
-      console.log(err);
+      console.log(err,'màn hình flowwing1');
     }
   };
   useEffect(() => {
@@ -84,10 +84,10 @@ const Folowing=({ navigation})=> {
         setData([]);
         setData(data.data);
       } catch (err) {
-        console.log(err);
+        console.log(err,'màn hình flowing2');
       }
     } catch (err) {
-      console.log(err);
+      console.log(err,'màn hình folowing3');
     } finally {
       // Kết thúc setRefreshing sau một khoảng thời gian
       setTimeout(() => {

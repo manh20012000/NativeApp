@@ -28,11 +28,11 @@ import { io } from "socket.io-client";
 import path from "../../confige/config.js";
 import { useSelector, useDispatch } from "react-redux";
 const SeeDeTail = ({ route, navigation }) => {
-  // console.log(route.params)
   const count = useSelector((state) => state.auth.value);
   const BackTrangHome = () => {
     navigation.navigate("Home");
   };
+  // console.log(route.params);
   const [dataRoute, setDataRote] = useState(route.params);
   const [baiviet, setBaiviet] = useState([]);
 
@@ -57,7 +57,9 @@ const SeeDeTail = ({ route, navigation }) => {
       // console.log(dataUserChat)
     }
   };
-  const [isFriend, setIsFriend] = useState(false);
+  const [isFriend, setIsFriend] = useState(
+    dataRoute.userFriends.some((useid) => count._id === useid) // Sử dụng some để kiểm tra
+  );
   let handlePress = async () => {
     try {
       setIsFriend((prevState) => !prevState);
@@ -72,6 +74,7 @@ const SeeDeTail = ({ route, navigation }) => {
   useEffect(() => {
     const selectPostUser = async () => {
       try {
+        console.log(dataRoute._id);
         const { data } = await axios.post(`${path}/selectPost_inUser`, {
           userId: dataRoute._id,
         });
@@ -102,7 +105,7 @@ const SeeDeTail = ({ route, navigation }) => {
           }}
         >
           <TouchableOpacity onPress={BackTrangHome}>
-            <Ionicons name="md-arrow-back-sharp" size={24} color="black" />
+            <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
             style={{
@@ -160,7 +163,7 @@ const SeeDeTail = ({ route, navigation }) => {
               fontWeight: "500",
             }}
           >
-            {dataRoute.AcceptFriend.length} Bạn bè
+            {dataRoute.numberFollowing} Bạn bè
           </Text>
           <Text
             style={{
@@ -168,7 +171,7 @@ const SeeDeTail = ({ route, navigation }) => {
               fontWeight: "500",
             }}
           >
-            {dataRoute.userFolowing.length} Likes
+            {dataRoute.idVideoLike.length} Likes
           </Text>
         </View>
         <View

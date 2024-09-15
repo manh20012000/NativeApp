@@ -1,29 +1,29 @@
 import {
-    StyleSheet,
-    Text,
-    View,
-    TouchableOpacity,
-    FlatList,
-    StatusBar,
-    AppState,
-    RefreshControl,
-  } from "react-native";
-  import { React, useState, useEffect, useRef, useCallback } from "react";
-  import { useFocusEffect } from "@react-navigation/native";
-  import { Ionicons } from "@expo/vector-icons";
-  import { FontAwesome5 } from "@expo/vector-icons";
-  import { Video, ResizeMode } from "expo-av";
-  import { FontAwesome } from "@expo/vector-icons";
-  import VideoItem from "./VideoItem.js";
-  import { firestore } from "../../../Confige.js";
-  import { collection, getDocs } from "firebase/firestore";
-  import path from "../../confige/config.js";
-  import axios from "axios";
-  import {
-    createBottomTabNavigator,
-    useBottomTabBarHeight,
-  } from "@react-navigation/bottom-tabs";
-  import { useIsFocused } from '@react-navigation/native';
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+  StatusBar,
+  AppState,
+  RefreshControl,
+} from "react-native";
+import { React, useState, useEffect, useRef, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Video, ResizeMode } from "expo-av";
+import { FontAwesome } from "@expo/vector-icons";
+import VideoItem from "./VideoItem.js";
+import { firestore } from "../../../Confige.js";
+import { collection, getDocs } from "firebase/firestore";
+import path from "../../confige/config.js";
+import axios from "axios";
+import {
+  createBottomTabNavigator,
+  useBottomTabBarHeight,
+} from "@react-navigation/bottom-tabs";
+import { useIsFocused } from "@react-navigation/native";
 const VideoLocation = ({ navigation }) => {
   const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(true);
@@ -35,9 +35,8 @@ const VideoLocation = ({ navigation }) => {
   let trangthai = true;
   const [leng, setLeng] = useState(0);
   const handlerSelectVideo = async () => {
-   
     try {
-   const lim = 5; // Định nghĩa giá trị lim
+      const lim = 5; // Định nghĩa giá trị lim
       const { data } = await axios.post(`${path}/selectVideo`, {
         limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
         skip: leng,
@@ -45,28 +44,25 @@ const VideoLocation = ({ navigation }) => {
       setLeng(leng + 5);
       setData((prevData) => prevData.concat(data.data));
     } catch (err) {
-      console.log(err);
+      console.log(err, "màn hinh videolocatin1");
     }
   };
   useEffect(() => {
-    trangthai = true
+    trangthai = true;
     if (isFocused) {
-     
       if (trangthai == true) {
         handlerSelectVideo();
       }
       setAction(currentTabIndex);
     } else {
       setAction(false);
-   
     }
-    trangthai = false
+    trangthai = false;
     return () => {
       // Hàm cleanup (nếu cần)
     };
   }, [isFocused]);
-  
- 
+
   // useEffect(() => {
   //   handlerSelectVideo();
   // }, [trangthai]);
@@ -74,25 +70,22 @@ const VideoLocation = ({ navigation }) => {
     setRefreshing(true);
     setLeng(0);
     try {
-      // Gọi handlerSelectVideo và đợi nó hoàn thành  
-     
+      // Gọi handlerSelectVideo và đợi nó hoàn thành
+
       try {
         const lim = 5; // Định nghĩa giá trị lim
-  
-        const { data } = await axios.post(
-          `${path}/selectVideo`,
-          {
-            limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-            skip:0,
-          }
-        );
+
+        const { data } = await axios.post(`${path}/selectVideo`, {
+          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+          skip: 0,
+        });
         setData([]);
         setData(data.data);
       } catch (err) {
-        console.log(err);
+        console.log(err, "màn hình videolocation2");
       }
     } catch (err) {
-      console.log(err);
+      console.log(err, "man hình videolocation3");
     } finally {
       // Kết thúc setRefreshing sau một khoảng thời gian
       setTimeout(() => {
@@ -101,9 +94,9 @@ const VideoLocation = ({ navigation }) => {
     }
   };
   return (
-    <View style={{backgroundColor:'black'}}>
+    <View style={{ backgroundColor: "black" }}>
       <FlatList
-         style={{backgroundColor:'black'}}
+        style={{ backgroundColor: "black" }}
         data={data}
         pagingEnabled
         initialNumToRender={4}
@@ -121,7 +114,7 @@ const VideoLocation = ({ navigation }) => {
           const index = Math.round(
             e.nativeEvent.contentOffset.y / (810 - bottomTabHight)
           );
-          setCurrentTabIndex(index)
+          setCurrentTabIndex(index);
           setAction(index);
         }}
         showsVerticalScrollIndicator={false}
@@ -136,4 +129,4 @@ const VideoLocation = ({ navigation }) => {
   );
 };
 export default VideoLocation;
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

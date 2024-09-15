@@ -48,15 +48,14 @@ const Infor = ({ navigation, route }) => {
   );
   const selectUser = async () => {
     try {
-     
       const { data } = await axios.post(`${path}/userInfor`, {
         _id: count._id,
       });
-     
+
       setUserInfor(data.data);
       // console.log("user", data.data);
     } catch (err) {
-      console.log(err, "");
+      console.log(err, " lỗi với màn hình inforjs");
     }
   };
   useEffect(() => {

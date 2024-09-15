@@ -16,9 +16,12 @@ import path from "../../../confige/config.js";
 import { useSelector, useDispatch } from "react-redux";
 import { GiftedChat } from "react-native-gifted-chat";
 import { useSocket } from "../../../socket";
+import { checkingToken } from "../../../confige/CheckingToken.js";
+import { login } from "../../../Redex/Reducer/auth.slice.js";
 const Chat = ({ navigation }) => {
   const { width, height } = useWindowDimensions();
-  
+  const dispath = useDispatch();
+
   const user = useSelector((state) => state.auth.value);
   const StatusUser = useSelector((state) => state.Status.value);
   const [filter, setFillter] = useState([]);
@@ -70,18 +73,18 @@ const Chat = ({ navigation }) => {
 
   const SelectUserMessage = async () => {
     try {
-      const { data } = await axios.get(
-        `${path}/UserRouter`
-        //,
-        // {
-        // headers: {
-        //   "Content-Type": "multipart/form-data",
-        //   Authorization: `Bearer ${accessToken}`,
-        // },
-        //}
-      );
+      const isChecked = await checkingToken.checking(user);
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        const { data } = await axios.get(`${path}/UserRouter`, {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${isChecked.accessToken}`,
+          },
+        });
 
-      setFillter(data);
+        setFillter(data);
+      }
     } catch (error) {
       console.log(error, "lỗi cho mỗi cuộc chat ");
     } finally {
@@ -90,9 +93,18 @@ const Chat = ({ navigation }) => {
   const [listbarUser, setListbarUser] = useState([]);
   const selectUsersListBar = async () => {
     try {
-      const { data } = await axios.get(`${path}/UserSelelectchat`);
-      // console.log(data, "data selector");
-      setListbarUser(data);
+      const isChecked = await checkingToken.checking(user);
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        const { data } = await axios.get(`${path}/UserSelelectchat`, {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${isChecked.accessToken}`,
+          },
+        });
+        // console.log(data, "data selector");
+        setListbarUser(data);
+      }
     } catch (error) {
       console.log(error, "lôi sãy ra khi sleect với dữ liệu user ");
     } finally {
@@ -130,20 +142,32 @@ const Chat = ({ navigation }) => {
       Messages: item.messages,
     });
   };
-  const NavigateMess = async (user) => {
+  const NavigateMess = async (users) => {
     try {
-      const { data } = await axios.get(`${path}/getMessage/${user._id}`);
-      // console.log(data, "dataatin nhan ");
-      if (data.length === 0) {
-        navigation.navigate("PesionChat", {
-          participants: user,
-          Messages: [],
+      console.log(users);
+      const isChecked = await checkingToken.checking(user);
+      console.log(typeof isChecked);
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        console.log("nảy bào đay");
+        const { data } = await axios.get(`${path}/getMessage/${users._id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${isChecked.accessToken}`,
+          },
         });
-      } else {
-        navigation.navigate("PesionChat", {
-          participants: user,
-          Messages: data,
-        });
+        // console.log(data, "dataatin nhan ");
+        if (data.length === 0) {
+          navigation.navigate("PesionChat", {
+            participants: users,
+            Messages: [],
+          });
+        } else {
+          navigation.navigate("PesionChat", {
+            participants: users,
+            Messages: data,
+          });
+        }
       }
     } catch (error) {
       console.log(error, "lỗi khi chuyen sang chat detail ");

@@ -88,7 +88,7 @@ export class HandlerNotification {
       const expoPushToken = this.userData.expoPushToken;
 
       if (expoPushToken && !expoPushToken.includes(token)) {
-        console.log(token, "giá tr");
+        console.log(token, "giá tri token");
         //      expoPushToken.push(token);
         const updatedExpoPushToken = [...expoPushToken, token];
 
@@ -112,7 +112,7 @@ export class HandlerNotification {
       // const acesstoken = await AsyncStorage.getIem("accessToken");
       // const freshtoken = await AsyncStorage.getItem("refreshToken");
       const dataUser = {
-        id: data.data._id,
+        _id: data.data._id,
         Hoten: data.data.Hoten,
         Avatar: data.data.Avatar,
         email: data.data.email,
@@ -120,11 +120,10 @@ export class HandlerNotification {
         accessToken: userData.accessToken,
         refreshToken: userData.refreshToken,
       };
-     
       const userDataString = JSON.stringify(dataUser);
       await AsyncStorage.setItem("userToken", userDataString);
-      
     } catch (err) {
+      alert("tài khoản hoặc mật khẩu không chính xác");
       console.log("Failed to update token", err);
     }
   };

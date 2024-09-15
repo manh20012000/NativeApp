@@ -70,6 +70,7 @@ const RecodViedeo = ({ navigation }) => {
         if (result.assets[0].height < 700) {
           setResizeMode(true);
         }
+        // console.log(result.assets, "hahah");
         setFileselect(result.assets[0].uri);
         setHeight(result.assets[0].height);
         setWidthV(result.assets[0].width);
@@ -187,7 +188,6 @@ const RecodViedeo = ({ navigation }) => {
       throw error;
     }
   };
-
   const ContinuteDegin = async () => {
     setAutoplay(false);
     const randomUUID = uuidv4();
@@ -199,7 +199,7 @@ const RecodViedeo = ({ navigation }) => {
       // const processedVideoUrl = await uploadToCloudinary(fileselect);
 
       // Chuyển hướng đến màn hình khác với đường dẫn video đã xử lý
-      console.log(fileselect, "chuyẻn sang màn kia ");
+      // console.log(fileselect, "chuyẻn sang màn kia ");
       navigation.navigate("PostVideo", {
         fileselect: fileselect,
         widthV: widthV, // Kích thước tùy chỉnh
@@ -220,8 +220,6 @@ const RecodViedeo = ({ navigation }) => {
     formData.append("Height", heightV);
     formData.append("widthV", widthV);
     formData.append("datePost", datePostTimstemp);
-    // formData.append("videoConten", inputText);
-    formData.append("privacy", privacy);
     formData.append("Story", {
       uri: fileselect,
       name: `Story${datePostTimstemp}.mp4`,
@@ -230,7 +228,7 @@ const RecodViedeo = ({ navigation }) => {
     formData.append("resizeMode", resizeMode);
     formData.append("userId", dataUser._id);
     formData.append("textinLocation", inputText);
-    
+
     // formData.append("nameMusic", dataUser.Hoten);
     try {
       const { status, message, msg } = await axios.post(
@@ -259,6 +257,7 @@ const RecodViedeo = ({ navigation }) => {
     } finally {
       setAutoplay(false);
       setFileselect(null);
+      setLoading(false);
     }
   };
   return (
@@ -316,7 +315,7 @@ const RecodViedeo = ({ navigation }) => {
           {trangThai == 1 && startCamera && (
             <Camera
               type={type}
-              style={{ flex: 0.7, width: "100%" }}
+              style={{ flex: 0.85, width: "100%" }}
               ref={(cameraRef) => {
                 camera = cameraRef;
               }}
