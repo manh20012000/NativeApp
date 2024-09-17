@@ -21,7 +21,7 @@ import FlatItem from "../TrangChu/FlatItem.js";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import path from "../../confige/config.js";
-import { login } from "../../Redex/Reducer/auth.slice.js";
+import { login,logout } from "../../Redex/Reducer/auth.slice.js";
 import { HandlerNotification } from "../../confige/Util_handlerNotification.js";
 import { checkingToken } from "../../confige/CheckingToken.js";
 const Infor = ({ navigation, route }) => {

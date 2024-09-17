@@ -13,13 +13,14 @@ import { Entypo } from "@expo/vector-icons";
 import { React, useState, useRef, useEffect, memo } from "react";
 import TimeAgo from "react-native-timeago";
 import { MaterialIcons } from "@expo/vector-icons";
-import { checkingToken } from "../../confige/CheckingToken";
+
 import path from "../../confige/config";
-import { login } from "../../Redex/Reducer/auth.slice";
+import { login } from "../../Redex/Reducer/auth.slice.js";
+import { checkingToken } from "../../confige/CheckingToken.js";
 import { useSelector, useDispatch } from "react-redux";
 const CommentChildrens = (props) => {
   const data = props.item;
-
+  const userCurent = useSelector((state) => state.auth.value);
   const [user, setUser] = useState(data.User);
   const [Data, setData] = useState(props.item);
   useEffect(() => {
@@ -52,14 +53,15 @@ const CommentChildrens = (props) => {
   };
   const deleteComment = async () => {
     setShowOptions(false);
-    const { data } = await axios.delete(
-      "http://192.168.0.100:8080/deleteComment",
-      {
+    try {
+      const { data } = await axios.delete(`${path}/deleteComment`, {
         idComemnt: Item._id,
         DinhDanh: Item.Dinhdanh,
         idPerent: Item.idParentComment,
-      }
-    );
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {
@@ -70,7 +72,15 @@ const CommentChildrens = (props) => {
     <View>
       <View style={styles.topView}>
         <TouchableOpacity
-          onPress={() => props.navigation.navigate("SeeDeTail", data.User)}
+          onPress={() => {
+            props.toggleModal();
+            if (userCurent._id === data.User._id) {
+              props.navigation.navigate("Infor");
+            } else {
+              props.toggleModal();
+              props.navigation.navigate("SeeDeTail", data.User);
+            }
+          }}
         >
           <Image
             style={{ width: 35, height: 35, borderRadius: 30 }}

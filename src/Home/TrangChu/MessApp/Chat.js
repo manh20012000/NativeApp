@@ -66,9 +66,9 @@ const Chat = ({ navigation }) => {
       });
     });
 
-    return () => {
-      socket?.off("newMessage");
-    };
+    // return () => {
+    //   socket?.off("newMessage");
+    // };
   }, []);
 
   const SelectUserMessage = async () => {

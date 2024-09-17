@@ -18,10 +18,15 @@ import TimeAgo from "react-native-timeago";
 import { MaterialIcons } from "@expo/vector-icons";
 import path from "../../confige/config";
 import CommentChildrens from "./CommentChrildrens";
+import { login } from "../../Redex/Reducer/auth.slice.js";
+import { checkingToken } from "../../confige/CheckingToken.js";
+import { useSelector, useDispatch } from "react-redux";
 const CommentPanrent = (props) => {
   const [user, setUser] = useState(props.item.User);
+  const userCurent = useSelector((state) => state.auth.value);
   const Data = props.item;
-  const [Noidung, setNoiDung] = useState(Data.Content);
+  // const [Noidung, setNoiDung] = useState(Data.Content);
+  // console.log(Noidung, "log ra nội dung");
   const [soluongCmt, setSoluongcmt] = useState(Data.soluongcmt);
   const [DataCommentChildren, setCmchildren] = useState([]);
 
@@ -29,16 +34,15 @@ const CommentPanrent = (props) => {
   // console.log(Data, "log ra comment con");
   useEffect(() => {
     props.handleComemntData(Data.comments);
-
-    if (Data.comments.length == 0) {
+    if (Data.comments.length >= 1) {
       setXemThem(false);
-    } else if (Data.comments.length > 1) {
+    } else if (Data.comments.length >= 2) {
       setXemThem(true);
     }
   }, []);
 
   useEffect(() => {
-    console.log(Data.comments, "log lại giá tri comment con");
+    // console.log(Data.comments, "log lại giá tri comment con");
     setCmchildren(Data.comments);
   }, [Data.comments]);
   const itemsPerPage = 3;
@@ -67,15 +71,21 @@ const CommentPanrent = (props) => {
     });
   };
 
-  // useEffect(() => {
-  //   setCmchildren(Data.CommentChildrens);
-  // }, [Data]);
-
   return (
     <View>
       <View style={styles.topView}>
         <TouchableOpacity
-          onPress={() => props.navigation.navigate("SeeDeTail", user)}
+          onPress={() => {
+            if (userCurent._id === user._id) {
+              console.log("đây là bản thân mình ");
+              props.navigation.navigate("Infor");
+              props.toggleModal();
+            } else {
+              props.toggleModal();
+              console.log("đây ko phải là bản thân mình ");
+              props.navigation.navigate("SeeDeTail", user);
+            }
+          }}
         >
           <Image
             style={{ width: 45, height: 45, borderRadius: 40 }}
@@ -101,7 +111,7 @@ const CommentPanrent = (props) => {
                 {user.Hoten}
               </Text>
             </TouchableOpacity>
-            <Text style={{ color: "white" }}>{Noidung}</Text>
+            <Text style={{ color: "white" }}>{Data.Content}</Text>
           </Pressable>
           <View style={styles.viewTab}>
             <View style={styles.ViewitemCmt}>
@@ -144,7 +154,14 @@ const CommentPanrent = (props) => {
           style={{ flex: 0.9 }}
           keyExtractor={(item) => item._id}
           renderItem={({ item, index }) => {
-            return <CommentChildrens item={item} />;
+            return (
+              <CommentChildrens
+                item={item}
+                navigation={props.navigation}
+                index={index}
+                toggleModal={props.toggleModal}
+              />
+            );
           }}
           extraData={DataCommentChildren}
         />

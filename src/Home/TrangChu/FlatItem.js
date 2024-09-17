@@ -34,7 +34,7 @@ import { login } from "../../Redex/Reducer/auth.slice.js";
 import { checkingToken } from "../../confige/CheckingToken.js";
 import { useSelector, useDispatch } from "react-redux";
 // import SkeletonPlaceholder from "react-native-skeleton-placeholder";
-const FlatItem = memo((props) => {
+const FlatItem = (props) => {
   const userCurent = useSelector((state) => state.auth.value);
   const dispath = useDispatch();
   const { width, height } = useWindowDimensions();
@@ -96,7 +96,9 @@ const FlatItem = memo((props) => {
           Soluong: soluongTim,
           Trangthai: Liked, // trạng thái đã like hay chưa
           nameLike: dataContenpost.User.Hoten,
-          screen: "Trang chủ",
+          avatarSend: userCurent.Avatar,
+          title: "Thích bài viết ",
+          messagenotifi: `@[${userCurent.Hoten}](id:${userCurent._id}) thích bài viết của bạn`,
         });
         const { data } = await axios.post(
           `${path}/tymPost`,
@@ -106,7 +108,9 @@ const FlatItem = memo((props) => {
             Soluong: soluongTim,
             Trangthai: Liked, // trạng thái đã like hay chưa
             nameLike: dataContenpost.User.Hoten,
-            screen: "Trang chủ",
+            avatarSend: userCurent.Avatar,
+            title: "Thích bài viết ",
+            messagenotifi: `@[${userCurent.Hoten}](id:${userCurent._id}) thích bài viết của bạn`,
           },
           {
             headers: {
@@ -124,7 +128,11 @@ const FlatItem = memo((props) => {
     }
   };
   const DetaiHandress = () => {
-    props.navigation.navigate("SeeDeTail", dataContenpost.User);
+    if (userCurent._id === dataContenpost.User._id) {
+      props.navigation.navigate("Infor", userCurent);
+    } else {
+      props.navigation.navigate("SeeDeTail", dataContenpost.User);
+    }
   };
   // set phongd to màn hinhg
   const [isViewerOpen, setIsViewerOpen] = useState(false);
@@ -283,9 +291,12 @@ const FlatItem = memo((props) => {
         CommentChildren: commentArr,
         comments: comments,
       };
-      console.log("thêm comment cha");
-      setBinhLuan((prevComments) => [newComment, ...prevComments]);
+      // console.log(newComment, "thêm comment cha");
+      console.log([newComment, ...binhluan]);
+      setBinhLuan([newComment, ...binhluan]);
+      // setBinhLuan((prevComments) => [newComment, ...prevComments]);
     } else {
+      console.log("jaha");
       const newComment = {
         _id: myId,
         idBaiviet: dataContenpost._id,
@@ -328,7 +339,12 @@ const FlatItem = memo((props) => {
       formData.append("Soluongcmt", soluong);
       formData.append("parentId", JSON.stringify(parentId));
       formData.append("nameComemnt", userCurent.Hoten);
-
+      formData.append("avatarSend", userCurent.Avatar);
+      formData.append("title", "Bình luận bài viết");
+      formData.append(
+        "messagenotifi",
+        `@[${userCurent.Hoten}](id:${userCurent._id}) bình luận bài viết của bạn`
+      );
       if (image) {
         formData.append("imageCmt", {
           uri: image,
@@ -526,7 +542,7 @@ const FlatItem = memo((props) => {
                 }}
               >
                 <TimeAgo
-                  style={{ fontSize: 12, color: "blue" }}
+                  style={{ fontSize: 12, color: "blue", fontWeight: "bold" }}
                   time={dataContenpost.createdAt}
                 />
                 <Text style={{ marginTop: 10 }}>
@@ -579,7 +595,13 @@ const FlatItem = memo((props) => {
 
         {dataContenpost.Fell !== "null" && (
           // Kiểm tra nếu Fell không phải là null hoặc undefined
-          <Text style={{ fontSize: 14, fontWeight: "400" }}>
+          <Text
+            style={{
+              fontSize: 13,
+              fontWeight: "600",
+              color: "#444444",
+            }}
+          >
             {dataContenpost.Fell}
           </Text>
         )}
@@ -722,6 +744,7 @@ const FlatItem = memo((props) => {
                       setParentId={setParentId}
                       setCommentArr={handleSetCommentArr}
                       handleComemntData={handleComemntData}
+                      toggleModal={toggleModal}
                     />
                   );
                 }}
@@ -912,7 +935,7 @@ const FlatItem = memo((props) => {
       </Modal>
     </View>
   );
-});
+};
 export default FlatItem;
 const styles = StyleSheet.create({
   contain: {

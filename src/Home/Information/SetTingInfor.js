@@ -13,23 +13,13 @@ import {
   TextInput,
   Animated,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { AntDesign } from "@expo/vector-icons";
-import NewRecode from "../../AddVideo/NewRecode";
-import { Camera, CameraType } from "expo-camera";
-import Swiper from "react-native-swiper";
-import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-import { Video, ResizeMode } from "expo-av";
-import { FontAwesome } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Octicons } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CommonActions } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { HandlerNotification } from "../../confige/Util_handlerNotification.js";
 import { useSocket } from "../../socket.js";
+import { logout } from "../../Redex/Reducer/auth.slice.js";
 const SetTingInfor = ({ navigation, route }) => {
   // console.log(route.params, "giá trị");
   const socket = useSocket();
@@ -47,6 +37,7 @@ const SetTingInfor = ({ navigation, route }) => {
         ],
       })
     );
+    dispatch(logout())
     const fcmtoken = await AsyncStorage.getItem("fcmtoken");
     await AsyncStorage.removeItem("userToken");
     await AsyncStorage.removeItem("fcmtoken");
