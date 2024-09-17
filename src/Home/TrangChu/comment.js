@@ -3,10 +3,7 @@ import {
   Text,
   View,
   FlatList,
-  Item,
   Image,
-  TextInput,
-  ScrollView,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Modal,
@@ -16,37 +13,40 @@ import {
   Pressable,
 } from "react-native";
 import axios from "axios";
-import { Entypo } from "@expo/vector-icons";
 import { React, useState, useRef, useEffect, memo } from "react";
 import TimeAgo from "react-native-timeago";
 import { MaterialIcons } from "@expo/vector-icons";
 import path from "../../confige/config";
 import CommentChildrens from "./CommentChrildrens";
-const CommentPanrent = memo((props) => {
+const CommentPanrent = (props) => {
   const [user, setUser] = useState(props.item.User);
-  const [Data, setData] = useState(props.item);
-  console.log(props.item.comments,'comment con')
+  const Data = props.item;
   const [Noidung, setNoiDung] = useState(Data.Content);
   const [soluongCmt, setSoluongcmt] = useState(Data.soluongcmt);
   const [DataCommentChildren, setCmchildren] = useState([]);
 
   const [XemThem, setXemThem] = useState(false);
-
+  // console.log(Data, "log ra comment con");
   useEffect(() => {
     props.handleComemntData(Data.comments);
-    console.log(Data.comments.length, "cmt ");
-    if (Data.comments.length >= 1) {
-      setXemThem(true);
+
+    if (Data.comments.length == 0) {
+      setXemThem(false);
     } else if (Data.comments.length > 1) {
       setXemThem(true);
     }
   }, []);
+
+  useEffect(() => {
+    console.log(Data.comments, "log lại giá tri comment con");
+    setCmchildren(Data.comments);
+  }, [Data.comments]);
   const itemsPerPage = 3;
   const [startIndex, setStartIndex] = useState(0);
   const hanlderXemThem = () => {
     setXemThem(false);
     setCmchildren(Data.comments);
-    // setStartIndex((prevIndex) => prevIndex - itemsPerPage);
+    setStartIndex((prevIndex) => prevIndex - itemsPerPage);
   };
   const [showOptions, setShowOptions] = useState(false);
   const [Item, setItem] = useState("");
@@ -95,7 +95,9 @@ const CommentPanrent = memo((props) => {
               style={{ width: "auto" }}
               onPress={() => props.navigation.navigate("SeeDeTail", user)}
             >
-              <Text style={{ fontSize: 20, fontWeight: "500", color: "white" }}>
+              <Text
+                style={{ fontSize: 15, fontWeight: "bold", color: "white" }}
+              >
                 {user.Hoten}
               </Text>
             </TouchableOpacity>
@@ -104,24 +106,27 @@ const CommentPanrent = memo((props) => {
           <View style={styles.viewTab}>
             <View style={styles.ViewitemCmt}>
               <TimeAgo
-                style={{ color: "blue" }}
+                style={{ color: "blue", fontSize: 12 }}
                 time={Data.createdAt}
                 hideAgo={true}
               />
               <TouchableOpacity>
-                <Text>Like</Text>
+                <Text style={{ fontSize: 12 }}>Like</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  props.handleTextInputChange(user.Hoten + " 👉 ");
+                  props.handleTextInputChange(
+                    `@${user.Hoten} `
+                    // `@[${user.Hoten}](id:${user._id})`
+                  );
                   props.setParentId(Data._id);
                   props.setCommentArr(Data.comments);
                 }}
               >
-                <Text>Reply</Text>
+                <Text style={{ fontSize: 12 }}>Reply</Text>
               </TouchableOpacity>
             </View>
-            <Text>Thích</Text>
+            <Text style={{ fontSize: 12 }}>Thích</Text>
           </View>
           <View style={{ marginLeft: 30 }}>
             {Data.Image ? (
@@ -139,9 +144,9 @@ const CommentPanrent = memo((props) => {
           style={{ flex: 0.9 }}
           keyExtractor={(item) => item._id}
           renderItem={({ item, index }) => {
-            console.log(item);
             return <CommentChildrens item={item} />;
           }}
+          extraData={DataCommentChildren}
         />
         {XemThem && (
           <TouchableOpacity onPress={hanlderXemThem}>
@@ -168,7 +173,7 @@ const CommentPanrent = memo((props) => {
               </TouchableOpacity>
               <TouchableOpacity style={styles.touchcmt}>
                 <MaterialIcons name="report-problem" size={24} color="black" />
-                <Text>Reply</Text>
+                <Text style={{ fontSize: 14 }}>Reply</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.touchcmt}>
                 <MaterialIcons name="report-problem" size={24} color="black" />
@@ -188,7 +193,7 @@ const CommentPanrent = memo((props) => {
       </Modal>
     </View>
   );
-});
+};
 export default CommentPanrent;
 const styles = StyleSheet.create({
   topView: {

@@ -2,17 +2,10 @@ import {
   StyleSheet,
   Text,
   View,
-  FlatList,
-  Item,
   Image,
-  TextInput,
-  ScrollView,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Modal,
-  BackHandler,
-  Alert,
-  RefreshControl,
   Pressable,
 } from "react-native";
 import axios from "axios";
@@ -20,12 +13,18 @@ import { Entypo } from "@expo/vector-icons";
 import { React, useState, useRef, useEffect, memo } from "react";
 import TimeAgo from "react-native-timeago";
 import { MaterialIcons } from "@expo/vector-icons";
-const CommentChildrens = memo((props) => {
+import { checkingToken } from "../../confige/CheckingToken";
+import path from "../../confige/config";
+import { login } from "../../Redex/Reducer/auth.slice";
+import { useSelector, useDispatch } from "react-redux";
+const CommentChildrens = (props) => {
   const data = props.item;
 
   const [user, setUser] = useState(data.User);
-  const [Data, setData] = useState(data);
-
+  const [Data, setData] = useState(props.item);
+  useEffect(() => {
+    setData(props.item);
+  }, [props.item]);
   const [Noidung, setNoiDung] = useState(Data.Content);
   const [soluongCmt, setSoluongcmt] = useState(Data.soluongcmt);
   const [cmtChidren, setCmchildren] = useState(Data.CommentChildren);
@@ -53,9 +52,6 @@ const CommentChildrens = memo((props) => {
   };
   const deleteComment = async () => {
     setShowOptions(false);
-
-    console.log(Item._id);
-    console.log(Item.Dinhdanh, Item.idParentComment);
     const { data } = await axios.delete(
       "http://192.168.0.100:8080/deleteComment",
       {
@@ -89,7 +85,7 @@ const CommentChildrens = memo((props) => {
             android_ripple={{ color: "gray" }} // Ripple effect for Android
             style={styles.pressAble}
           >
-            <Text style={{ fontSize: 14, fontWeight: "500", color: "white" }}>
+            <Text style={{ fontSize: 12, fontWeight: "bold", color: "white" }}>
               {data.User.Hoten}
             </Text>
 
@@ -98,23 +94,23 @@ const CommentChildrens = memo((props) => {
           <View style={styles.viewTab}>
             <View style={styles.ViewitemCmt}>
               <TimeAgo
-                style={{ color: "blue" }}
+                style={{ color: "blue", fontSize: 12 }}
                 time={data.createdAt}
                 hideAgo={true}
               />
               <TouchableOpacity>
-                <Text>Like</Text>
+                <Text style={{ fontSize: 12 }}>Like</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  props.handleTextInputChange(data.User.Hoten + " 👉 ");
+                  props.handleTextInputChange(`@${data.User.Hoten} `);
                   props.setParentId(Data._id);
                 }}
               >
-                <Text>Reply</Text>
+                <Text style={{ fontSize: 12 }}>Reply</Text>
               </TouchableOpacity>
             </View>
-            <Text>Thích</Text>
+            <Text style={{ fontSize: 12 }}>Thích</Text>
           </View>
         </View>
       </View>
@@ -155,7 +151,7 @@ const CommentChildrens = memo((props) => {
       </Modal>
     </View>
   );
-});
+};
 export default CommentChildrens;
 const styles = StyleSheet.create({
   topView: {

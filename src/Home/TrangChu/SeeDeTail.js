@@ -12,17 +12,12 @@ import {
 import { collection, getDocs, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
-
 import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
-import { BottomSheet } from "react-native-btr";
-import { Fontisto } from "@expo/vector-icons";
 import FlatItem from "./FlatItem.js";
 import { Entypo } from "@expo/vector-icons";
 import { Tabs, CollapsibleTabView } from "react-native-collapsible-tab-view";
-import { firestore } from "../../../Confige.js";
+import { login } from "../../Redex/Reducer/auth.slice.js";
+import { checkingToken } from "../../confige/CheckingToken.js";
 import axios from "axios";
 import { io } from "socket.io-client";
 import path from "../../confige/config.js";
@@ -30,26 +25,40 @@ import { useSelector, useDispatch } from "react-redux";
 const SeeDeTail = ({ route, navigation }) => {
   const count = useSelector((state) => state.auth.value);
   const BackTrangHome = () => {
-    navigation.navigate("Home");
+    navigation.goBack();
   };
-  // console.log(route.params);
+  const dispath = useDispatch();
   const [dataRoute, setDataRote] = useState(route.params);
   const [baiviet, setBaiviet] = useState([]);
 
   const NavigateMess = async () => {
     try {
-      const { data } = await axios.get(`${path}/getMessage/${dataRoute._id}`);
-      console.log(data, "dataatin nhan ");
-      if (data.length === 0) {
-        navigation.navigate("PesionChat", {
-          participants: dataRoute,
-          Messages: [],
-        });
-      } else {
-        navigation.navigate("PesionChat", {
-          participants: dataRoute,
-          Messages: data,
-        });
+      const isChecked = await checkingToken.checking(count);
+      // console.log(count.accessToken);
+      // console.log(isChecked, "gias tri sau checked");
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        const { data } = await axios.get(
+          `${path}/getMessage/${dataRoute._id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        console.log(data, "dataatin nhan ");
+        if (data.length === 0) {
+          navigation.navigate("PesionChat", {
+            participants: dataRoute,
+            Messages: [],
+          });
+        } else {
+          navigation.navigate("PesionChat", {
+            participants: dataRoute,
+            Messages: data,
+          });
+        }
       }
     } catch (error) {
       console.log(error, "lỗi khi chuyen sang chat sseedetail NavigateMess");
@@ -62,11 +71,26 @@ const SeeDeTail = ({ route, navigation }) => {
   );
   let handlePress = async () => {
     try {
-      setIsFriend((prevState) => !prevState);
-      const { message } = await axios.post(`${path}/Addfriend`, {
-        _idfirend: dataRoute._id,
-      });
-      console.log(message, "message");
+      const isChecked = await checkingToken.checking(count);
+      // console.log(count.accessToken);
+      // console.log(isChecked, "gias tri sau checked");
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        setIsFriend((prevState) => !prevState);
+        const { message } = await axios.post(
+          `${path}/Addfriend`,
+          {
+            _idfirend: dataRoute._id,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        console.log(message, "message");
+      }
     } catch (err) {
       console.log(err, "lỗi với addfriend message handlePress");
     }
@@ -74,15 +98,28 @@ const SeeDeTail = ({ route, navigation }) => {
   useEffect(() => {
     const selectPostUser = async () => {
       try {
-        console.log(dataRoute._id);
-        const { data } = await axios.post(`${path}/selectPost_inUser`, {
-          userId: dataRoute._id,
-        });
-        console.log(data.trangthai, "trang thái");
-        setIsFriend(data.trangthai);
-        setBaiviet(data.data);
+        const isChecked = await checkingToken.checking(count);
+        if (typeof isChecked === "object" && isChecked !== null) {
+          dispath(login(isChecked));
+          console.log(dataRoute._id);
+          const { data } = await axios.post(
+            `${path}/selectPost_inUser`,
+            {
+              userId: dataRoute._id,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+              },
+            }
+          );
+          // console.log(data, "trang thái");
+          setIsFriend(data.trangthai);
+          setBaiviet(data.data);
+        }
       } catch (err) {
-        console.log(err, "lỗi vơis lấy dữ luêuj ra ");
+        console.log(err, "lỗi vơis lấy dữ luêuj ra màn seedetail ");
       }
     };
     selectPostUser();
@@ -262,7 +299,14 @@ const SeeDeTail = ({ route, navigation }) => {
             keyExtractor={(item, index) => index.toString()}
             data={baiviet}
             renderItem={({ item, index }) => {
-              return <FlatItem item={item} navigation={navigation} />;
+              return (
+                <FlatItem
+                  item={item}
+                  index={index}
+                  userDn={count._id}
+                  navigation={navigation}
+                />
+              );
             }}
           />
         </Tabs.Tab>

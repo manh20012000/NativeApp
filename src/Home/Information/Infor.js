@@ -11,8 +11,7 @@ import {
 } from "react-native";
 import { React, useState, useEffect, useRef, useCallback } from "react";
 import ViewVideo from "./ViewVideo";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
+
 import axios from "axios";
 import { collection, getDocs } from "firebase/firestore";
 
@@ -22,11 +21,13 @@ import FlatItem from "../TrangChu/FlatItem.js";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import path from "../../confige/config.js";
-import { UpdateAuth } from "../../Redex/Reducer/auth.slice.js";
+import { login } from "../../Redex/Reducer/auth.slice.js";
 import { HandlerNotification } from "../../confige/Util_handlerNotification.js";
+import { checkingToken } from "../../confige/CheckingToken.js";
 const Infor = ({ navigation, route }) => {
   const count = useSelector((state) => state.auth.value);
   // console.log(count,'usser counet')
+  const dispath = useDispatch();
   const [dataUser, setDatauUser] = useState(count);
   const [databaiviet, setDataBaiviet] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
@@ -48,12 +49,27 @@ const Infor = ({ navigation, route }) => {
   );
   const selectUser = async () => {
     try {
-      const { data } = await axios.post(`${path}/userInfor`, {
-        _id: count._id,
-      });
+      const isChecked = await checkingToken.checking(count);
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
 
-      setUserInfor(data.data);
-      // console.log("user", data.data);
+        const { data } = await axios.post(
+          `${path}/userInfor`,
+          {
+            _id: isChecked._id,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+
+        setUserInfor(data.data);
+
+        // console.log("user", data.data);
+      }
     } catch (err) {
       console.log(err, " lỗi với màn hình inforjs");
     }
@@ -65,14 +81,27 @@ const Infor = ({ navigation, route }) => {
 
   const handlerSelectVideo = async () => {
     try {
-      const lim = 15; // Định nghĩa giá trị lim
-      const { data } = await axios.post(`${path}/selectedVideoId`, {
-        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-        skip: leng,
-        id: count._id,
-      });
-      setLeng(leng + 3);
-      setDataVideo((prevData) => prevData.concat(data.data));
+      const isChecked = await checkingToken.checking(count);
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        const lim = 15; // Định nghĩa giá trị lim
+        const { data } = await axios.post(
+          `${path}/selectedVideoId`,
+          {
+            limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+            skip: leng,
+            id: count._id,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        setLeng(leng + 3);
+        setDataVideo((prevData) => prevData.concat(data.data));
+      }
     } catch (err) {
       console.log(err, "log loi infor user222");
     }
@@ -84,14 +113,28 @@ const Infor = ({ navigation, route }) => {
   const onRefresh = async () => {
     setRefreshing(true);
     try {
-      const lim = 9; // Định nghĩa giá trị lim
-      const { data } = await axios.post(`${path}/selectedVideoId`, {
-        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-        skip: leng,
-        id: count._id,
-      });
-      setLeng(leng + 3);
-      setDataVideo((prevData) => prevData.concat(data.data));
+      const isChecked = await checkingToken.checking(count);
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+
+        const lim = 9; // Định nghĩa giá trị lim
+        const { data } = await axios.post(
+          `${path}/selectedVideoId`,
+          {
+            limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+            skip: leng,
+            id: count._id,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        setLeng(leng + 3);
+        setDataVideo((prevData) => prevData.concat(data.data));
+      }
     } catch (err) {
       console.log(err, "loi vưới selectedVideoId");
     }
@@ -112,19 +155,32 @@ const Infor = ({ navigation, route }) => {
   const setSeeInfor = () => {
     setSeeIF(!SeeIF);
   };
-  const handlerSlectVideo = async () => {};
+  // const handlerSlectVideo = async () => {};
   useEffect(() => {
     const selectPostUser = async () => {
       try {
-        console.log("dataUser._id", dataUser._id);
-        const { data } = await axios.post(`${path}/selectPost_inUser`, {
-          userId: dataUser._id,
-        });
-        console.log("di liệu được sinh ra ");
-        setDataBaiviet(data.data);
+        const isChecked = await checkingToken.checking(count);
+        if (typeof isChecked === "object" && isChecked !== null) {
+          dispath(login(isChecked));
+
+          const { data } = await axios.post(
+            `${path}/selectPost_inUser`,
+            {
+              userId: isChecked._id,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+              },
+            }
+          );
+          // console.log(data, "trang thái");
+          // setIsFriend(data.trangthai);
+          setDataBaiviet(data.data);
+        }
       } catch (err) {
-        console.log(err, "log lỗi infor");
-        return;
+        console.log(err, "lỗi vơis lấy dữ luêuj ra màn seedetail ");
       }
     };
     selectPostUser();

@@ -6,24 +6,19 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Modal,
-  Button,
-  PanResponder,
   Share,
   FlatList,
   TextInput,
+  Linking,
   KeyboardAvoidingView,
   Animated,
+  useWindowDimensions,
 } from "react-native";
 import { React, useState, useRef, useEffect, memo } from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { FontAwesome, EvilIcons, AntDesign } from "@expo/vector-icons";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Swiper from "react-native-swiper";
 import ImageViewer from "react-native-image-zoom-viewer";
-import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-import { BottomSheet } from "react-native-btr";
-import Binhluan from "./BinhLuan.js";
 import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import CommentPanrent from "./comment.js";
@@ -42,14 +37,15 @@ import { useSelector, useDispatch } from "react-redux";
 const FlatItem = memo((props) => {
   const userCurent = useSelector((state) => state.auth.value);
   const dispath = useDispatch();
+  const { width, height } = useWindowDimensions();
   // console.log(userCurent);
   const user = props.item.User; //
   // console.log(props.item);
   const dataContenpost = props.item;
+  // console.log(dataContenpost);
   const [isLiked, setIsLiked] = useState(
     dataContenpost.Like.some((like) => {
-      // console.log(like.User, props.userDn);
-      // console.log(like.User === props.userDn);
+      // console.log(like);
       return like.User === props.userDn; // Kiểm tra dựa trên ID của người dùng
     })
   );
@@ -94,11 +90,18 @@ const FlatItem = memo((props) => {
       // console.log(isChecked, "gias tri sau checked");
       if (typeof isChecked === "object" && isChecked !== null) {
         dispath(login(isChecked));
-
+        console.log("Body sent for like/dislike:", {
+          idUser: userCurent._id,
+          idBaiPost: dataContenpost._id,
+          Soluong: soluongTim,
+          Trangthai: Liked, // trạng thái đã like hay chưa
+          nameLike: dataContenpost.User.Hoten,
+          screen: "Trang chủ",
+        });
         const { data } = await axios.post(
           `${path}/tymPost`,
           {
-            idUser: props.userDn,
+            idUser: userCurent._id,
             idBaiPost: dataContenpost._id,
             Soluong: soluongTim,
             Trangthai: Liked, // trạng thái đã like hay chưa
@@ -107,7 +110,7 @@ const FlatItem = memo((props) => {
           },
           {
             headers: {
-              "Content-Type": "multipart/form-data",
+              "Content-Type": "application/json",
               authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
               Authorization: `Bearer ${isChecked.accessToken}`,
             },
@@ -222,6 +225,7 @@ const FlatItem = memo((props) => {
   const [isimageCmt, setIsImageCmt] = useState(true);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   const [selectedImages, setSelectedImages] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const pickImages = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsMultipleSelection: false,
@@ -236,7 +240,7 @@ const FlatItem = memo((props) => {
       });
     }
   };
-  const handlerSelectCommentChildren = async () => {};
+
   const HandelerDeletePickture = () => {
     setIsImageCmt(true);
     setImageCmt(null);
@@ -252,6 +256,7 @@ const FlatItem = memo((props) => {
     setComments(comments);
     // console.log(comments, 'commentAeee')
   };
+
   const SendComment = async () => {
     const myId = uuid();
     // const randomInt = Math.floor(Math.random() * 10001); // Tạo số nguyên từ 0 đến 10000
@@ -278,6 +283,7 @@ const FlatItem = memo((props) => {
         CommentChildren: commentArr,
         comments: comments,
       };
+      console.log("thêm comment cha");
       setBinhLuan((prevComments) => [newComment, ...prevComments]);
     } else {
       const newComment = {
@@ -291,6 +297,7 @@ const FlatItem = memo((props) => {
         User: userCurent,
         comments: comments,
       };
+      console.log("thêm comment con vào comment cha ");
       setCommentArr((prevComments) => [...prevComments, newComment]);
       setBinhLuan((prevBinhLuan) =>
         prevBinhLuan.map((comment) =>
@@ -299,51 +306,58 @@ const FlatItem = memo((props) => {
             : comment
         )
       );
-      // console.log(binhluan);
-      // let newBinhLuan = [...binhluan];
 
-      // newBinhLuan.map((comment) =>
-      //   comment._id === parentId
-      //     ? { ...comment, comments: [...comment.comments, newComment] }
-      //     : comment
-      // );
-      // setBinhLuan(newBinhLuan);
+      let newBinhLuan = [...binhluan];
+
+      const handlerNewcomment = newBinhLuan.map((comment) =>
+        comment._id === parentId
+          ? { ...comment, comments: [...comment.comments, newComment] }
+          : comment
+      );
+      console.log(
+        handlerNewcomment,
+        "khi được log ra màn hình giá trị comment"
+      );
+      setBinhLuan(handlerNewcomment);
     }
-    // try {
-    //   formData.append("_id", myId);
-    //   formData.append("UserCmt", props.userDn);
-    //   formData.append("idBaiviet", dataContenpost._id);
-    //   formData.append("Noidung", noidung);
-    //   formData.append("Soluongcmt", soluong);
-    //   formData.append("parentId", JSON.stringify(parentId));
+    try {
+      formData.append("_id", myId);
+      formData.append("UserCmt", props.userDn);
+      formData.append("idBaiviet", dataContenpost._id);
+      formData.append("Noidung", noidung);
+      formData.append("Soluongcmt", soluong);
+      formData.append("parentId", JSON.stringify(parentId));
+      formData.append("nameComemnt", userCurent.Hoten);
 
-    //   if (image) {
-    //     formData.append("imageCmt", {
-    //       uri: image,
-    //       name: `image.jpeg`,
-    //       type: "image/jpeg", // Loại tệp
-    //     });
-    //   }
-    //   const { data } = await axios.post(
-    //     `${path}/SendCommentArticles`,
-    //     // "https://nativeapp-vwvi.onrender.com:8080/SendCommentArticles",
-    //     formData,
-    //     {
-    //       headers: {
-    //         "Content-Type": "multipart/form-data",
-    //       },
-    //     }
-    //   );
-    //   setParentId(null);
-    //   setSoluongcmt(soluong);
-    //   setImageCmt(null);
-    //   selectCmt();
-    // } catch (err) {
-    //   console.log(err, "log erree");
-    // }
-    setTimeout(() => {
-      console.log(binhluan, "binh kuan ");
-    }, 2000);
+      if (image) {
+        formData.append("imageCmt", {
+          uri: image,
+          name: `image.jpeg`,
+          type: "image/jpeg", // Loại tệp
+        });
+      }
+      const isChecked = await checkingToken.checking(userCurent);
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        const { data } = await axios.post(
+          `${path}/SendCommentArticles`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        setParentId(null);
+        setSoluongcmt(soluong);
+        setImageCmt(null);
+        // selectCmt();
+      }
+    } catch (err) {
+      console.log(err, "lỗi với bình luận");
+    }
+    // etRefresh((prevRefresh) => !prevRefresh); // Đổi giá trị của refresh để buộc re-render
   };
 
   const handleDeleteAticarl = async () => {
@@ -408,10 +422,9 @@ const FlatItem = memo((props) => {
   const renderParsedText = (text) => {
     const parsedParts = parseText(text); // Phân tích đoạn text
     return (
-      <Text>
+      <Text style={{ fontSize: 13, fontWeight: "500" }}>
         {parsedParts.map((part, index) => {
           if (part.user) {
-            console.log(part.user, "hahahah");
             return (
               <Text
                 style={{ color: "blue", fontWeight: "bold" }}
@@ -481,12 +494,12 @@ const FlatItem = memo((props) => {
         >
           <View
             style={{
-              width: 45,
-              height: 45,
-              borderRadius: 45,
+              width: width / 7,
+              height: width / 7,
+              borderRadius: width / 7,
               marginHorizontal: 6,
               backgroundColor: "#888888",
-              marginTop: 2,
+              marginTop: "2%",
             }}
           >
             <Image source={{ uri: user.Avatar }} style={styles.imges}></Image>
@@ -504,23 +517,44 @@ const FlatItem = memo((props) => {
               }}
             >
               <Text style={styles.title}>{user.Hoten}</Text>
-              <TimeAgo
-                style={{ fontSize: 12, color: "blue" }}
-                time={dataContenpost.createdAt}
-              />
+              <Text
+                style={{
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  alignSelf: "center",
+                  flexDirection: "row",
+                }}
+              >
+                <TimeAgo
+                  style={{ fontSize: 12, color: "blue" }}
+                  time={dataContenpost.createdAt}
+                />
+                <Text style={{ marginTop: 10 }}>
+                  {"   "} <MaterialIcons name={quyen} size={20} color="black" />{" "}
+                </Text>
+              </Text>
             </View>
-            {/* <View
+            <View
               style={{
                 justifyContent: "center",
                 alignItems: "center",
                 marginLeft: 20,
               }}
             >
-              <MaterialIcons name={quyen} size={20} color="black" />
-              {dataContenpost.Loaction != null ? (
-                <Text>-Bạn đang ở {dataContenpost.Loaction}</Text>
-              ) : null}
-            </View> */}
+              {dataContenpost.Loaction !== "null" ? ( // Kiểm tra nếu Loaction không phải là null hoặc undefined
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    color: "blue",
+                    fontStyle: "italic",
+                  }}
+                >
+                  {dataContenpost.Loaction}
+                </Text>
+              ) : (
+                <></>
+              )}
+            </View>
           </View>
         </TouchableOpacity>
         <TouchableOpacity
@@ -538,15 +572,17 @@ const FlatItem = memo((props) => {
           <Text style={{ fontSize: 35 }}>...</Text>
         </TouchableOpacity>
       </View>
-      <View style={{ marginBottom: 10, paddingHorizontal: 6 }}>
+      <View
+        style={{ marginBottom: 10, paddingHorizontal: 6, marginVertical: "2%" }}
+      >
         {renderParsedText(dataContenpost.Trangthai)}
-        {/* Render đoạn văn bản đã phân tích */}
-        {/* <Text style={{ fontSize: 16, fontWeight: "500" }}>
-          {dataContenpost.Trangthai}
-        </Text> */}
-        <Text style={{ fontSize: 14, fontWeight: "400" }}>
-          {dataContenpost.Fell}
-        </Text>
+
+        {dataContenpost.Fell !== "null" && (
+          // Kiểm tra nếu Fell không phải là null hoặc undefined
+          <Text style={{ fontSize: 14, fontWeight: "400" }}>
+            {dataContenpost.Fell}
+          </Text>
+        )}
       </View>
       {showImage == true && (
         <Swiper style={{ position: "relative", height: 450 }} loop={true}>
@@ -593,10 +629,10 @@ const FlatItem = memo((props) => {
           {numberLike >= 1000
             ? (numberLike / 1000).toFixed(1) + "k"
             : numberLike}{" "}
-          Like
+          <Text style={{ fontSize: 13 }}>Like</Text>
         </Text>
         <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-          {soluongCmt} Bình luận
+          {soluongCmt} <Text style={{ fontSize: 13 }}>Bình luận</Text>
         </Text>
       </View>
       <View
@@ -619,7 +655,7 @@ const FlatItem = memo((props) => {
             color={isLiked ? "red" : "white"}
             // color={dataContenpost.Like.filter(x => x._id == props.userDn).length > 0 ? "red" : "white"}
           />
-          <Text style={{ color: "white" }}> Like</Text>
+          <Text style={{ color: "white", fontSize: 13 }}> Like</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
@@ -629,7 +665,7 @@ const FlatItem = memo((props) => {
           style={{ flexDirection: "row", alignItems: "center" }}
         >
           <EvilIcons name="comment" size={34} color="white" />
-          <Text style={{ color: "white" }}> Comemnt</Text>
+          <Text style={{ color: "white", fontSize: 13 }}> Comemnt</Text>
         </TouchableOpacity>
 
         <Modal
@@ -657,11 +693,11 @@ const FlatItem = memo((props) => {
                   flexDirection: "row",
                 }}
               >
-                <Text style={{ fontSize: 18 }}>
+                <Text style={{ fontSize: 15 }}>
                   {numberLike >= 1000
                     ? (numberLike / 1000).toFixed(1) + "k"
                     : numberLike}{" "}
-                  <AntDesign name="heart" size={20} color="red" /> Người Thích
+                  <AntDesign name="heart" size={18} color="red" /> Người Thích
                   bài viết này{" "}
                 </Text>
               </View>
@@ -670,8 +706,11 @@ const FlatItem = memo((props) => {
               <FlatList
                 style={{ flex: 0.9 }}
                 data={binhluan}
-                keyExtractor={(item) => item._id}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => {
+                  // if (item.comments.length > 0) {
+                  //   console.log(item.comments, "sau khi log ", index);
+                  // }
                   return (
                     <CommentPanrent
                       item={item}
@@ -686,6 +725,7 @@ const FlatItem = memo((props) => {
                     />
                   );
                 }}
+                extraData={binhluan}
               />
             </View>
             <View style={styles.view7}>
@@ -737,7 +777,7 @@ const FlatItem = memo((props) => {
                   style={{ flexDirection: "row", alignItems: "center" }}
                   onPress={() => SendComment(imageCmt)}
                 >
-                  <Ionicons name="md-send-sharp" size={20} color="blue" />
+                  <MaterialIcons name="send" size={24} color="black" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -750,7 +790,7 @@ const FlatItem = memo((props) => {
           style={{ flexDirection: "row", alignItems: "center" }}
         >
           <FontAwesome name="share" size={24} color="white" />
-          <Text style={{ color: "white" }}> Share</Text>
+          <Text style={{ color: "white", fontSize: 13 }}> Share</Text>
         </TouchableOpacity>
       </View>
       <Modal
