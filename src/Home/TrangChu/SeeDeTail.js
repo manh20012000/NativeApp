@@ -66,9 +66,9 @@ const SeeDeTail = ({ route, navigation }) => {
       // console.log(dataUserChat)
     }
   };
-  const [isFriend, setIsFriend] = useState(
-    dataRoute.userFriends.some((useid) => count._id === useid) // Sử dụng some để kiểm tra
-  );
+
+  const [isFriend, setIsFriend] = useState();
+
   let handlePress = async () => {
     try {
       const isChecked = await checkingToken.checking(count);
@@ -98,6 +98,11 @@ const SeeDeTail = ({ route, navigation }) => {
   useEffect(() => {
     const selectPostUser = async () => {
       try {
+        const isckeckfriend = dataRoute.userFriends.some(
+          (useid) => count._id === useid
+        ); // Sử dụng some để kiểm tra
+        console.log(isckeckfriend, "cjecl");
+        setIsFriend(isckeckfriend);
         const isChecked = await checkingToken.checking(count);
         if (typeof isChecked === "object" && isChecked !== null) {
           dispath(login(isChecked));
@@ -115,7 +120,7 @@ const SeeDeTail = ({ route, navigation }) => {
             }
           );
           // console.log(data, "trang thái");
-          setIsFriend(data.trangthai);
+
           setBaiviet(data.data);
         }
       } catch (err) {
@@ -245,6 +250,7 @@ const SeeDeTail = ({ route, navigation }) => {
           >
             <Text style={{ color: "white" }}>Message</Text>
           </TouchableOpacity>
+          
           <TouchableOpacity
             onPress={handlePress}
             style={{
