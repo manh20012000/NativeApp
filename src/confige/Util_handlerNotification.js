@@ -91,13 +91,17 @@ export class HandlerNotification {
         console.log(token, "giá tri token");
         //      expoPushToken.push(token);
         const updatedExpoPushToken = [...expoPushToken, token];
-
-        await this.updateExpoPushToken(updatedExpoPushToken, this.userData);
+        const status = "updatelogin";
+        await this.updateExpoPushToken(
+          updatedExpoPushToken,
+          this.userData,
+          status
+        );
       }
     }
   };
 
-  static updateExpoPushToken = async (expoPushToken, userData) => {
+  static updateExpoPushToken = async (expoPushToken, userData, status) => {
     try {
       const { data } = await axios.put(
         `${path}/user/upadateFCMtoken/${userData._id}`,
@@ -108,7 +112,7 @@ export class HandlerNotification {
           },
         }
       );
-      console.log(data.data, "giá trị sau khi tải về ");
+      // console.log(data.data, "giá trị sau khi tải về ");
       // const acesstoken = await AsyncStorage.getIem("accessToken");
       // const freshtoken = await AsyncStorage.getItem("refreshToken");
       const dataUser = {
@@ -120,8 +124,10 @@ export class HandlerNotification {
         accessToken: userData.accessToken,
         refreshToken: userData.refreshToken,
       };
-      const userDataString = JSON.stringify(dataUser);
-      await AsyncStorage.setItem("userToken", userDataString);
+      if (status !== "") {
+        const userDataString = JSON.stringify(dataUser);
+        await AsyncStorage.setItem("userToken", userDataString);
+      }
     } catch (err) {
       alert("tài khoản hoặc mật khẩu không chính xác");
       console.log("Failed to update token", err);

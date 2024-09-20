@@ -30,10 +30,9 @@ const BootonGate = ({ navigation, route }) => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: { backgroundColor: "black" },
+        tabBarStyle: { backgroundColor: "black",  },
         tabBarIcon: ({ focused, color, size }) => {
           let iconComponent;
-
           if (route.name === "Home") {
             iconComponent = (
               <Image
@@ -42,6 +41,7 @@ const BootonGate = ({ navigation, route }) => {
                   width: focused ? 30 : 25,
                   height: focused ? 30 : 25,
                   tintColor: focused ? "white" : "#888888",
+                  fontWeight: "bold",
                 }}
               />
             );

@@ -37,15 +37,16 @@ const SetTingInfor = ({ navigation, route }) => {
         ],
       })
     );
-    dispatch(logout())
+    dispatch(logout());
     const fcmtoken = await AsyncStorage.getItem("fcmtoken");
-    await AsyncStorage.removeItem("userToken");
-    await AsyncStorage.removeItem("fcmtoken");
+
     HandlerNotification.updateExpoPushToken(
       handlerArrayfcmToken(fcmtoken),
-      user
+      user,
+      ""
     );
-
+    await AsyncStorage.removeItem("userToken");
+    await AsyncStorage.removeItem("fcmtoken");
     await AsyncStorage.removeItem("accessToken");
     await AsyncStorage.removeItem("refreshToken");
     socket?.disconnect();

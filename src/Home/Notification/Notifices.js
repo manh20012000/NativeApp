@@ -34,12 +34,9 @@ const Notifices = ({ navigation }) => {
   const [hasMore, setHasMore] = useState(true); // Còn dữ liệu để tải hay không
   const [refreshing, setRefreshing] = useState(false);
   const getNotification = async (newPage) => {
-    console.log("thực hiện hành vi hiển thị thông báo ");
     try {
       const getNumber = 10; // Số lượng thông báo mỗi lần tải
       const isChecked = await checkingToken.checking(userCurent);
-      // console.log(userCurent.accessToken);
-      // console.log(isChecked, "gias tri sau checked");
       if (typeof isChecked === "object" && isChecked !== null) {
         dispath(login(isChecked));
         const { data } = await axios.get(
@@ -55,7 +52,7 @@ const Notifices = ({ navigation }) => {
         setDataNotifi(data.data);
       }
     } catch (error) {
-      console.log(error, "select thông báo");
+      console.log(error, "select thông báo tải lại ");
     }
   };
   useEffect(() => {
@@ -73,6 +70,12 @@ const Notifices = ({ navigation }) => {
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
+  };
+  const handlerremonotifi = (_id) => {
+    const datanotification = dataNotif.filter((notifi) => {
+      return notifi._id !== _id;
+    });
+    setDataNotifi(datanotification);
   };
   return (
     <View style={{ backgroundColor: "#555555", flex: 1 }}>
@@ -113,7 +116,7 @@ const Notifices = ({ navigation }) => {
         </Text>
         <FlatList
           style={{
-            flex: 1,
+            flex: 0.9,
             backgroundColor: "#555555",
           }}
           data={dataNotif}
@@ -124,10 +127,11 @@ const Notifices = ({ navigation }) => {
                 item={item}
                 index={index}
                 navigation={navigation}
+                handlerremonotifi={handlerremonotifi}
               />
             );
           }}
-          extraData={dataNotif}
+          // extraData={dataNotif}
           onEndReached={handleLoadMore} // Sự kiện cuộn đến cuối
           onEndReachedThreshold={0.5} // Cuộn đến 50% cuối danh sách
           ListFooterComponent={

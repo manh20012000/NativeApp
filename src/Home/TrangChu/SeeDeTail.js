@@ -24,18 +24,18 @@ import path from "../../confige/config.js";
 import { useSelector, useDispatch } from "react-redux";
 const SeeDeTail = ({ route, navigation }) => {
   const count = useSelector((state) => state.auth.value);
+  // console.log(count);
   const BackTrangHome = () => {
     navigation.goBack();
   };
+  // console.log(route.params);
   const dispath = useDispatch();
   const [dataRoute, setDataRote] = useState(route.params);
   const [baiviet, setBaiviet] = useState([]);
-
+  // console.log(dataRoute);
   const NavigateMess = async () => {
     try {
       const isChecked = await checkingToken.checking(count);
-      // console.log(count.accessToken);
-      // console.log(isChecked, "gias tri sau checked");
       if (typeof isChecked === "object" && isChecked !== null) {
         dispath(login(isChecked));
         const { data } = await axios.get(
@@ -67,20 +67,42 @@ const SeeDeTail = ({ route, navigation }) => {
     }
   };
 
-  const [isFriend, setIsFriend] = useState();
-
+  const [isFriend, setIsFriend] = useState(false);
+  const [status, setStatus] = useState(null);
   let handlePress = async () => {
     try {
       const isChecked = await checkingToken.checking(count);
-      // console.log(count.accessToken);
-      // console.log(isChecked, "gias tri sau checked");
+      let checkstatus = status;
+      if (status == null) {
+        setStatus("Can't request");
+        setIsFriend(true);
+      } else if (status === "Can't request") {
+        checkstatus = null;
+        setStatus(null);
+        setIsFriend(false);
+      } else if (status === "Respons") {
+        console.log("nahyf sjdjs");
+        console.log(status);
+        checkstatus = "Friend";
+        setStatus("Friend");
+        setIsFriend(true);
+      }
+      console.log(status, "status", isFriend);
       if (typeof isChecked === "object" && isChecked !== null) {
+        // console.log(count.accessToken);
+        // console.log(isChecked, "gias tri sau checked");
         dispath(login(isChecked));
-        setIsFriend((prevState) => !prevState);
+        // setIsFriend((prevState) => !prevState);
+        console.log("hihi", status);
         const { message } = await axios.post(
           `${path}/Addfriend`,
           {
-            _idfirend: dataRoute._id,
+            _idsend: count._id,
+            toreciver: dataRoute._id,
+            status: status,
+            nameSend: count.Hoten,
+            avatarSend: count.Avatar,
+            messagenotifi: `@[${count.Hoten}](id:${count._id}) gữi cho bạn lời mời kết bạn`,
           },
           {
             headers: {
@@ -96,22 +118,14 @@ const SeeDeTail = ({ route, navigation }) => {
     }
   };
   useEffect(() => {
-    const selectPostUser = async () => {
+    const handlercheckcount = async () => {
       try {
-        const isckeckfriend = dataRoute.userFriends.some(
-          (useid) => count._id === useid
-        ); // Sử dụng some để kiểm tra
-        console.log(isckeckfriend, "cjecl");
-        setIsFriend(isckeckfriend);
         const isChecked = await checkingToken.checking(count);
         if (typeof isChecked === "object" && isChecked !== null) {
           dispath(login(isChecked));
           console.log(dataRoute._id);
-          const { data } = await axios.post(
-            `${path}/selectPost_inUser`,
-            {
-              userId: dataRoute._id,
-            },
+          const { data } = await axios.get(
+            `${path}/userfriendReq/${isChecked._id}`,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -119,15 +133,92 @@ const SeeDeTail = ({ route, navigation }) => {
               },
             }
           );
-          // console.log(data, "trang thái");
 
-          setBaiviet(data.data);
+          const arrayFriendReq = dataRoute.friendRequests;
+          // Kiểm tra nếucount gửi lời mời kết bạn cho người khác
+          const friendRequestByMe = arrayFriendReq.find(
+            (request) =>
+              request.from.toString() === count._id.toString() &&
+              request.to.toString() === dataRoute._id.toString() // ID của người dùng mà bạn đang kiểm tra
+          );
+
+          const friendRequestToMe = data.data.find(
+            (request) =>
+              request.from.toString() === dataRoute._id.toString() &&
+              request.to.toString() === count._id.toString() // Kiểm tra nếucount nhận được lời mời từ user đó
+          );
+          if (friendRequestByMe) {
+            // dối với mình là người đăng nhập
+            setIsFriend(true);
+            setStatus(friendRequestByMe.status);
+          } else if (friendRequestToMe) {
+            // đây là người khác gưix cho mình
+
+            setIsFriend(true);
+            // nếu người khác gữi cho mình là
+            if (friendRequestToMe.status === "Can't request") {
+              setStatus("Respons");
+            } else {
+              setIsFriend(true);
+              setStatus(friendRequestToMe.status);
+            }
+          } else {
+            console.log("không tim tháy");
+            setIsFriend(false);
+            setStatus(null); // Không có lời mời nào đã được gửi
+          }
         }
       } catch (err) {
-        console.log(err, "lỗi vơis lấy dữ luêuj ra màn seedetail ");
+        console.log(err, "friend addd req");
       }
     };
-    selectPostUser();
+    handlercheckcount();
+
+    // const selectPostUser = async () => {
+    //   try {
+    //     if (count && dataRoute) {
+    //       const friendRequests = dataRoute.friendRequests || []; // Danh sách lời mời kết bạn
+
+    //       // Kiểm tra xem người dùng đã gửi lời mời kết bạn chưa
+    //       const friendRequest = friendRequests.find(
+    //         (request) => count._id === request.from.toString()
+    //       );
+
+    //       if (friendRequest) {
+    //         // Nếu có lời mời kết bạn, cập nhật trạng thái
+    //         setIsFriend(true); // Cập nhật isFriend nếu trạng thái là "Friend"
+    //         setStatus(friendRequest.status); // Cập nhật trạng thái (Can't reques, Friend, rejected)
+    //       } else {
+    //         // Nếu không tìm thấy lời mời kết bạn
+    //         setIsFriend(false); // Người dùng chưa gửi lời mời kết bạn
+    //         setStatus(null); // Không có trạng thái
+    //       }
+    //     }
+    //     const isChecked = await checkingToken.checking(count);
+    //     if (typeof isChecked === "object" && isChecked !== null) {
+    //       dispath(login(isChecked));
+    //       console.log(dataRoute._id);
+    //       const { data } = await axios.post(
+    //         `${path}/selectPost_inUser`,
+    //         {
+    //           userId: dataRoute._id,
+    //         },
+    //         {
+    //           headers: {
+    //             "Content-Type": "application/json",
+    //             authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+    //           },
+    //         }
+    //       );
+    //       // console.log(data, "trang thái");
+
+    //       setBaiviet(data.data);
+    //     }
+    //   } catch (err) {
+    //     console.log(err, "lỗi vơis lấy dữ luêuj ra màn seedetail ");
+    //   }
+    // };
+    // selectPostUser();
   }, []);
   const InforHeader = () => {
     return (
@@ -191,12 +282,10 @@ const SeeDeTail = ({ route, navigation }) => {
         </View>
         <View
           style={{
-            marginHorizontal: 20,
             flexDirection: "row",
-            width: 200,
-            // backgroundColor: '#333333',
-            justifyContent: "space-between",
+            justifyContent: "space-around",
             alignItems: "center",
+            width: "100%",
           }}
         >
           <Text
@@ -213,7 +302,15 @@ const SeeDeTail = ({ route, navigation }) => {
               fontWeight: "500",
             }}
           >
-            {dataRoute.idVideoLike.length} Likes
+            {dataRoute.userlikeAtical.length} Likes Article
+          </Text>
+          <Text
+            style={{
+              color: "white",
+              fontWeight: "500",
+            }}
+          >
+            {dataRoute.userlikeVideo.length} Likes Video
           </Text>
         </View>
         <View
@@ -224,13 +321,15 @@ const SeeDeTail = ({ route, navigation }) => {
             marginTop: 3,
           }}
         >
-          <Text style={{ color: "white" }}>Gioi thieu chung</Text>
+          <Text style={{ color: "white", marginLeft: "3%" }}>
+            Gới thiệu chung
+          </Text>
         </View>
         <View
           style={{
-            marginHorizontal: 20,
+            marginHorizontal: "2%",
             flexDirection: "row",
-            marginTop: 3,
+            marginTop: "2%",
             justifyContent: "space-between",
             alignItems: "center",
           }}
@@ -250,7 +349,7 @@ const SeeDeTail = ({ route, navigation }) => {
           >
             <Text style={{ color: "white" }}>Message</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             onPress={handlePress}
             style={{
@@ -258,7 +357,7 @@ const SeeDeTail = ({ route, navigation }) => {
               alignItems: "center",
               width: 140,
               height: 40,
-              backgroundColor: isFriend ? "pink" : "green",
+              backgroundColor: isFriend ? "blue" : "green",
               borderRadius: 10,
               flexDirection: "row",
             }}
@@ -268,8 +367,10 @@ const SeeDeTail = ({ route, navigation }) => {
               size={24}
               color={isFriend ? "green" : "blue"}
             />
-            <Text style={{ color: isFriend ? "green" : "blue" }}>
-              {isFriend ? "Bạn bè" : "Thêm b bè"}
+
+            <Text style={{ color: isFriend ? "green" : "white" }}>
+              {console.log(isFriend, status, "veiw lohdjshj")}
+              {isFriend ? "  " + status : "Thêm b bè"}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity

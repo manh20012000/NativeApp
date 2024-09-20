@@ -90,7 +90,7 @@ const Login = ({ navigation }) => {
   };
 
   const sigin = () => {
-    navigation.navigate("InforUser");
+    navigation.navigate("InforLogin");
   };
 
   return (

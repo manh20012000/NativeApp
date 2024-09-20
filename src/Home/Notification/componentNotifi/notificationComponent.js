@@ -11,12 +11,48 @@ import { checkingToken } from "../../../confige/CheckingToken";
 import { useDispatch, useSelector } from "react-redux";
 import path from "../../../confige/config";
 import { TouchableOpacity } from "react-native";
-
+import { login } from "../../../Redex/Reducer/auth.slice";
+import axios from "axios";
 const NotificationComponent = (props) => {
   const { width, height } = useWindowDimensions();
   const [isred, setIsred] = useState(props.item.isRead);
   const userCurent = useSelector((state) => state.auth.value);
   const dispath = useDispatch();
+  // console.log(props.item._id);
+  const handlerAccepOrDispose = async (onclickchange) => {
+    try {
+      setIsred(true);
+      const isChecked = await checkingToken.checking(userCurent);
+      // console.log(userCurent.accessToken);
+      // console.log(isChecked, "gias tri sau checked");
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        const { data } = await axios.put(
+          `${path}/updateFriendReq/${props.item._id}`,
+          {
+            sendId: props.item.sendId,
+            reciveId: props.item.reciveId,
+            isRead: true,
+            onclickchange: onclickchange,
+            messagenotifi: `@[${userCurent.Hoten}](id:${userCurent._id}) đã ${onclickchange} lời mời kết bạn`,
+            avatarSend: isChecked.Avatar,
+          },
+          {
+            headers: {
+              // Accept: "application/json",
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+      }
+    } catch (executionError) {
+      console.log(executionError, "jaassjdjsnj");
+    } finally {
+      props.handlerremonotifi(props.item._id);
+    }
+  };
+
   const parseText = (text) => {
     const regex = /\@\[(.*?)\]\(id:(.*?)\)/g; // Regex để tìm @ và URL
     const parts = [];
@@ -135,18 +171,25 @@ const NotificationComponent = (props) => {
           }}
         >
           {renderParsedText(props.item.messageNotifi)}
-          {props.item.title === "SeeDeTail" && (
+          {props.item.title === "SeeUserAfriend" && (
             <View
-              style={{ justifyContent: "space-around", flexDirection: "row" }}
+              style={{
+                justifyContent: "space-around",
+                flexDirection: "row",
+                paddingVertical: "2%",
+              }}
             >
               <TouchableOpacity
                 style={{
                   backgroundColor: "blue",
                   width: width / 4,
-                  height: width / 10,
+                  height: width / 11,
                   justifyContent: "center",
                   alignItems: "center",
                   borderRadius: 5,
+                }}
+                onPress={() => {
+                  handlerAccepOrDispose("Accept");
                 }}
               >
                 <Text style={{ fontWeight: "bold", color: "white" }}>
@@ -154,10 +197,13 @@ const NotificationComponent = (props) => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
+                onPress={() => {
+                  handlerAccepOrDispose("Decline");
+                }}
                 style={{
                   backgroundColor: "#777777",
                   width: width / 4,
-                  height: width / 10,
+                  height: width / 11,
                   justifyContent: "center",
                   alignItems: "center",
                   borderRadius: 5,

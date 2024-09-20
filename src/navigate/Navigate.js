@@ -28,6 +28,7 @@ import { jwtDecode } from "jwt-decode";
 import { encode, decode } from "js-base64";
 import ViewCall from "../Home/TrangChu/MessApp/ViewCall.js";
 import ArticalDetail from "./ScreenDetail/ArticalDetail.js";
+import SeeUserAfriend from "./ScreenDetail/SeeUserAfriend.js";
 const Stack = createNativeStackNavigator();
 const Navigete = () => {
   const dispath = useDispatch();
@@ -39,17 +40,25 @@ const Navigete = () => {
     const checkLoginStatus = async () => {
       const userTokenString = await AsyncStorage.getItem("userToken");
       const userTokenObject = JSON.parse(userTokenString);
-      // console.log(userTokenObject, "giá trị sau khi navigate ");
-      if (userTokenString !== null) {
-        const decoded = jwtDecode(userTokenObject.refreshToken);
-        const isTokenExpired = decoded.exp * 1000 < Date.now();
-        if (isTokenExpired) {
-          setIsLoggedIn(false);
-          alert("session cokies ");
+      // console.log(typeof userTokenObject, "giá trị sau khi navigate ");
+      try {
+        if (userTokenObject !== null) {
+          const decoded = jwtDecode(userTokenObject.refreshToken);
+          const isTokenExpired = decoded.exp * 1000 < Date.now();
+          if (isTokenExpired) {
+            console.log("hahah222");
+            setIsLoggedIn(false);
+            alert("session cokies ");
+          } else {
+            console.log("hahah");
+            setIsLoggedIn(true);
+            dispath(login(userTokenObject));
+          }
         } else {
-          setIsLoggedIn(true);
-          dispath(login(userTokenObject));
+          setIsLoggedIn(false);
         }
+      } catch (err) {
+        conso.log(err, "navigation log err");
       }
       setLoading(true);
     };
@@ -88,6 +97,7 @@ const Navigete = () => {
           <Stack.Screen name="SetTingInfor" component={SetTingInfor} />
           <Stack.Screen name="ViewCall" component={ViewCall} />
           <Stack.Screen name="Article" component={ArticalDetail} />
+          <Stack.Screen name="SeeUserAfriend" component={SeeUserAfriend} />
           {/* <Stack.Screen
         name='PostWithCamera'
         component={PostWithCamera}
