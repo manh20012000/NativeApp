@@ -37,7 +37,9 @@ import axios from "axios";
 import path from "../../confige/config.js";
 import SkeletonApp from "../../Skeleton/SkeletonApp.js";
 import Skeleton from "../../Skeleton/Skeleton.js";
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 const TrangChu = ({ navigation }) => {
+  const dispath = useDispatch();
   const user = useSelector((state) => state.auth.value);
   // console.log(user);
   const { width } = useWindowDimensions();
@@ -53,18 +55,25 @@ const TrangChu = ({ navigation }) => {
   const [SakeIload2, setSakeIload2] = useState(false);
   const handlerSelectVideoStory = async () => {
     try {
-      const lim = 5; // Định nghĩa giá trị lim
-      const { data } = await axios.post(`${path}/selectStory`, {
-        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-        skip: leng,
-      });
-      setLeng(leng + 3);
-      // console.log(data.data)
-      if (data.data != null && data.data.length > 0) {
-        // setDataStory((prevData) => prevData.concat(data.data));
+      const isChecked = await checkAndRefreshToken(dispath, user);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const lim = 5; // Định nghĩa giá trị lim
+        const { data } = await axios.post(`${path}/selectStory`, {
+          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+          skip: leng,
+        });
+        setLeng(leng + 3);
+        // console.log(data.data)
+        if (data.data != null && data.data.length > 0) {
+          // setDataStory((prevData) => prevData.concat(data.data));
+        }
+        setDataStory(data.data);
+        setSakeIload2(true);
       }
-      setDataStory(data.data);
-      setSakeIload2(true);
     } catch (err) {
       console.log(err, "lỗi với trang chủ handlerSelectVideoStory");
     } finally {
@@ -74,10 +83,17 @@ const TrangChu = ({ navigation }) => {
   const [isSakeIload, setSakecheck] = useState(true);
   const fetchdata = async () => {
     try {
-      const { data } = await axios.get(`${path}/selectBaiViet`);
+      const isChecked = await checkAndRefreshToken(dispath, user);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { data } = await axios.get(`${path}/selectBaiViet`);
 
-      setData(data.data);
-      setSakeIload(true);
+        setData(data.data);
+        setSakeIload(true);
+      }
     } catch (err) {
       console.log(err, "lôi với trang chủ =>fetchdata");
     }

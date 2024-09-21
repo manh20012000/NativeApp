@@ -36,9 +36,12 @@ const Notifices = ({ navigation }) => {
   const getNotification = async (newPage) => {
     try {
       const getNumber = 10; // Số lượng thông báo mỗi lần tải
-      const isChecked = await checkingToken.checking(userCurent);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
+      const isChecked = await checkAndRefreshToken(dispath, userCurent);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         const { data } = await axios.get(
           `${path}/getnotification/${isChecked._id}?page=${newPage}&limit=${getNumber}`,
           {

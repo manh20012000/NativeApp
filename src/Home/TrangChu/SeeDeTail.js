@@ -23,6 +23,7 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import path from "../../confige/config.js";
 import { useSelector, useDispatch } from "react-redux";
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 const SeeDeTail = ({ route, navigation }) => {
   const count = useSelector((state) => state.auth.value);
   const { width, height } = useWindowDimensions();
@@ -36,9 +37,12 @@ const SeeDeTail = ({ route, navigation }) => {
   // console.log(dataRoute);
   const NavigateMess = async () => {
     try {
-      const isChecked = await checkingToken.checking(count);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         const { data } = await axios.get(
           `${path}/getMessage/${dataRoute._id}`,
           {
@@ -72,7 +76,6 @@ const SeeDeTail = ({ route, navigation }) => {
   const [status, setStatus] = useState(null);
   let handlePress = async () => {
     try {
-      const isChecked = await checkingToken.checking(count);
       let notifimessgae = "";
       let checkstatus = status;
       if (status == null) {
@@ -92,11 +95,12 @@ const SeeDeTail = ({ route, navigation }) => {
         setIsFriend(true);
       }
       console.log(status, "status", isFriend);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        // console.log(count.accessToken);
-        // console.log(isChecked, "gias tri sau checked");
-        dispath(login(isChecked));
-        // setIsFriend((prevState) => !prevState);
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         console.log("hihi", status);
         const { data } = await axios.post(
           `${path}/Addfriend`,
@@ -124,9 +128,12 @@ const SeeDeTail = ({ route, navigation }) => {
   useEffect(() => {
     const handlercheckcount = async () => {
       try {
-        const isChecked = await checkingToken.checking(count);
-        if (typeof isChecked === "object" && isChecked !== null) {
-          dispath(login(isChecked));
+        const isChecked = await checkAndRefreshToken(dispath, count);
+        if (!isChecked) {
+          console.log("Token hết hạn, cần đăng nhập lại");
+          // Thực hiện điều hướng về trang đăng nhập nếu cần
+          return null;
+        } else {
           console.log(dataRoute._id);
           const { data } = await axios.get(
             `${path}/userfriendReq/${isChecked._id}`,

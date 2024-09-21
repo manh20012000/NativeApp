@@ -34,6 +34,7 @@ import { RadioButton } from "react-native-paper";
 import { FontAwesome5 } from "@expo/vector-icons";
 import ModalMention from "./ModalMention.js";
 import { useSelector, useDispatch } from "react-redux";
+import { checkAndRefreshToken } from "../confige/ComponencheckingToken.js";
 import {
   actions,
   RichEditor,
@@ -46,7 +47,7 @@ import ParsedText from "react-native-parsed-text";
 import { login } from "../Redex/Reducer/auth.slice.js";
 import { checkingToken } from "../confige/CheckingToken.js";
 const PostVideo = ({ navigation, route }) => {
-  const dispatch = useDispatch();
+  const dispath = useDispatch();
 
   const [dataUser, setData] = useState(
     useSelector((state) => state.auth.value)
@@ -129,9 +130,12 @@ const PostVideo = ({ navigation, route }) => {
         name: `Video${datePostTimstemp}.mp4`,
       });
 
-      const isChecked = await checkingToken.checking(dataUser);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispatch(login(isChecked));
+      const isChecked = await checkAndRefreshToken(dispath, dataUser);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         const parts = formData.getParts();
         parts.forEach((part) => {
           console.log(part.fieldName, part, "màn hình post video1");

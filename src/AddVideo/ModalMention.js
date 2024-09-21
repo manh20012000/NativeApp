@@ -8,19 +8,34 @@ import {
 } from "react-native";
 import axios from "axios";
 import path from "../confige/config";
+import { useSelector, useDispatch } from "react-redux";
+import { checkAndRefreshToken } from "../confige/ComponencheckingToken";
 const ModalMention = ({ onValuechangeseach }) => {
   const [Textseach, setTextSeach] = useState(null);
+  const userCurent = useSelector((state) => state.auth.value);
   const [dataMention, setdataMention] = useState(null);
+  const dispath = useDispatch();
   const setSearchText = (text) => {
     setTextSeach(text);
   };
 
   const handeleSearch = async (text) => {
-    const { data, mess } = await axios.post(`${path}/SearchMention`, {
-      Textseach: text,
-    });
+    try {
+      const isChecked = await checkAndRefreshToken(dispath, userCurent);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { data, mess } = await axios.post(`${path}/SearchMention`, {
+          Textseach: text,
+        });
 
-    setdataMention(data.data);
+        setdataMention(data.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleMendtion = (valueItem) => {

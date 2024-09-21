@@ -34,7 +34,9 @@ import Spinner from "react-native-loading-spinner-overlay";
 import * as FileSystem from "expo-file-system";
 import { useSelector, useDispatch } from "react-redux";
 import { FFmpegKit, FFmpegKitConfig } from "ffmpeg-kit-react-native";
+import { checkAndRefreshToken } from "../confige/ComponencheckingToken";
 const RecodViedeo = ({ navigation }) => {
+  const dispath = useDispatch();
   const { height, width } = useWindowDimensions();
   const [autoPlays, setAutoplay] = useState(false);
   const [trangThai, setTrangThai] = useState(1);
@@ -231,25 +233,32 @@ const RecodViedeo = ({ navigation }) => {
 
     // formData.append("nameMusic", dataUser.Hoten);
     try {
-      const { status, message, msg } = await axios.post(
-        `${path}/uploadStory`,
-        //`${path}/uploadVideo`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setVconten(null);
-      setPrivacy("public");
-      // setLocated(null);
+      const isChecked = await checkAndRefreshToken(dispath, dataUser);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { status, message, msg } = await axios.post(
+          `${path}/uploadStory`,
+          //`${path}/uploadVideo`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        setVconten(null);
+        setPrivacy("public");
+        // setLocated(null);
 
-      console.log(fileselect);
-      if (status == 200) {
-        navigation.navigate("Home");
-        setLoading(false);
-        alert("sussecess");
+        console.log(fileselect);
+        if (status == 200) {
+          navigation.navigate("Home");
+          setLoading(false);
+          alert("sussecess");
+        }
       }
     } catch (erro) {
       setLoading(false);

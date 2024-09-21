@@ -33,6 +33,7 @@ import uuid from "uuid/v4";
 import { login } from "../../Redex/Reducer/auth.slice.js";
 import { checkingToken } from "../../confige/CheckingToken.js";
 import { useSelector, useDispatch } from "react-redux";
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 // import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 const FlatItem = (props) => {
   const userCurent = useSelector((state) => state.auth.value);
@@ -84,12 +85,12 @@ const FlatItem = (props) => {
       }
     }
     try {
-      // console.log("nahfy van", userCurent.accessToken, userCurent.refreshToken);
-      const isChecked = await checkingToken.checking(userCurent);
-      // console.log(userCurent.accessToken);
-      // console.log(isChecked, "gias tri sau checked");
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
+      const isChecked = await checkAndRefreshToken(dispath, userCurent);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         console.log("Body sent for like/dislike:", {
           idUser: userCurent._id,
           idBaiPost: dataContenpost._id,
@@ -200,11 +201,12 @@ const FlatItem = (props) => {
     console.log(dataContenpost._id);
     try {
       // console.log("nahfy van", userCurent.accessToken, userCurent.refreshToken);
-      const isChecked = await checkingToken.checking(userCurent);
-      // console.log(userCurent.accessToken);
-      // console.log(isChecked, "gias tri sau checked");
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
+      const isChecked = await checkAndRefreshToken(dispath, userCurent);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         const { data } = await axios.post(
           `${path}/selectDataCmt`,
           {
@@ -352,9 +354,12 @@ const FlatItem = (props) => {
           type: "image/jpeg", // Loại tệp
         });
       }
-      const isChecked = await checkingToken.checking(userCurent);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
+      const isChecked = await checkAndRefreshToken(dispath, userCurent);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         const { data } = await axios.post(
           `${path}/SendCommentArticles`,
           formData,
@@ -380,9 +385,12 @@ const FlatItem = (props) => {
     console.log("haha");
     try {
       // console.log("nahfy van", userCurent.accessToken, userCurent.refreshToken);
-      const isChecked = await checkingToken.checking(userCurent);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
+      const isChecked = await checkAndRefreshToken(dispath, userCurent);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         const { data } = await axios.delete(
           `${path}/deleteAticarl/${dataContenpost._id}`,
           {
@@ -448,9 +456,15 @@ const FlatItem = (props) => {
                 onPress={async () => {
                   try {
                     // console.log("nahfy van", userCurent.accessToken, userCurent.refreshToken);
-                    const isChecked = await checkingToken.checking(userCurent);
-                    if (typeof isChecked === "object" && isChecked !== null) {
-                      dispath(login(isChecked));
+                    const isChecked = await checkAndRefreshToken(
+                      dispath,
+                      userCurent
+                    );
+                    if (!isChecked) {
+                      console.log("Token hết hạn, cần đăng nhập lại");
+                      // Thực hiện điều hướng về trang đăng nhập nếu cần
+                      return null;
+                    } else {
                       const { data } = await axios.post(
                         `${path}/userfind`,
                         {

@@ -34,7 +34,7 @@ import * as MediaLibrary from "expo-media-library";
 import { MaterialIcons } from "@expo/vector-icons";
 import path from "../../confige/config.js";
 import axios from "axios";
-
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 import * as Location from "expo-location";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Constants } from "expo";
@@ -45,6 +45,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Editor, { EU } from "react-native-mentions-editor";
 const UserThink = ({ navigation, route }) => {
   const count = useSelector((state) => state.auth.value);
+  const dispath = useDispatch();
   const [Hienthi, setHienthi] = useState(true);
   const HandeHienthi = () => {
     setHienthi(true);
@@ -243,11 +244,18 @@ const UserThink = ({ navigation, route }) => {
   const handleSearch = async (text) => {
     console.log(`Searching for: ${text}`); // In ra log để kiểm tra tìm kiếm
     try {
-      const { data } = await axios.post(`${path}/SearchMention`, {
-        Textseach: text, // Gửi text tìm kiếm lên server
-      });
-      console.log("Users found:", data.data); // Log dữ liệu người dùng
-      setArrayUser(data.data); // Cập nhật danh sách người dùng dựa trên kết quả API
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { data } = await axios.post(`${path}/SearchMention`, {
+          Textseach: text, // Gửi text tìm kiếm lên server
+        });
+        console.log("Users found:", data.data); // Log dữ liệu người dùng
+        setArrayUser(data.data); // Cập nhật danh sách người dùng dựa trên kết quả API
+      }
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -295,19 +303,26 @@ const UserThink = ({ navigation, route }) => {
       });
     }
     try {
-      const { status, msg } = await axios.post(`${path}/uploadAnh`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      setFell(null);
-      setPermission("public");
-      setLocation(null);
-      setIsText(null);
-      if (status == 200) {
-        navigation.navigate("Home");
-        setLoading(false);
-        alert(msg);
+       const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { status, msg } = await axios.post(`${path}/uploadAnh`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        setFell(null);
+        setPermission("public");
+        setLocation(null);
+        setIsText(null);
+        if (status == 200) {
+          navigation.navigate("Home");
+          setLoading(false);
+          alert(msg);
+        }
       }
     } catch (erro) {
       setLoading(false);

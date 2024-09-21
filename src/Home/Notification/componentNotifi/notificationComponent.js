@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import path from "../../../confige/config";
 import { TouchableOpacity } from "react-native";
 import { login } from "../../../Redex/Reducer/auth.slice";
+import { checkAndRefreshToken } from "../../../confige/ComponencheckingToken";
 import axios from "axios";
 const NotificationComponent = (props) => {
   const { width, height } = useWindowDimensions();
@@ -22,11 +23,12 @@ const NotificationComponent = (props) => {
   const handlerAccepOrDispose = async (onclickchange) => {
     try {
       setIsred(true);
-      const isChecked = await checkingToken.checking(userCurent);
-      // console.log(userCurent.accessToken);
-      // console.log(isChecked, "gias tri sau checked");
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
+      const isChecked = await checkAndRefreshToken(dispath, userCurent);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         const { data } = await axios.put(
           `${path}/updateFriendReq/${props.item._id}`,
           {
@@ -54,12 +56,12 @@ const NotificationComponent = (props) => {
   };
   const handler_Tranfer_Navigation = async (sendId) => {
     try {
-      const isChecked = await checkingToken.checking(userCurent);
-      // console.log(userCurent.accessToken);
-
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
-        console.log(isChecked.accessToken, "gias tri sau checked");
+      const isChecked = await checkAndRefreshToken(dispath, userCurent);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         const { data } = await axios.post(
           `${path}/userfindByid`,
           { sendId: sendId, isRead: true, notificationId: props.item._id },

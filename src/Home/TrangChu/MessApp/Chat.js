@@ -24,7 +24,7 @@ const Chat = ({ navigation }) => {
 
   const user = useSelector((state) => state.auth.value);
   const StatusUser = useSelector((state) => state.Status.value);
-  const [filter, setFillter] = useState([]);
+  const [filterdata, setFillter] = useState([]);
   const socket = useSocket();
   // const accessToken = JSON.parse(JSON.stringify(user.accessToken+''));
   // // console.log(typeof(user.accessToken))
@@ -65,26 +65,29 @@ const Chat = ({ navigation }) => {
         }
       });
     });
-
-    // return () => {
-    //   socket?.off("newMessage");
-    // };
+    // loại bỏ sự lắng nghe khi mà nó đang omponent unmount
+    return () => {
+      socket?.off("newMessage");
+    };
   }, []);
 
   const SelectUserMessage = async () => {
     try {
-      const isChecked = await checkingToken.checking(user);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
-        const { data } = await axios.get(`${path}/UserRouter`, {
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${isChecked.accessToken}`,
-          },
-        });
+     const isChecked = await checkAndRefreshToken(dispath, user);
+     if (!isChecked) {
+       console.log("Token hết hạn, cần đăng nhập lại");
+       // Thực hiện điều hướng về trang đăng nhập nếu cần
+       return null;
+     } else {
+       const { data } = await axios.get(`${path}/UserRouter/${isChecked._id}`, {
+         headers: {
+           "Content-Type": "application/json",
+           authorization: `Bearer ${isChecked.accessToken}`,
+         },
+       });
 
-        setFillter(data);
-      }
+       setFillter(data);
+     }
     } catch (error) {
       console.log(error, "lỗi cho mỗi cuộc chat ");
     } finally {
@@ -93,9 +96,12 @@ const Chat = ({ navigation }) => {
   const [listbarUser, setListbarUser] = useState([]);
   const selectUsersListBar = async () => {
     try {
-      const isChecked = await checkingToken.checking(user);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
+      const isChecked = await checkAndRefreshToken(dispath, user);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         const { data } = await axios.get(`${path}/UserSelelectchat`, {
           headers: {
             "Content-Type": "application/json",
@@ -114,24 +120,25 @@ const Chat = ({ navigation }) => {
     selectUsersListBar();
     SelectUserMessage();
   }, []);
-  useEffect(() => {
-    const getPersionChat = async () => {
-      try {
-        const { data } = await axios.post(`${path}/selectChatPersion`, {
-          _id: user._id,
-        });
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-  }, []);
+  // useEffect(() => {
+  //   const getPersionChat = async () => {
+  //     try {
+  //       const { data } = await axios.post(`${path}/selectChatPersion`, {
+  //         _id: user._id,
+  //       });
+  //     } catch (error) {
+  //       console.error("Error fetching comments:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   getPersionChat();
+  // }, []);
   const [Seach, setSeach] = useState("");
 
   const handlerSearch = (text) => {
     setSeach(text);
-    const filterData = filter.filter((value) =>
+    const filterData = filterdata.filter((value) =>
       value.name.toLowerCase().includes(text.toLowerCase())
     );
     setFillter(filterData);
@@ -144,11 +151,12 @@ const Chat = ({ navigation }) => {
   };
   const NavigateMess = async (users) => {
     try {
-      console.log(users);
-      const isChecked = await checkingToken.checking(user);
-      console.log(typeof isChecked);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
+      const isChecked = await checkAndRefreshToken(dispath, user);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         console.log("nảy bào đay");
         const { data } = await axios.get(`${path}/getMessage/${users._id}`, {
           headers: {
@@ -332,7 +340,7 @@ const Chat = ({ navigation }) => {
     <View style={{ backgroundColor: "black", flex: 1 }}>
       <FlatList
         ListHeaderComponent={seach}
-        data={filter}
+        data={filterdata}
         renderItem={({ item, index }) => {
           const statusUser = StatusUser.includes(item.participants._id);
           return (

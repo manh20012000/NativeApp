@@ -49,27 +49,29 @@ const Infor = ({ navigation, route }) => {
   );
   const selectUser = async () => {
     try {
-      const isChecked = await checkingToken.checking(count);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
+     const isChecked = await checkAndRefreshToken(dispath, count);
+     if (!isChecked) {
+       console.log("Token hết hạn, cần đăng nhập lại");
+       // Thực hiện điều hướng về trang đăng nhập nếu cần
+       return null;
+     } else {
+       const { data } = await axios.post(
+         `${path}/userInfor`,
+         {
+           _id: isChecked._id,
+         },
+         {
+           headers: {
+             "Content-Type": "application/json",
+             authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+           },
+         }
+       );
 
-        const { data } = await axios.post(
-          `${path}/userInfor`,
-          {
-            _id: isChecked._id,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
-            },
-          }
-        );
+       setUserInfor(data.data);
 
-        setUserInfor(data.data);
-
-        // console.log("user", data.data);
-      }
+       // console.log("user", data.data);
+     }
     } catch (err) {
       console.log(err, " lỗi với màn hình inforjs");
     }
@@ -81,9 +83,12 @@ const Infor = ({ navigation, route }) => {
 
   const handlerSelectVideo = async () => {
     try {
-      const isChecked = await checkingToken.checking(count);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
         const lim = 15; // Định nghĩa giá trị lim
         const { data } = await axios.post(
           `${path}/selectedVideoId`,
@@ -113,28 +118,30 @@ const Infor = ({ navigation, route }) => {
   const onRefresh = async () => {
     setRefreshing(true);
     try {
-      const isChecked = await checkingToken.checking(count);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
-
-        const lim = 9; // Định nghĩa giá trị lim
-        const { data } = await axios.post(
-          `${path}/selectedVideoId`,
-          {
-            limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-            skip: leng,
-            id: count._id,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
-            },
-          }
-        );
-        setLeng(leng + 3);
-        setDataVideo((prevData) => prevData.concat(data.data));
-      }
+       const isChecked = await checkAndRefreshToken(dispath, count);
+       if (!isChecked) {
+         console.log("Token hết hạn, cần đăng nhập lại");
+         // Thực hiện điều hướng về trang đăng nhập nếu cần
+         return null;
+       } else {
+         const lim = 9; // Định nghĩa giá trị lim
+         const { data } = await axios.post(
+           `${path}/selectedVideoId`,
+           {
+             limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+             skip: leng,
+             id: count._id,
+           },
+           {
+             headers: {
+               "Content-Type": "application/json",
+               authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+             },
+           }
+         );
+         setLeng(leng + 3);
+         setDataVideo((prevData) => prevData.concat(data.data));
+       }
     } catch (err) {
       console.log(err, "loi vưới selectedVideoId");
     }
@@ -159,26 +166,28 @@ const Infor = ({ navigation, route }) => {
   useEffect(() => {
     const selectPostUser = async () => {
       try {
-        const isChecked = await checkingToken.checking(count);
-        if (typeof isChecked === "object" && isChecked !== null) {
-          dispath(login(isChecked));
-
-          const { data } = await axios.post(
-            `${path}/selectPost_inUser`,
-            {
-              userId: isChecked._id,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
-              },
-            }
-          );
-          // console.log(data, "trang thái");
-          // setIsFriend(data.trangthai);
-          setDataBaiviet(data.data);
-        }
+         const isChecked = await checkAndRefreshToken(dispath, count);
+         if (!isChecked) {
+           console.log("Token hết hạn, cần đăng nhập lại");
+           // Thực hiện điều hướng về trang đăng nhập nếu cần
+           return null;
+         } else {
+           const { data } = await axios.post(
+             `${path}/selectPost_inUser`,
+             {
+               userId: isChecked._id,
+             },
+             {
+               headers: {
+                 "Content-Type": "application/json",
+                 authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+               },
+             }
+           );
+           // console.log(data, "trang thái");
+           // setIsFriend(data.trangthai);
+           setDataBaiviet(data.data);
+         }
       } catch (err) {
         console.log(err, "lỗi vơis lấy dữ luêuj ra màn seedetail ");
       }

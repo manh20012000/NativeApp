@@ -22,6 +22,7 @@ import TimeAgo from "react-native-timeago";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
+
 import path from "../../confige/config";
 const CommentChildren = ({
   index,
@@ -34,7 +35,7 @@ const CommentChildren = ({
   setSoluongcomemtChidrent,
   navigation,
   sendComemtChildren,
-  idCommentCha
+  idCommentCha,
 }) => {
   const [user, setUser] = useState(item.User);
   const [Data, setData] = useState(item);
@@ -44,6 +45,7 @@ const CommentChildren = ({
   const [cmtChidren, setCmchildren] = useState(Data.CommentChildren);
   const [ChidrenCpnent, setComponent] = useState(false);
   const [XemThem, setXemThem] = useState(false);
+  const dispath = useDispatch();
   useEffect(() => {
     if (soluongCmt == 0) {
       setComponent(true);
@@ -81,25 +83,25 @@ const CommentChildren = ({
   }, [Data]);
 
   const [isLikedcmt, setisLikedcmt] = useState(false);
-  const [qualitylike, setqualitylike] = useState(Data.soluonglike)
+  const [qualitylike, setqualitylike] = useState(Data.soluonglike);
   let soluongTim = qualitylike;
   useEffect(() => {
-    console.log(Data.idLike, 'mảng lile')
-    if(Array.isArray(Data.idLike)){ Data.idLike.forEach((item) => {
+    console.log(Data.idLike, "mảng lile");
+    if (Array.isArray(Data.idLike)) {
+      Data.idLike.forEach((item) => {
         if (item === count._id) {
           setisLikedcmt(true);
-          console.log(item, 'item', count._id,isLikedcmt)
+          console.log(item, "item", count._id, isLikedcmt);
         }
-    });
+      });
     }
-     
-  },[])
-  const handlderLike = async() => {
+  }, []);
+  const handlderLike = async () => {
     let like = !isLikedcmt;
-    setisLikedcmt(like)
+    setisLikedcmt(like);
     if (isLikedcmt == false) {
       soluongTim = soluongTim + 1;
-    
+
       setqualitylike(soluongTim);
     } else if (isLikedcmt == true) {
       if (soluongTim > 0) {
@@ -108,92 +110,98 @@ const CommentChildren = ({
       }
     }
     try {
-      const { data } = await axios.post(`${path}/likeComemntVideoChildren`, {
-        idcomment: Data._id,
-        idlike: count._id,
-        Soluong: soluongTim,
-        Trangthai:like
-      });
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { data } = await axios.post(`${path}/likeComemntVideoChildren`, {
+          idcomment: Data._id,
+          idlike: count._id,
+          Soluong: soluongTim,
+          Trangthai: like,
+        });
+      }
     } catch (err) {
-      console.log(err,'log error');
+      console.log(err, "log error");
     }
-    console.log(soluongTim)
-  }
+    console.log(soluongTim);
+  };
   return (
     idCommentCha == item.idParentComment && (
       <View>
-        <View style={{ flexDirection: 'row' }}>
-           <TouchableOpacity
-        style={styles.pressAble}
-        onLongPress={() => {
-          handleLongPress(Data);
-        }}
-        onPress={() => {
-          console.log("récd",idCommentCha);
-          setParentId(idCommentCha);
-          handleTextInputChange(user.Hoten + " 👉 ");
-
-          // setSoluongcomemtChidrent(Data.SoluongCommentChildrent+1);
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => navigation.navigate("SeeDeTail", user)}
-        >
-          <Image
-            style={{ width: 30, height: 30, borderRadius: 40 }}
-            source={{ uri: user.Avatar }}
-          ></Image>
-        </TouchableOpacity>
-
-        <View style={styles.viewdau}>
+        <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
-            style={{ width: "auto" }}
-            onPress={() => navigation.navigate("SeeDeTail", user)}
+            style={styles.pressAble}
+            onLongPress={() => {
+              handleLongPress(Data);
+            }}
+            onPress={() => {
+              console.log("récd", idCommentCha);
+              setParentId(idCommentCha);
+              handleTextInputChange(user.Hoten + " 👉 ");
+
+              // setSoluongcomemtChidrent(Data.SoluongCommentChildrent+1);
+            }}
           >
-            <Text
-              style={{
-                fontSize: 12,
-                fontWeight: "500",
-                color: "black",
-                opacity: 0.5,
-              }}
+            <TouchableOpacity
+              onPress={() => navigation.navigate("SeeDeTail", user)}
             >
-              {user.Hoten}
-            </Text>
-          </TouchableOpacity>
-          <View style={{ width: "95%" }}>
-            <Text style={{ color: "black" }}>{Content}</Text>
-          </View>
-
-          <View style={styles.viewTab}>
-            <View style={styles.ViewitemCmt}>
-              <TimeAgo
-                style={{ color: "black", opacity: 0.7, fontSize: 12 }}
-                time={Data.Timing}
-                hideAgo={true}
-              />
-
-              <TouchableOpacity
-                onPress={() => {
-                  console.log("récd",idCommentCha);
-                  setParentId(idCommentCha);
-                  handleTextInputChange(user.Hoten + " 👉 ");
-                }}
-              >
-                <Text style={{ opacity: 0.5, fontSize: 13 }}>Reply</Text>
-              </TouchableOpacity>
-            </View>
-           
-          </View>
-          <View style={{ marginLeft: 30 }}>
-            {Data.Image ? (
               <Image
-                style={{ width: 100, height: 150, borderRadius: 15 }}
-                source={{ uri: Data.Image }}
-              />
-            ) : null}
-          </View>
-        </View>
+                style={{ width: 30, height: 30, borderRadius: 40 }}
+                source={{ uri: user.Avatar }}
+              ></Image>
+            </TouchableOpacity>
+
+            <View style={styles.viewdau}>
+              <TouchableOpacity
+                style={{ width: "auto" }}
+                onPress={() => navigation.navigate("SeeDeTail", user)}
+              >
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: "500",
+                    color: "black",
+                    opacity: 0.5,
+                  }}
+                >
+                  {user.Hoten}
+                </Text>
+              </TouchableOpacity>
+              <View style={{ width: "95%" }}>
+                <Text style={{ color: "black" }}>{Content}</Text>
+              </View>
+
+              <View style={styles.viewTab}>
+                <View style={styles.ViewitemCmt}>
+                  <TimeAgo
+                    style={{ color: "black", opacity: 0.7, fontSize: 12 }}
+                    time={Data.Timing}
+                    hideAgo={true}
+                  />
+
+                  <TouchableOpacity
+                    onPress={() => {
+                      console.log("récd", idCommentCha);
+                      setParentId(idCommentCha);
+                      handleTextInputChange(user.Hoten + " 👉 ");
+                    }}
+                  >
+                    <Text style={{ opacity: 0.5, fontSize: 13 }}>Reply</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={{ marginLeft: 30 }}>
+                {Data.Image ? (
+                  <Image
+                    style={{ width: 100, height: 150, borderRadius: 15 }}
+                    source={{ uri: Data.Image }}
+                  />
+                ) : null}
+              </View>
+            </View>
           </TouchableOpacity>
           <TouchableOpacity
             style={{
@@ -214,42 +222,66 @@ const CommentChildren = ({
             <Text style={{ opacity: 0.6, fontSize: 10 }}>{qualitylike}</Text>
           </TouchableOpacity>
         </View>
-     
-      <Modal visible={showOptions} animationType="slide" transparent>
-        <TouchableWithoutFeedback onPress={handleBackdropPress}>
-          <View
-            style={{
-              borderRadius: 10,
-              flex: 1,
-              justifyContent: "center",
-            }}
-          >
-            <View style={styles.viewmodal}>
-              <TouchableOpacity style={styles.touchcmt}>
-                <MaterialIcons name="report-problem" size={24} color="black" />
-                <Text>Report Comment</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.touchcmt}>
-                <MaterialIcons name="report-problem" size={24} color="black" />
-                <Text>Reply</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.touchcmt}>
-                <MaterialIcons name="report-problem" size={24} color="black" />
-                <Text>Cập nhật </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.touchcmt}>
-                <MaterialIcons name="report-problem" size={24} color="black" />
-                <Text>Hide comment</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={deleteComment} style={styles.touchcmt}>
-                <MaterialIcons name="report-problem" size={24} color="black" />
-                <Text>Delete</Text>
-              </TouchableOpacity>
+
+        <Modal visible={showOptions} animationType="slide" transparent>
+          <TouchableWithoutFeedback onPress={handleBackdropPress}>
+            <View
+              style={{
+                borderRadius: 10,
+                flex: 1,
+                justifyContent: "center",
+              }}
+            >
+              <View style={styles.viewmodal}>
+                <TouchableOpacity style={styles.touchcmt}>
+                  <MaterialIcons
+                    name="report-problem"
+                    size={24}
+                    color="black"
+                  />
+                  <Text>Report Comment</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.touchcmt}>
+                  <MaterialIcons
+                    name="report-problem"
+                    size={24}
+                    color="black"
+                  />
+                  <Text>Reply</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.touchcmt}>
+                  <MaterialIcons
+                    name="report-problem"
+                    size={24}
+                    color="black"
+                  />
+                  <Text>Cập nhật </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.touchcmt}>
+                  <MaterialIcons
+                    name="report-problem"
+                    size={24}
+                    color="black"
+                  />
+                  <Text>Hide comment</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={deleteComment}
+                  style={styles.touchcmt}
+                >
+                  <MaterialIcons
+                    name="report-problem"
+                    size={24}
+                    color="black"
+                  />
+                  <Text>Delete</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    </View>)
+          </TouchableWithoutFeedback>
+        </Modal>
+      </View>
+    )
   );
 };
 export default CommentChildren;
@@ -266,7 +298,6 @@ const styles = StyleSheet.create({
     width: "80%",
     borderRadius: 10,
     paddingHorizontal: 5,
-
   },
   ViewitemCmt: {
     flexDirection: "row",

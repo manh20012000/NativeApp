@@ -37,7 +37,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const EditProfile = ({ navigation, route }) => {
   let user = route.params;
   const count = useSelector((state) => state.auth.value);
-  
+
   const dispath = useDispatch();
   const [loading, setLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState(user.Avatar);
@@ -70,25 +70,32 @@ const EditProfile = ({ navigation, route }) => {
       name: `${randomInt}image_.jpeg`, // Tên tệp
     });
     try {
-      const { data } = await axios.post(`${path}/UpadateAvatar`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      if (data.status == 200) {
-        const userData = {
-          _id: data.data._id,
-          Hoten: data.data.Hoten,
-          Avatar: data.data.Avatar,
-          email: data.data.Email,
-          accessToken: count.accessToken,
-        };
-        console.log(userData);
-        dispath(UpdateAuth(userData));
-        navigation.navigate("Infor");
-        alert(data.mess);
-        const userDataString = JSON.stringify(userData);
-        await AsyncStorage.setItem("userToken", userDataString);
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { data } = await axios.post(`${path}/UpadateAvatar`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        if (data.status == 200) {
+          const userData = {
+            _id: data.data._id,
+            Hoten: data.data.Hoten,
+            Avatar: data.data.Avatar,
+            email: data.data.Email,
+            accessToken: count.accessToken,
+          };
+          console.log(userData);
+          dispath(UpdateAuth(userData));
+          navigation.navigate("Infor");
+          alert(data.mess);
+          const userDataString = JSON.stringify(userData);
+          await AsyncStorage.setItem("userToken", userDataString);
+        }
       }
     } catch (err) {
       console.log(err, "log lỗi editinfor");

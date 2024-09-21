@@ -159,10 +159,21 @@ const VideoItem = ({ item, action, navigation }) => {
   const [controlsVisible, setControlsVisible] = useState(false);
   useEffect(() => {
     const listLike = async () => {
-      const { data } = await axios.post(`${path}/selectLikeVideo`, {
-        IdVideo: datavideo._id,
-      });
-      setArrlike(data);
+      try {
+        const isChecked = await checkAndRefreshToken(dispath, count);
+        if (!isChecked) {
+          console.log("Token hết hạn, cần đăng nhập lại");
+          // Thực hiện điều hướng về trang đăng nhập nếu cần
+          return null;
+        } else {
+          const { data } = await axios.post(`${path}/selectLikeVideo`, {
+            IdVideo: datavideo._id,
+          });
+          setArrlike(data);
+        }
+      } catch (err) {
+        console.log(err, "jajaja");
+      }
     };
     listLike();
   }, []);
@@ -191,12 +202,19 @@ const VideoItem = ({ item, action, navigation }) => {
       }
     }
     try {
-      const { data } = await axios.post(`${path}/LikeVideo`, {
-        idUser: dataUser._id,
-        IdVideo: datavideo._id,
-        Soluong: soluongTim,
-        Trangthai: Liked,
-      });
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { data } = await axios.post(`${path}/LikeVideo`, {
+          idUser: dataUser._id,
+          IdVideo: datavideo._id,
+          Soluong: soluongTim,
+          Trangthai: Liked,
+        });
+      }
     } catch (err) {
       console.log(err);
     }
@@ -307,12 +325,19 @@ const VideoItem = ({ item, action, navigation }) => {
       setLoading(true);
       startRotation();
       try {
-        const { data } = await axios.post(`${path}/api_CommentVideoGet`, {
-          idVideo: datavideo._id,
-          Skips: leng,
-        });
-        setComment((prevData) => prevData.concat(data.data));
-        // console.log(data.data)
+        const isChecked = await checkAndRefreshToken(dispath, count);
+        if (!isChecked) {
+          console.log("Token hết hạn, cần đăng nhập lại");
+          // Thực hiện điều hướng về trang đăng nhập nếu cần
+          return null;
+        } else {
+          const { data } = await axios.post(`${path}/api_CommentVideoGet`, {
+            idVideo: datavideo._id,
+            Skips: leng,
+          });
+          setComment((prevData) => prevData.concat(data.data));
+          // console.log(data.data)
+        }
       } catch (error) {
         console.error("Error fetching comments:", error);
       } finally {
@@ -345,45 +370,53 @@ const VideoItem = ({ item, action, navigation }) => {
     const myId = uuid();
 
     try {
-      if (parentId == null) {
-        const newComment = {
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        if (parentId == null) {
+          const newComment = {
+            _id: myId,
+            UserCmt: dataUser._id,
+            idVideo: datavideo._id,
+            Content: contens,
+            Soluongcmt: soluong,
+            SoluongCommentChildrent: 0,
+            User: dataUser,
+            Timing: new Date().toISOString(),
+          };
+          // console.log(newComment)
+          setComment((prevComments) => [newComment, ...prevComments]);
+        } else if (parentId != null) {
+          const newComment = {
+            _id: myId,
+            UserCmt: dataUser._id,
+            idVideo: datavideo._id,
+            Content: contens,
+            Soluongcmt: soluong,
+            idParentComment: parentId,
+            User: dataUser,
+            Timing: new Date().toISOString(),
+          };
+          dispath(addComment(newComment));
+          // setSendCommentChidren(newComment);
+          console.log("jajaja");
+        }
+
+        const { data } = await axios.post(`${path}/api_CommentVideoPost`, {
           _id: myId,
           UserCmt: dataUser._id,
           idVideo: datavideo._id,
-          Content: contens,
-          Soluongcmt: soluong,
-          SoluongCommentChildrent: 0,
-          User: dataUser,
-          Timing: new Date().toISOString(),
-        };
-        // console.log(newComment)
-        setComment((prevComments) => [newComment, ...prevComments]);
-      } else if (parentId != null) {
-        const newComment = {
-          _id: myId,
-          UserCmt: dataUser._id,
-          idVideo: datavideo._id,
-          Content: contens,
+          Conten: contens,
           Soluongcmt: soluong,
           idParentComment: parentId,
-          User: dataUser,
-          Timing: new Date().toISOString(),
-        };
-        dispath(addComment(newComment));
-        // setSendCommentChidren(newComment);
-        console.log("jajaja");
+        });
+        setParentId(null);
+        setSoluongcmt(soluong);
+        setConten("");
       }
-      const { data } = await axios.post(`${path}/api_CommentVideoPost`, {
-        _id: myId,
-        UserCmt: dataUser._id,
-        idVideo: datavideo._id,
-        Conten: contens,
-        Soluongcmt: soluong,
-        idParentComment: parentId,
-      });
-      setParentId(null);
-      setSoluongcmt(soluong);
-      setConten("");
     } catch (err) {
       console.log(err);
     } finally {
@@ -396,9 +429,16 @@ const VideoItem = ({ item, action, navigation }) => {
       setComment(updatedComments);
       console.log(SoluongCommentChildrent, idComment, "log1");
       setSoluongcmt(soluongCmt - SoluongCommentChildrent);
-      const { data } = await axios.delete(
-        `${path}/deleteCommentVideo/${idComment}/${datavideo._id}/${SoluongCommentChildrent}`
-      );
+       const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { data } = await axios.delete(
+          `${path}/deleteCommentVideo/${idComment}/${datavideo._id}/${SoluongCommentChildrent}`
+        );
+      }
     } catch (err) {
       console.log(err);
     } finally {

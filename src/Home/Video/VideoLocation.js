@@ -23,6 +23,9 @@ import {
   createBottomTabNavigator,
   useBottomTabBarHeight,
 } from "@react-navigation/bottom-tabs";
+import { useSelector, useDispatch } from "react-redux";
+import { login } from "../../Redex/Reducer/auth.slice.js";
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 import { useIsFocused } from "@react-navigation/native";
 const VideoLocation = ({ navigation }) => {
   const isFocused = useIsFocused();
@@ -33,16 +36,25 @@ const VideoLocation = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [action, setAction] = useState(false);
   let trangthai = true;
+    const count = useSelector((state) => state.auth.value);
   const [leng, setLeng] = useState(0);
+   const dispath = useDispatch();
   const handlerSelectVideo = async () => {
     try {
-      const lim = 5; // Định nghĩa giá trị lim
-      const { data } = await axios.post(`${path}/selectVideo`, {
-        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-        skip: leng,
-      });
-      setLeng(leng + 5);
-      setData((prevData) => prevData.concat(data.data));
+       const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const lim = 5; // Định nghĩa giá trị lim
+        const { data } = await axios.post(`${path}/selectVideo`, {
+          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+          skip: leng,
+        });
+        setLeng(leng + 5);
+        setData((prevData) => prevData.concat(data.data));
+      } 
     } catch (err) {
       console.log(err, "màn hinh videolocatin1");
     }

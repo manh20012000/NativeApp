@@ -70,6 +70,7 @@ export const SocketProvider = ({ children }) => {
     connectToSocketServer().then();
 
     return () => {
+      // socket.io.opts.reconnection = false; // Tắt auto-reconnect
       socket?.disconnect();
       socket?.removeAllListeners();
       socket?.close();

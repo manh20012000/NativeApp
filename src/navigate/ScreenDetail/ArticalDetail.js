@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import FlatItem from "../../Home/TrangChu/FlatItem";
 import path from "../../confige/config";
 import SkeletonApp from "../../Skeleton/SkeletonApp";
-
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken";
 const ArticalDetail = ({ navigation, route }) => {
   const dispath = useDispatch();
   const userCurent = useSelector((state) => state.auth.value);
@@ -18,13 +18,12 @@ const ArticalDetail = ({ navigation, route }) => {
   useEffect(() => {
     const handler = async () => {
       try {
-        // console.log("nahfy van", userCurent.accessToken, userCurent.refreshToken);
-        const isChecked = await checkingToken.checking(userCurent);
-        // console.log(userCurent.accessToken);
-        // console.log(isChecked, "gias tri sau checked");
-        if (typeof isChecked === "object" && isChecked !== null) {
-          dispath(login(isChecked));
-          console.log("nhảy vào đây xe, ", typeof pramsroute.isRead);
+        const isChecked = await checkAndRefreshToken(dispath, userCurent);
+        if (!isChecked) {
+          console.log("Token hết hạn, cần đăng nhập lại");
+          // Thực hiện điều hướng về trang đăng nhập nếu cần
+          return null;
+        } else {
           const { data } = await axios.get(
             `${path}/get_Article_Getone/${pramsroute.idOjectModel}`, //idOjectmodal là id bài viết được lấy từ thông báo
             {

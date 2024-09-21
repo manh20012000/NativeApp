@@ -52,6 +52,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { checkingToken } from "../../../confige/CheckingToken";
 import { login } from "../../../Redex/Reducer/auth.slice";
 import { useSelector, useDispatch } from "react-redux";
+import { checkAndRefreshToken } from "../../../confige/ComponencheckingToken";
 const PesionChat = ({ route, navigation }) => {
   const myId = uuid();
   const dispath = useDispatch();
@@ -120,21 +121,27 @@ const PesionChat = ({ route, navigation }) => {
       // console.log(messages, "messagaahdj");
       // sendMessage(messages);
       // Gửi tin nhắn lên server sử dụng Axios
+ const isChecked = await checkAndRefreshToken(dispath, user);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const response = await axios.post(`${path}/send/${participants._id}`, {
+          message: messages[0],
+          // Các thông tin khác nếu cần
+        });
+        // if (response.data) {
+        //   socket.emit("sendMessage", {
+        //     ...messages[0],
+        //     receiverId: participants._id,
+        //   });
+        // }
+        // Cập nhật state để hiển thị tin nhắn trong GiftedChat
 
-      const response = await axios.post(`${path}/send/${participants._id}`, {
-        message: messages[0],
-        // Các thông tin khác nếu cần
-      });
-      // if (response.data) {
-      //   socket.emit("sendMessage", {
-      //     ...messages[0],
-      //     receiverId: participants._id,
-      //   });
-      // }
-      // Cập nhật state để hiển thị tin nhắn trong GiftedChat
-
-      // Hiển thị hoặc ẩn component nếu cần
-      setVisible(true);
+        // Hiển thị hoặc ẩn component nếu cần
+        setVisible(true);
+      }
     } catch (error) {
       console.error("Error sending message to server:", error);
     }
@@ -223,66 +230,69 @@ const PesionChat = ({ route, navigation }) => {
       GiftedChat.append(previousMessages, messages)
     );
     try {
-      const isChecked = await checkingToken.checking(user);
-      if (typeof isChecked === "object" && isChecked !== null) {
-        dispath(login(isChecked));
-        const message = new FormData();
-        setchooseLibrary(true);
-        if (typefile == "image") {
-          let datetime = new Date();
-          let datePostTimstemp = await datetime.toISOString().slice(0, -5);
-          for (let i = 0; i < selectedImages.length; i++) {
-            message.append("ArayImages", {
-              uri: selectedImages[i],
-              name: `image_${i}.jpeg`,
-              type: "image/jpeg",
-            });
-          }
-          message.append("createdAt", datePostTimstemp);
-          message.append("text", null);
-          message.append("video", null);
-          message.append("userId", user._id);
-          message.append("username", user.Hoten);
-          message.append("avatar", user.Avatar);
-          const response = await axios.post(
-            `${path}/ChatImage/${participants._id}`,
-            message,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-                authorization: `Bearer ${isChecked.accessToken}`,
-              },
-            }
-          );
-        } else if (typefile == "video") {
-          let datetime = new Date();
-          let datePostTimstemp = await datetime.toISOString().slice(0, -5);
-          message.append("Video", {
-            uri: selectedVideo,
-            name: `Video${datePostTimstemp}.mp4`,
-            type: "video/mp4",
-          });
-          message.append("createdAt", datePostTimstemp);
-          message.append("text", null);
-          message.append("image", null);
-          message.append("userId", user._id);
-          message.append("username", user.Hoten);
-          message.append("avatar", user.Avatar);
-          const response = await axios.post(
-            `${path}/ChatVideo/${participants._id}`,
+     const isChecked = await checkAndRefreshToken(dispath, user);
+     if (!isChecked) {
+       console.log("Token hết hạn, cần đăng nhập lại");
+       // Thực hiện điều hướng về trang đăng nhập nếu cần
+       return null;
+     } else {
+       const message = new FormData();
+       setchooseLibrary(true);
+       if (typefile == "image") {
+         let datetime = new Date();
+         let datePostTimstemp = await datetime.toISOString().slice(0, -5);
+         for (let i = 0; i < selectedImages.length; i++) {
+           message.append("ArayImages", {
+             uri: selectedImages[i],
+             name: `image_${i}.jpeg`,
+             type: "image/jpeg",
+           });
+         }
+         message.append("createdAt", datePostTimstemp);
+         message.append("text", null);
+         message.append("video", null);
+         message.append("userId", user._id);
+         message.append("username", user.Hoten);
+         message.append("avatar", user.Avatar);
+         const response = await axios.post(
+           `${path}/ChatImage/${participants._id}`,
+           message,
+           {
+             headers: {
+               "Content-Type": "multipart/form-data",
+               authorization: `Bearer ${isChecked.accessToken}`,
+             },
+           }
+         );
+       } else if (typefile == "video") {
+         let datetime = new Date();
+         let datePostTimstemp = await datetime.toISOString().slice(0, -5);
+         message.append("Video", {
+           uri: selectedVideo,
+           name: `Video${datePostTimstemp}.mp4`,
+           type: "video/mp4",
+         });
+         message.append("createdAt", datePostTimstemp);
+         message.append("text", null);
+         message.append("image", null);
+         message.append("userId", user._id);
+         message.append("username", user.Hoten);
+         message.append("avatar", user.Avatar);
+         const response = await axios.post(
+           `${path}/ChatVideo/${participants._id}`,
 
-            message,
+           message,
 
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-                authorization: `Bearer ${isChecked.accessToken}`,
-              },
-            }
-          );
-        }
-        setVisible(true);
-      }
+           {
+             headers: {
+               "Content-Type": "multipart/form-data",
+               authorization: `Bearer ${isChecked.accessToken}`,
+             },
+           }
+         );
+       }
+       setVisible(true);
+     }
     } catch (error) {
       console.error("Error sending message to server:", error.message);
     }

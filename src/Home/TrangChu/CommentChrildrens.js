@@ -21,6 +21,7 @@ import { useSelector, useDispatch } from "react-redux";
 const CommentChildrens = (props) => {
   const data = props.item;
   const userCurent = useSelector((state) => state.auth.value);
+  const dispath= useDispatch()
   const [user, setUser] = useState(data.User);
   const [Data, setData] = useState(props.item);
   useEffect(() => {
@@ -54,11 +55,18 @@ const CommentChildrens = (props) => {
   const deleteComment = async () => {
     setShowOptions(false);
     try {
-      const { data } = await axios.delete(`${path}/deleteComment`, {
-        idComemnt: Item._id,
-        DinhDanh: Item.Dinhdanh,
-        idPerent: Item.idParentComment,
-      });
+       const isChecked = await checkAndRefreshToken(dispath, userCurent);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { data } = await axios.delete(`${path}/deleteComment`, {
+          idComemnt: Item._id,
+          DinhDanh: Item.Dinhdanh,
+          idPerent: Item.idParentComment,
+        });
+      }
     } catch (err) {
       console.log(err);
     }

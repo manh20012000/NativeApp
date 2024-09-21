@@ -28,6 +28,7 @@ import {
 } from "../../Redex/Reducer/updateComentChildren.js";
 import path from "../../confige/config.js";
 import { useSelector, useDispatch } from "react-redux";
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 const Comment = memo(
   ({
     index,
@@ -81,18 +82,25 @@ const Comment = memo(
     const hanlderXemThem = async () => {
       setLoading(true);
       try {
-        console.log(leng);
-        const { data } = await axios.get(
-          `${path}/api_CommentVideoGetChildrent/${Data._id}/${Skipcomemnt}`
-        );
-        setCmchildren((prevCmtChidren) => [
-          ...(prevCmtChidren || []),
-          ...data.data,
-        ]);
-        dispatch(updateDataCommentChildrent(data.data));
-        // console.log(data.data)
-        statusLoad(true);
-        setLeng(leng + 3);
+        const isChecked = await checkAndRefreshToken(dispatch, count);
+        if (!isChecked) {
+          console.log("Token hết hạn, cần đăng nhập lại");
+          // Thực hiện điều hướng về trang đăng nhập nếu cần
+          return null;
+        } else {
+          console.log(leng);
+          const { data } = await axios.get(
+            `${path}/api_CommentVideoGetChildrent/${Data._id}/${Skipcomemnt}`
+          );
+          setCmchildren((prevCmtChidren) => [
+            ...(prevCmtChidren || []),
+            ...data.data,
+          ]);
+          dispatch(updateDataCommentChildrent(data.data));
+          // console.log(data.data)
+          statusLoad(true);
+          setLeng(leng + 3);
+        }
       } catch (error) {
         console.error("Error fetching comments:", error);
       } finally {
@@ -128,13 +136,20 @@ const Comment = memo(
     };
     const deleteCommentChildern = async (idComment) => {
       try {
-        setLoading(true);
-        setqualityComment(QualityComment - 1);
-        console.log(idComment, Data.idVideo, item._id);
-        const updateComemntChildren = cmtChidren.filter(
-          (items) => items._id !== idComment
-        );
-        setCmchildren(updateComemntChildren);
+        const isChecked = await checkAndRefreshToken(dispath, count);
+        if (!isChecked) {
+          console.log("Token hết hạn, cần đăng nhập lại");
+          // Thực hiện điều hướng về trang đăng nhập nếu cần
+          return null;
+        } else {
+          setLoading(true);
+          setqualityComment(QualityComment - 1);
+          console.log(idComment, Data.idVideo, item._id);
+          const updateComemntChildren = cmtChidren.filter(
+            (items) => items._id !== idComment
+          );
+          setCmchildren(updateComemntChildren);
+        }
         const { data } = await axios.delete(
           `${path}/deleteCommentChildrenVideo/${idComment}/${Data.idVideo}/${item._id}`
         );
@@ -173,12 +188,19 @@ const Comment = memo(
         }
       }
       try {
-        const { data } = await axios.post(`${path}/likeComemntVideoParent`, {
-          idcomment: Data._id,
-          idlike: count._id,
-          Soluong: soluongTim,
-          Trangthai: like,
-        });
+        const isChecked = await checkAndRefreshToken(dispath, count);
+        if (!isChecked) {
+          console.log("Token hết hạn, cần đăng nhập lại");
+          // Thực hiện điều hướng về trang đăng nhập nếu cần
+          return null;
+        } else {
+          const { data } = await axios.post(`${path}/likeComemntVideoParent`, {
+            idcomment: Data._id,
+            idlike: count._id,
+            Soluong: soluongTim,
+            Trangthai: like,
+          });
+        }
       } catch (err) {
         console.log(err, "log error");
       }

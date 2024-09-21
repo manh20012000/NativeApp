@@ -27,6 +27,7 @@ import { useSelector, useDispatch } from "react-redux";
 import VideoItem from "../Video/VideoItem";
 const SeemVideo = ({ navigation, route }) => {
   const count = useSelector((state) => state.auth.value);
+  const dispath = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   //   const bottomTabHight = useBottomTabBarHeight();
   const [dataUser, setDatauUser] = useState(count);
@@ -60,15 +61,22 @@ const SeemVideo = ({ navigation, route }) => {
 
   const handlerSelectVideo = async () => {
     try {
-      const lim = 15; // Định nghĩa giá trị lim
-      const { data } = await axios.post(`${path}/selectedVideoId`, {
-        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-        skip: leng,
-        id: count._id,
-      });
-      setLeng(leng + 3);
-      // setData((prevData) => prevData.concat(data.data));
-      setData[data.data];
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const lim = 15; // Định nghĩa giá trị lim
+        const { data } = await axios.post(`${path}/selectedVideoId`, {
+          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+          skip: leng,
+          id: count._id,
+        });
+        setLeng(leng + 3);
+        // setData((prevData) => prevData.concat(data.data));
+        setData[data.data];
+      }
     } catch (err) {
       console.log(err, "màn hình video seemVideo");
     }
