@@ -8,6 +8,7 @@ import {
   ScrollView,
   FlatList,
   StatusBar,
+  useWindowDimensions,
 } from "react-native";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
@@ -24,11 +25,11 @@ import path from "../../confige/config.js";
 import { useSelector, useDispatch } from "react-redux";
 const SeeDeTail = ({ route, navigation }) => {
   const count = useSelector((state) => state.auth.value);
-  // console.log(count);
+  const { width, height } = useWindowDimensions();
   const BackTrangHome = () => {
     navigation.goBack();
   };
-  // console.log(route.params);
+  // console.log(route.params, "dsahgfchsdbhcbsdj");
   const dispath = useDispatch();
   const [dataRoute, setDataRote] = useState(route.params);
   const [baiviet, setBaiviet] = useState([]);
@@ -72,8 +73,10 @@ const SeeDeTail = ({ route, navigation }) => {
   let handlePress = async () => {
     try {
       const isChecked = await checkingToken.checking(count);
+      let notifimessgae = "";
       let checkstatus = status;
       if (status == null) {
+        notifimessgae = `@[${count.Hoten}](id:${count._id}) gữi cho bạn lời mời kết bạn`;
         setStatus("Can't request");
         setIsFriend(true);
       } else if (status === "Can't request") {
@@ -81,7 +84,8 @@ const SeeDeTail = ({ route, navigation }) => {
         setStatus(null);
         setIsFriend(false);
       } else if (status === "Respons") {
-        console.log("nahyf sjdjs");
+        notifimessgae = `@[${count.Hoten}](id:${count._id}) chấp nhận lời mời kết bạn`;
+
         console.log(status);
         checkstatus = "Friend";
         setStatus("Friend");
@@ -94,7 +98,7 @@ const SeeDeTail = ({ route, navigation }) => {
         dispath(login(isChecked));
         // setIsFriend((prevState) => !prevState);
         console.log("hihi", status);
-        const { message } = await axios.post(
+        const { data } = await axios.post(
           `${path}/Addfriend`,
           {
             _idsend: count._id,
@@ -102,7 +106,7 @@ const SeeDeTail = ({ route, navigation }) => {
             status: status,
             nameSend: count.Hoten,
             avatarSend: count.Avatar,
-            messagenotifi: `@[${count.Hoten}](id:${count._id}) gữi cho bạn lời mời kết bạn`,
+            messagenotifi: notifimessgae,
           },
           {
             headers: {
@@ -111,7 +115,7 @@ const SeeDeTail = ({ route, navigation }) => {
             },
           }
         );
-        console.log(message, "message");
+        console.log(data.message, "message");
       }
     } catch (err) {
       console.log(err, "lỗi với addfriend message handlePress");
@@ -365,10 +369,15 @@ const SeeDeTail = ({ route, navigation }) => {
             <Entypo
               name={isFriend ? "users" : "add-user"}
               size={24}
-              color={isFriend ? "green" : "blue"}
+              color={isFriend ? "green" : "white"}
             />
 
-            <Text style={{ color: isFriend ? "green" : "white" }}>
+            <Text
+              style={{
+                color: "white",
+                fontWeight: "bold",
+              }}
+            >
               {console.log(isFriend, status, "veiw lohdjshj")}
               {isFriend ? "  " + status : "Thêm b bè"}
             </Text>

@@ -19,28 +19,45 @@ import Story from "./Story";
 import Chat from "./Chat";
 import axios from "axios";
 import path from "../../../confige/config";
+import { checkingToken } from "../../../confige/CheckingToken";
+import { useDispatch, useSelector } from "react-redux";
 const bottonTad = createBottomTabNavigator();
 const Message = ({ navigation }) => {
+  const userCurent = useSelector((state) => state.auth.value);
+  const dispath = useDispatch();
   const [dataUserChat, setDataUser] = useState([]);
   const SelectUserMessage = async () => {
-      try {
-        const { data } = await axios.get(`${path}/UserRouter`);
+    try {
+      const isChecked = await checkingToken.checking(userCurent);
+      // console.log(userCurent.accessToken);
+      // console.log(isChecked, "gias tri sau checked");
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        const { data } = await axios.get(
+          `${path}/UserRouter/${isChecked._id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
         // console.log(data, "data selector");
         setDataUser(data);
-      } catch (error) {
-        console.log(error, "lỗi nhânj với ");
-      } finally {
-        // console.log(dataUserChat)
       }
-    };
+    } catch (error) {
+      console.log(error, "lỗi nhânj với ");
+    } finally {
+      // console.log(dataUserChat)
+    }
+  };
   useEffect(() => {
     SelectUserMessage();
   }, []);
 
-  // 
+  //
   // console.log(dataUserChat, 'log ra dâtracgat');
   return (
-   
     <View style={{ flex: 1, backgroundColor: "black" }}>
       <View style={styles.header}>
         <View
@@ -56,7 +73,7 @@ const Message = ({ navigation }) => {
               navigation.navigate("BootonGate");
             }}
           >
-          <Ionicons name="arrow-back-outline" size={24} color="white" />
+            <Ionicons name="arrow-back-outline" size={24} color="white" />
           </TouchableOpacity>
           <Text style={{ fontSize: 20, color: "white", fontWeight: "800" }}>
             Chats

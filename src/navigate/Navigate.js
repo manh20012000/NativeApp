@@ -28,7 +28,7 @@ import { jwtDecode } from "jwt-decode";
 import { encode, decode } from "js-base64";
 import ViewCall from "../Home/TrangChu/MessApp/ViewCall.js";
 import ArticalDetail from "./ScreenDetail/ArticalDetail.js";
-import SeeUserAfriend from "./ScreenDetail/SeeUserAfriend.js";
+
 const Stack = createNativeStackNavigator();
 const Navigete = () => {
   const dispath = useDispatch();
@@ -97,7 +97,7 @@ const Navigete = () => {
           <Stack.Screen name="SetTingInfor" component={SetTingInfor} />
           <Stack.Screen name="ViewCall" component={ViewCall} />
           <Stack.Screen name="Article" component={ArticalDetail} />
-          <Stack.Screen name="SeeUserAfriend" component={SeeUserAfriend} />
+
           {/* <Stack.Screen
         name='PostWithCamera'
         component={PostWithCamera}

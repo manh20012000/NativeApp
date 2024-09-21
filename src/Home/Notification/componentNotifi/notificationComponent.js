@@ -52,7 +52,35 @@ const NotificationComponent = (props) => {
       props.handlerremonotifi(props.item._id);
     }
   };
+  const handler_Tranfer_Navigation = async (sendId) => {
+    try {
+      const isChecked = await checkingToken.checking(userCurent);
+      // console.log(userCurent.accessToken);
 
+      if (typeof isChecked === "object" && isChecked !== null) {
+        dispath(login(isChecked));
+        console.log(isChecked.accessToken, "gias tri sau checked");
+        const { data } = await axios.post(
+          `${path}/userfindByid`,
+          { sendId: sendId, isRead: true, notificationId: props.item._id },
+          {
+            headers: {
+              // Accept: "application/json",
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        if (data.data) {
+          props.navigation.navigate("SeeDeTail", data.data);
+        } else {
+          props.navigation.navigate("Inbox", data.data);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const parseText = (text) => {
     const regex = /\@\[(.*?)\]\(id:(.*?)\)/g; // Regex để tìm @ và URL
     const parts = [];
@@ -156,8 +184,17 @@ const NotificationComponent = (props) => {
           alignItems: "center",
         }}
         onPress={() => {
+          if (props.item.title === "SeeDeTail") {
+            handler_Tranfer_Navigation(props.item.sendId);
+          } else {
+            props.navigation.navigate(props.item.title, props.item);
+          }
           setIsred(true);
-          props.navigation.navigate(props.item.title, props.item);
+          console.log(
+            props.item.title,
+            "vhasdbsabdj thông báo->>>",
+            props.item
+          );
         }}
       >
         <Image
@@ -171,7 +208,7 @@ const NotificationComponent = (props) => {
           }}
         >
           {renderParsedText(props.item.messageNotifi)}
-          {props.item.title === "SeeUserAfriend" && (
+          {props.item.title === "SeeDeTail" && (
             <View
               style={{
                 justifyContent: "space-around",
