@@ -429,7 +429,7 @@ const VideoItem = ({ item, action, navigation }) => {
       setComment(updatedComments);
       console.log(SoluongCommentChildrent, idComment, "log1");
       setSoluongcmt(soluongCmt - SoluongCommentChildrent);
-       const isChecked = await checkAndRefreshToken(dispath, count);
+      const isChecked = await checkAndRefreshToken(dispath, count);
       if (!isChecked) {
         console.log("Token hết hạn, cần đăng nhập lại");
         // Thực hiện điều hướng về trang đăng nhập nếu cần
@@ -2031,3 +2031,24 @@ const VideoItem = ({ item, action }) => {
 // }
 
 // */
+/*const MAX_WATCHED_VIDEOS = 200; // Giới hạn tối đa video đã xem
+
+const saveWatchedVideo = async (videoId) => {
+  try {
+    const watchedVideos = await AsyncStorage.getItem('watchedVideos');
+    let watchedList = watchedVideos ? JSON.parse(watchedVideos) : [];
+
+    // Nếu danh sách quá lớn, xóa bớt video cũ nhất
+    if (watchedList.length >= MAX_WATCHED_VIDEOS) {
+      watchedList.shift(); // Xóa video cũ nhất
+    }
+
+    if (!watchedList.includes(videoId)) {
+      watchedList.push(videoId);
+      await AsyncStorage.setItem('watchedVideos', JSON.stringify(watchedList));
+    }
+  } catch (error) {
+    console.error("Error saving watched video", error);
+  }
+};
+ */

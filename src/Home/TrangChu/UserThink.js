@@ -303,17 +303,22 @@ const UserThink = ({ navigation, route }) => {
       });
     }
     try {
-       const isChecked = await checkAndRefreshToken(dispath, count);
+      const isChecked = await checkAndRefreshToken(dispath, count);
       if (!isChecked) {
         console.log("Token hết hạn, cần đăng nhập lại");
         // Thực hiện điều hướng về trang đăng nhập nếu cần
         return null;
       } else {
-        const { status, msg } = await axios.post(`${path}/uploadAnh`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        const { status, msg } = await axios.post(
+          `${path}/uploadAnh`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              authorization: `Bearer ${isChecked.accessToken}`,
+            },
+          }
+        );
         setFell(null);
         setPermission("public");
         setLocation(null);

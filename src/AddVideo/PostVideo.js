@@ -115,19 +115,19 @@ const PostVideo = ({ navigation, route }) => {
       console.log(data.fileselect, "jaaahahah");
       let datetime = new Date();
       let datePostTimstemp = await datetime.toISOString().slice(0, -5);
-      // setLoading(true);
-      // formData.append("Height", data.heightV);
-      // formData.append("widthV", data.widthV);
-      // formData.append("datePost", datePostTimstemp);
-      // formData.append("privacy", privacy);
-      // formData.append("resizeMode", data.resizeMode);
-      // formData.append("userId", dataUser._id);
-      // formData.append("located", located);
+      setLoading(true);
+      formData.append("Height", data.heightV);
+      formData.append("widthV", data.widthV);
+      formData.append("datePost", datePostTimstemp);
+      formData.append("privacy", privacy);
+      formData.append("resizeMode", data.resizeMode);
+      formData.append("userId", dataUser._id);
+      formData.append("located", located);
       formData.append("nameMusic", dataUser.Hoten);
       formData.append("Video", {
         uri: data.fileselect,
-        type: "video/mp4",
         name: `Video${datePostTimstemp}.mp4`,
+        type: "video/mp4",
       });
 
       const isChecked = await checkAndRefreshToken(dispath, dataUser);

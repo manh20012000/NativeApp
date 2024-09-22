@@ -82,6 +82,9 @@ const RecodViedeo = ({ navigation }) => {
         setTrangThai(3);
         setTypefile("video");
       }
+    } else {
+      setTrangThai(1);
+      return null;
     }
   };
   // setCamera

@@ -25,6 +25,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { login } from "../Redex/Reducer/auth.slice.js";
 import { jwtDecode } from "jwt-decode";
+import UploadStory from "../Home/TrangChu/UploadStory.js";
 import { encode, decode } from "js-base64";
 import ViewCall from "../Home/TrangChu/MessApp/ViewCall.js";
 import ArticalDetail from "./ScreenDetail/ArticalDetail.js";
@@ -97,7 +98,7 @@ const Navigete = () => {
           <Stack.Screen name="SetTingInfor" component={SetTingInfor} />
           <Stack.Screen name="ViewCall" component={ViewCall} />
           <Stack.Screen name="Article" component={ArticalDetail} />
-
+          <Stack.Screen name="UploadStory" component={UploadStory} />
           {/* <Stack.Screen
         name='PostWithCamera'
         component={PostWithCamera}

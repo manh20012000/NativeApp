@@ -28,6 +28,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { collection, getDocs } from "firebase/firestore";
 import { firestore } from "../../../Confige.js";
 import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
 import { Video, ResizeMode } from "expo-av";
 import screenfull from "screenfull";
 import VideoPlayer from "expo-video-player";
@@ -38,6 +39,7 @@ import path from "../../confige/config.js";
 import SkeletonApp from "../../Skeleton/SkeletonApp.js";
 import Skeleton from "../../Skeleton/Skeleton.js";
 import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
+import { FFmpegKit, FFmpegKitConfig } from "ffmpeg-kit-react-native";
 const TrangChu = ({ navigation }) => {
   const dispath = useDispatch();
   const user = useSelector((state) => state.auth.value);
@@ -129,11 +131,55 @@ const TrangChu = ({ navigation }) => {
     setIsLoading(true);
     setfullscreen(true);
   };
+
+  const optionStory = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
+    }
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      quality: 1,
+    });
+    if (!result.canceled) {
+      console.log(result.assets);
+      if (result.assets[0].type === "image") {
+        navigation.navigate("UploadStory", {
+          fileselect: result.assets[0].uri,
+          widthV: result.assets[0].width, // Kích thước tùy chỉnh
+          heightV: result.assets[0].height, // Kích thước tùy chỉnh
+          resizeMode: true,
+          typefile: result.assets[0]?.mimeType,
+          fileName: result.assets[0]?.fileName,
+        });
+      } else if (result.assets[0].type === "video") {
+        if (result.assets[0].height < 700) {
+          setResizeMode(true);
+        }
+        navigation.navigate("UploadStory", {
+          fileselect: result.assets[0].uri,
+          widthV: result.assets[0].width, // Kích thước tùy chỉnh
+          heightV: result.assets[0].height, // Kích thước tùy chỉnh
+          resizeMode: true,
+          typefile: result.assets[0]?.mimeType,
+          fileName: result.assets[0]?.fileName,
+        });
+      }
+    } else {
+      return null;
+    }
+
+    // setFileselect(null);
+    // setHeight(null);
+    // setWidthV(null);
+    // setTypefile(null);
+  };
   const str = () => {
     return (
       <TouchableOpacity
         onPress={() => {
-          console.log("bhdshbh");
+          optionStory();
         }}
         style={{
           width: 100,

@@ -63,7 +63,7 @@ const EditerVideo = ({ navigation, route }) => {
         >
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate(" ");
+              navigation.goBack();
             }}
           >
             <Ionicons name="chevron-back" size={34} color="white" />
@@ -83,8 +83,8 @@ const EditerVideo = ({ navigation, route }) => {
             </Text>
           </TouchableOpacity>
         </View>
-          )}
-       {contain == false && (
+      )}
+      {contain == false && (
         <View
           style={{
             flex: 0.08,
@@ -95,14 +95,11 @@ const EditerVideo = ({ navigation, route }) => {
             justifyContent: "space-between",
           }}
         >
-          <TouchableOpacity
-            onPress={resetZoom}
-          >
+          <TouchableOpacity onPress={resetZoom}>
             <Ionicons name="chevron-back" size={34} color="white" />
           </TouchableOpacity>
-          
         </View>
-          )}
+      )}
       <View
         style={{
           flex: 0.6,
@@ -122,7 +119,6 @@ const EditerVideo = ({ navigation, route }) => {
             <Video
               source={{ uri: data.fileselect }}
               style={{ flex: 1 }}
-            
               resizeMode={ResizeMode.CONTAIN}
               isLooping
               shouldPlay={false}
@@ -131,7 +127,6 @@ const EditerVideo = ({ navigation, route }) => {
           </Animated.View>
         )}
       </View>
-     
     </View>
   );
 };
