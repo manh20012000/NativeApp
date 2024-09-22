@@ -53,6 +53,7 @@ const UploadStory = ({ navigation, route }) => {
   const [positionX, setPositionX] = useState(50);
   const [positionY, setPositionY] = useState(100);
   const [loading, setLoading] = useState(false);
+  
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true, // Kích hoạt khi có hành động kéo

@@ -24,6 +24,7 @@ import {
   useBottomTabBarHeight,
 } from "@react-navigation/bottom-tabs";
 import { useIsFocused } from "@react-navigation/native";
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 const Friender = ({ navigation }) => {
   const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(true);
@@ -35,9 +36,8 @@ const Friender = ({ navigation }) => {
   let trangthai = true;
   const [leng, setLeng] = useState(0);
   const handlerSelectVideo = async () => {
-   
     try {
-   const lim = 5; // Định nghĩa giá trị lim
+      const lim = 5; // Định nghĩa giá trị lim
       const { data } = await axios.post(`${path}/selectVideo`, {
         limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
         skip: leng,
@@ -49,24 +49,21 @@ const Friender = ({ navigation }) => {
     }
   };
   useEffect(() => {
-    trangthai = true
+    trangthai = true;
     if (isFocused) {
-     
       if (trangthai == true) {
         handlerSelectVideo();
       }
       setAction(currentTabIndex);
     } else {
       setAction(false);
-   
     }
-    trangthai = false
+    trangthai = false;
     return () => {
       // Hàm cleanup (nếu cần)
     };
   }, [isFocused]);
-  
- 
+
   // useEffect(() => {
   //   handlerSelectVideo();
   // }, [trangthai]);
@@ -74,18 +71,15 @@ const Friender = ({ navigation }) => {
     setRefreshing(true);
     setLeng(0);
     try {
-      // Gọi handlerSelectVideo và đợi nó hoàn thành  
-     
+      // Gọi handlerSelectVideo và đợi nó hoàn thành
+
       try {
         const lim = 5; // Định nghĩa giá trị lim
-  
-        const { data } = await axios.post(
-          `${path}/selectVideo`,
-          {
-            limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-            skip:0,
-          }
-        );
+
+        const { data } = await axios.post(`${path}/selectVideo`, {
+          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+          skip: 0,
+        });
         setData([]);
         setData(data.data);
       } catch (err) {
@@ -101,9 +95,9 @@ const Friender = ({ navigation }) => {
     }
   };
   return (
-    <View style={{backgroundColor:'black'}}>
+    <View style={{ backgroundColor: "black" }}>
       <FlatList
-         style={{backgroundColor:'black'}}
+        style={{ backgroundColor: "black" }}
         data={data}
         pagingEnabled
         initialNumToRender={4}
@@ -121,7 +115,7 @@ const Friender = ({ navigation }) => {
           const index = Math.round(
             e.nativeEvent.contentOffset.y / (810 - bottomTabHight)
           );
-          setCurrentTabIndex(index)
+          setCurrentTabIndex(index);
           setAction(index);
         }}
         showsVerticalScrollIndicator={false}

@@ -49,6 +49,7 @@ const RecodViedeo = ({ navigation }) => {
   const [widthV, setWidthV] = useState(0);
   const [heightV, setHeight] = useState(0);
   const [typefile, setTypefile] = useState("");
+  const [fileName, setfileName] = useState("");
   const count = useSelector((state) => state.auth.value);
   const [dataUser, setData] = useState(count);
   const pickImages = async () => {
@@ -67,7 +68,8 @@ const RecodViedeo = ({ navigation }) => {
         setSelectedImage(result.assets[0].uri);
         setFileselect(result.assets[0].uri);
         setTrangThai(2);
-        setTypefile("image");
+        setTypefile(result.assets[0]?.mimeType);
+        setfileName(result.assets[0]?.fileName);
       } else if (result.assets[0].type === "video") {
         if (result.assets[0].height < 700) {
           setResizeMode(true);
@@ -76,11 +78,11 @@ const RecodViedeo = ({ navigation }) => {
         setFileselect(result.assets[0].uri);
         setHeight(result.assets[0].height);
         setWidthV(result.assets[0].width);
-        console.log(result.assets[0].uri);
         setSelectedVideo(result.assets[0].uri);
+        setfileName(result.assets[0]?.fileName);
         setAutoplay(true);
         setTrangThai(3);
-        setTypefile("video");
+        setTypefile(result.assets[0]?.mimeType);
       }
     } else {
       setTrangThai(1);
@@ -205,12 +207,19 @@ const RecodViedeo = ({ navigation }) => {
 
       // Chuyển hướng đến màn hình khác với đường dẫn video đã xử lý
       // console.log(fileselect, "chuyẻn sang màn kia ");
+      console.log("Video URI:", videoUri);
+      console.log("Width:", widthV);
+      console.log("Height:", heightV);
+      console.log("Resize Mode:", resizeMode);
+      console.log("Type:", typefile);
+      console.log("File Name:", fileName);
       navigation.navigate("PostVideo", {
         fileselect: fileselect,
         widthV: widthV, // Kích thước tùy chỉnh
         heightV: heightV, // Kích thước tùy chỉnh
         resizeMode: resizeMode,
         typefile: typefile,
+        fileName: fileName,
       });
     } catch (error) {
       console.error("Error processing video: ", error);

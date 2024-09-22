@@ -35,7 +35,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import Comment from "./Comment.js";
 import path from "../../confige/config.js";
 import uuid from "uuid/v4";
-
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 import { BottomSheet } from "react-native-btr";
 const VideoItem = ({ item, action, navigation }) => {
   // console.log(action)
@@ -589,11 +589,14 @@ const VideoItem = ({ item, action, navigation }) => {
               borderRadius: 10,
               flex: 1,
               justifyContent: "flex-end",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backgroundColor: "rgba(0, 0, 0, 0.4)",
             }}
           >
             <TouchableWithoutFeedback onPress={handleBackdropPress2e}>
-              <View style={{ flex: 0.4 }}> </View>
+              <View
+                onMoveShouldSetResponderCapture={handleBackdropPress2e}
+                style={{ flex: 0.4 }}
+              ></View>
             </TouchableWithoutFeedback>
             <View
               style={{
@@ -711,14 +714,17 @@ const VideoItem = ({ item, action, navigation }) => {
                 backgroundColor: "pink",
               }}
             >
-              <View style={{ width: "100%", height: 12 }}> </View>
+              {/* <View style={{ width: "100%", height: 12 }}>
+               
+                <Text>dhsjhdjshdsnjdjs</Text>
+              </View> */}
               <View
                 style={{
                   justifyContent: "space-between",
                   alignItems: "center",
                   flexDirection: "row",
                   marginHorizontal: 10,
-                  marginTop: -10,
+                  marginTop: "2%",
                   marginBottom: 5,
                 }}
               >

@@ -112,7 +112,7 @@ const PostVideo = ({ navigation, route }) => {
   const HanderUploadVideo = async () => {
     try {
       const formData = new FormData();
-      console.log(data.fileselect, "jaaahahah");
+      console.log(data.fileselect, "jaaahahah", data.fileName, data.typefile);
       let datetime = new Date();
       let datePostTimstemp = await datetime.toISOString().slice(0, -5);
       setLoading(true);
@@ -126,8 +126,9 @@ const PostVideo = ({ navigation, route }) => {
       formData.append("nameMusic", dataUser.Hoten);
       formData.append("Video", {
         uri: data.fileselect,
-        name: `Video${datePostTimstemp}.mp4`,
-        type: "video/mp4",
+        // name: `Video${datePostTimstemp}.mp4`
+        name: data.fileName,
+        type: data.typefile,
       });
 
       const isChecked = await checkAndRefreshToken(dispath, dataUser);
@@ -136,10 +137,10 @@ const PostVideo = ({ navigation, route }) => {
         // Thực hiện điều hướng về trang đăng nhập nếu cần
         return null;
       } else {
-        const parts = formData.getParts();
-        parts.forEach((part) => {
-          console.log(part.fieldName, part, "màn hình post video1");
-        });
+        // const parts = formData.getParts();
+        // parts.forEach((part) => {
+        //   console.log(part.fieldName, part, "màn hình post video1");
+        // });
         console.log("bắt đầu vào form data ");
         const { status, message, msg, config } = await axios.post(
           `${path}/uploadVideo`,
@@ -151,24 +152,23 @@ const PostVideo = ({ navigation, route }) => {
             },
           }
         );
-        console.log("config", config);
-        // setVconten(null);
-        // setPrivacy("public");
-        // setLocated(null);
-        // setLoading(false);
+
+        setVconten(null);
+        setPrivacy("public");
+        setLocated(null);
+        setLoading(false);
 
         if (status === 200) {
-          // console.log(data.fileselect, "ket quả log file select");
-          // alert("sussecess", data);
-          // // navigation.navigate("Video");
-          // setLoading(false);
+          console.log(data.fileselect, "ket quả log file select");
+          alert("sussecess", data);
+          navigation.navigate("Video");
+          setLoading(false);
         }
       }
     } catch (error) {
       setLoading(false);
       console.log(error + "->>catch lỗi màn hình postVideo");
     } finally {
-      // data.fileselect = null;
     }
   };
   // const handleUrlPress = (url, matchIndex /*: number*/) => {
@@ -326,7 +326,7 @@ const PostVideo = ({ navigation, route }) => {
           </View>
         </View>
         <TouchableOpacity style={{ height: 200, width: "40%" }}>
-          {data.typefile === "video" && (
+          {data.typefile === "video/mp4" && (
             <Video
               source={{ uri: data.fileselect }}
               style={{ width: "75%", height: "80%" }}
@@ -335,7 +335,7 @@ const PostVideo = ({ navigation, route }) => {
               isLooping
             />
           )}
-          {data.typefile === "image" && (
+          {data.typefile === "image/jpeg" && (
             <Image
               source={{ uri: data.fileselect }}
               style={{ width: "80%", height: "80%" }}

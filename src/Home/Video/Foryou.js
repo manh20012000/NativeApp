@@ -23,6 +23,7 @@ import {
   createBottomTabNavigator,
   useBottomTabBarHeight,
 } from "@react-navigation/bottom-tabs";
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 import { useIsFocused } from "@react-navigation/native";
 const bootonTba = createBottomTabNavigator();
 const VideoTikTok = ({ navigation }) => {
@@ -97,7 +98,7 @@ const VideoTikTok = ({ navigation }) => {
     <View style={{ backgroundColor: "black", flex: 1 }}>
       {!loading && (
         <FlatList
-          style={{flex:1,backgroundColor:'black'  }}
+          style={{ flex: 1, backgroundColor: "black" }}
           // contentContainerStyle={{
           //   flexGrow: 1,
           //   justifyContent: "center",
@@ -112,7 +113,7 @@ const VideoTikTok = ({ navigation }) => {
           renderItem={({ item, index }) => {
             return (
               <VideoItem
-                style={{flex:1}}
+                style={{ flex: 1 }}
                 item={item}
                 action={action === index}
                 navigation={navigation}

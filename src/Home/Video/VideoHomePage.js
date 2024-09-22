@@ -21,7 +21,7 @@ import Foryou from "./Foryou";
 import Folowing from "./Folowing";
 import Friender from "./Friender.js";
 import VideoLocation from "./VideoLocation.js";
-
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 const Tab = createMaterialTopTabNavigator();
 const VideoHomePage = () => {
   const { width, height } = useWindowDimensions();
