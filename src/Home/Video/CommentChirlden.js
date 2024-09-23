@@ -150,7 +150,7 @@ const CommentChildren = ({
             >
               <Image
                 style={{ width: 30, height: 30, borderRadius: 40 }}
-                source={{ uri: user.Avatar }}
+                source={{ uri: user?.Avatar }}
               ></Image>
             </TouchableOpacity>
 
@@ -167,7 +167,7 @@ const CommentChildren = ({
                     opacity: 0.5,
                   }}
                 >
-                  {user.Hoten}
+                  {user?.Hoten}
                 </Text>
               </TouchableOpacity>
               <View style={{ width: "95%" }}>

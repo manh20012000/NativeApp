@@ -24,8 +24,9 @@ import { useSelector, useDispatch } from "react-redux";
 const CommentPanrent = (props) => {
   const [user, setUser] = useState(props.item.User);
   const userCurent = useSelector((state) => state.auth.value);
-  const dispath=useDispatch()
+  const dispath = useDispatch();
   const Data = props.item;
+  console.log(Data, "dbshahfhidsifisdj");
   // const [Noidung, setNoiDung] = useState(Data.Content);
   // console.log(Noidung, "log ra nội dung");
   const [soluongCmt, setSoluongcmt] = useState(Data.soluongcmt);
@@ -65,7 +66,7 @@ const CommentPanrent = (props) => {
   const deleteComment = async () => {
     setShowOptions(false);
     try {
-       const isChecked = await checkAndRefreshToken(dispath, userCurent);
+      const isChecked = await checkAndRefreshToken(dispath, userCurent);
       if (!isChecked) {
         console.log("Token hết hạn, cần đăng nhập lại");
         // Thực hiện điều hướng về trang đăng nhập nếu cần
@@ -77,7 +78,9 @@ const CommentPanrent = (props) => {
           idPerent: Item.idParentComment,
         });
       }
-    }catch(error){console.log(error);}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

@@ -293,12 +293,11 @@ const FlatItem = (props) => {
         CommentChildren: commentArr,
         comments: comments,
       };
-      // console.log(newComment, "thêm comment cha");
-      console.log([newComment, ...binhluan]);
+   
       setBinhLuan([newComment, ...binhluan]);
       // setBinhLuan((prevComments) => [newComment, ...prevComments]);
     } else {
-      console.log("jaha");
+     
       const newComment = {
         _id: myId,
         idBaiviet: dataContenpost._id,
@@ -320,18 +319,18 @@ const FlatItem = (props) => {
         )
       );
 
-      let newBinhLuan = [...binhluan];
+      // let newBinhLuan = [...binhluan];
 
-      const handlerNewcomment = newBinhLuan.map((comment) =>
-        comment._id === parentId
-          ? { ...comment, comments: [...comment.comments, newComment] }
-          : comment
-      );
-      console.log(
-        handlerNewcomment,
-        "khi được log ra màn hình giá trị comment"
-      );
-      setBinhLuan(handlerNewcomment);
+      // const handlerNewcomment = newBinhLuan.map((comment) =>
+      //   comment._id === parentId
+      //     ? { ...comment, comments: [...comment.comments, newComment] }
+      //     : comment
+      // );
+      // console.log(
+      //   handlerNewcomment,
+      //   "khi được log ra màn hình giá trị comment"
+      // );
+      // setBinhLuan(handlerNewcomment);
     }
     try {
       formData.append("_id", myId);
@@ -636,6 +635,8 @@ const FlatItem = (props) => {
                   setCurrentImageIndex(index);
                 }}
               >
+                {/* <Text> {console.log(image)}</Text> */}
+
                 <Image
                   source={{ uri: image }}
                   style={{

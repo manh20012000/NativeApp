@@ -25,9 +25,12 @@ import {
 } from "@react-navigation/bottom-tabs";
 import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 import { useIsFocused } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
 const bootonTba = createBottomTabNavigator();
 const VideoTikTok = ({ navigation }) => {
   const isFocused = useIsFocused();
+  const count = useSelector((state) => state.auth.value);
+  const dispath = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const bottomTabHight = useBottomTabBarHeight();
   const [data, setData] = useState([]);
@@ -52,17 +55,31 @@ const VideoTikTok = ({ navigation }) => {
   const [leng, setLeng] = useState(0);
 
   const handlerSelectVideo = async () => {
-    console.log("hahaa");
     try {
       const lim = 5; // Định nghĩa giá trị lim
-
-      const { data } = await axios.post(`${path}/selectVideo`, {
-        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-        skip: leng,
-      });
-      setLeng(leng + 3);
-      if (data.data != null && data.data.length > 0) {
-        setData((prevData) => prevData.concat(data.data));
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { data } = await axios.post(
+          `${path}/selectVideo`,
+          {
+            limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
+            skip: leng,
+          },
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        setLeng(leng + 3);
+        if (data.data != null && data.data.length > 0) {
+          setData((prevData) => prevData.concat(data.data));
+        }
       }
     } catch (err) {
       console.log(err);

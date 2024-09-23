@@ -157,31 +157,47 @@ const VideoItem = ({ item, action, navigation }) => {
   const [arrlike, setArrlike] = useState(datavideo.Like);
   const [soluongCmt, setSoluongcmt] = useState(datavideo.SoluongCmt);
   const [controlsVisible, setControlsVisible] = useState(false);
+  // useEffect(() => {
+  //   const listLike = async () => {
+  //     try {
+  //       const isChecked = await checkAndRefreshToken(dispath, count);
+  //       if (!isChecked) {
+  //         console.log("Token hết hạn, cần đăng nhập lại");
+  //         // Thực hiện điều hướng về trang đăng nhập nếu cần
+  //         return null;
+  //       } else {
+  //         const { data } = await axios.post(
+  //           `${path}/selectLikeVideo`,
+  //           {
+  //             IdVideo: datavideo._id,
+  //           },
+  //           {
+  //             headers: {
+  //               "Content-Type": "multipart/form-data",
+  //               authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+  //             },
+  //           }
+  //         );
+  //         console.log(data.data);
+  //         setArrlike(data);
+  //       }
+  //     } catch (err) {
+  //       console.log(err, "jajaja");
+  //     }
+  //   };
+  //   listLike();
+  // }, []);
   useEffect(() => {
-    const listLike = async () => {
-      try {
-        const isChecked = await checkAndRefreshToken(dispath, count);
-        if (!isChecked) {
-          console.log("Token hết hạn, cần đăng nhập lại");
-          // Thực hiện điều hướng về trang đăng nhập nếu cần
-          return null;
-        } else {
-          const { data } = await axios.post(`${path}/selectLikeVideo`, {
-            IdVideo: datavideo._id,
-          });
-          setArrlike(data);
-        }
-      } catch (err) {
-        console.log(err, "jajaja");
-      }
-    };
-    listLike();
-  }, []);
-  useEffect(() => {
+    console.log(
+      datavideo.Like,
+      "hahahah",
+      count._id,
+      "66db1761d33fd38e5c9ad157" === count._id
+    );
     const trangthai = () => {
       datavideo.Like.forEach((item) => {
-        if (item.User === dataUser._id) {
-          setIsLiked(item.Trangthai);
+        if (item === count._id) {
+          setIsLiked(true);
         }
       });
     };
@@ -192,10 +208,10 @@ const VideoItem = ({ item, action, navigation }) => {
   const handleLike = async () => {
     let Liked = !isLiked;
     setIsLiked(Liked);
-    if (isLiked == false) {
+    if (isLiked === false) {
       soluongTim = soluongTim + 1;
       setNumber(soluongTim);
-    } else if (isLiked == true) {
+    } else if (isLiked === true) {
       if (soluongTim > 0) {
         soluongTim = soluongTim - 1;
         setNumber(soluongTim);
@@ -208,15 +224,27 @@ const VideoItem = ({ item, action, navigation }) => {
         // Thực hiện điều hướng về trang đăng nhập nếu cần
         return null;
       } else {
-        const { data } = await axios.post(`${path}/LikeVideo`, {
-          idUser: dataUser._id,
-          IdVideo: datavideo._id,
-          Soluong: soluongTim,
-          Trangthai: Liked,
-        });
+        const { data } = await axios.post(
+          `${path}/LikeVideo`,
+          {
+            idUser: dataUser._id,
+            IdVideo: datavideo._id,
+            Soluong: soluongTim,
+            nameComemnt: count.Hoten,
+            avatarSend: count.Avatar,
+            title: "thích video ",
+            messagenotifi: `@[${count.Hoten}](id:${count._id}) thích video của bạn`,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
       }
     } catch (err) {
-      console.log(err);
+      console.log(err, "loiox khi live");
     }
   };
 
@@ -331,18 +359,29 @@ const VideoItem = ({ item, action, navigation }) => {
           // Thực hiện điều hướng về trang đăng nhập nếu cần
           return null;
         } else {
-          const { data } = await axios.post(`${path}/api_CommentVideoGet`, {
-            idVideo: datavideo._id,
-            Skips: leng,
-          });
-          setComment((prevData) => prevData.concat(data.data));
+          const { data } = await axios.post(
+            `${path}/api_CommentVideoGet`,
+            {
+              idVideo: datavideo._id,
+              Skips: leng,
+              // Giới hạn số comment lấy về là 13
+            },
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+              },
+            }
+          );
+
+          setComment(data.data);
           // console.log(data.data)
         }
       } catch (error) {
         console.error("Error fetching comments:", error);
       } finally {
         setLoading(false);
-        setLeng(leng + 20);
+        setLeng(leng + 10); // Cập nhật vị trí để bỏ qua 13 comment đã lấy
         setStateSelect(false);
       }
     }
@@ -358,7 +397,15 @@ const VideoItem = ({ item, action, navigation }) => {
   const [commentsUpdated, setCommentsUpdated] = useState(0);
   const [sendComemtChildren, setSendCommentChidren] = useState(null);
   const [sendCommentQuik, setQuikCommentCdr] = useState();
-
+  const [commentArr, setCommentArr] = useState([]);
+  // const handleSetCommentArr = (comments) => {
+  //   setCommentArr(comments);
+  //   // console.log(comments, 'commentAeee')
+  // };
+  // const handleComemntData = (comments) => {
+  //   setComment(comments);
+  //   console.log(comments, "commentAeee");
+  // };
   const SendComment = async () => {
     let soluong = soluongCmt + 1;
     if (conten === "") {
@@ -386,10 +433,12 @@ const VideoItem = ({ item, action, navigation }) => {
             SoluongCommentChildrent: 0,
             User: dataUser,
             Timing: new Date().toISOString(),
+            comments: [],
           };
-          // console.log(newComment)
-          setComment((prevComments) => [newComment, ...prevComments]);
+
+          setComment([newComment, ...comment]);
         } else if (parentId != null) {
+          console.log("taok cmnsn con");
           const newComment = {
             _id: myId,
             UserCmt: dataUser._id,
@@ -400,19 +449,43 @@ const VideoItem = ({ item, action, navigation }) => {
             User: dataUser,
             Timing: new Date().toISOString(),
           };
-          dispath(addComment(newComment));
+          setComment((prevBinhLuan) =>
+            prevBinhLuan.map((comment) =>
+              comment._id === parentId
+                ? {
+                    ...comment,
+                    comments: [...comment.comments, newComment],
+                  }
+                : comment
+            )
+          );
+          // dispath(addComment(newComment));
+          // setComment((prevComments) => [newComment, ...prevComments]);
           // setSendCommentChidren(newComment);
           console.log("jajaja");
         }
 
-        const { data } = await axios.post(`${path}/api_CommentVideoPost`, {
-          _id: myId,
-          UserCmt: dataUser._id,
-          idVideo: datavideo._id,
-          Conten: contens,
-          Soluongcmt: soluong,
-          idParentComment: parentId,
-        });
+        const { data } = await axios.post(
+          `${path}/api_CommentVideoPost`,
+          {
+            _id: myId,
+            UserCmt: dataUser._id,
+            idVideo: datavideo._id,
+            Conten: contens,
+            Soluongcmt: soluong,
+            idParentComment: parentId,
+            nameComemnt: count.Hoten,
+            avatarSend: count.Avatar,
+            title: "Bình luận video",
+            messagenotif: `@[${count.Hoten}](id:${count._id}) bình luận video của bạn`,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
         setParentId(null);
         setSoluongcmt(soluong);
         setConten("");
@@ -677,7 +750,7 @@ const VideoItem = ({ item, action, navigation }) => {
                     initialNumToRender={8}
                     extraData={commentsUpdatedExtra}
                     showsVerticalScrollIndicator={false}
-                    keyExtractor={(item, index) => index.toString()}
+                    keyExtractor={(item) => item._id}
                     renderItem={({ item, index }) => {
                       return (
                         <Comment
@@ -695,6 +768,8 @@ const VideoItem = ({ item, action, navigation }) => {
                           QualityComment={soluongCmt}
                           updateQualityComemnt={updateQualityComemnt}
                           Skipcomemnt={Skipcomemnt}
+                          // setCommentArr={handleSetCommentArr}
+                          // handleComemntData={handleComemntData}
                         />
                       );
                     }}
