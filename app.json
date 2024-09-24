@@ -30,7 +30,7 @@
       },
       "package": "com.anonymous.NativeApp",
       "versionCode": 1,
-      "compileSdkVersion": 33
+      "compileSdkVersion": 34
     },
     "web": {
       "favicon": "./assets/favicon.png"

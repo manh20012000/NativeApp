@@ -26,7 +26,7 @@ const CommentPanrent = (props) => {
   const userCurent = useSelector((state) => state.auth.value);
   const dispath = useDispatch();
   const Data = props.item;
-  console.log(Data, "dbshahfhidsifisdj");
+
   // const [Noidung, setNoiDung] = useState(Data.Content);
   // console.log(Noidung, "log ra nội dung");
   const [soluongCmt, setSoluongcmt] = useState(Data.soluongcmt);
