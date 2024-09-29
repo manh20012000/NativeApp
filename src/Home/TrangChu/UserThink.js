@@ -517,6 +517,11 @@ const UserThink = ({ navigation, route }) => {
                 }}
               >
                 <Editor
+                  style={{
+                
+                    width: "100%",
+                    height: "100%",
+                  }}
                   list={arrUserSer} // Truyền danh sách người dùng từ API vào Editor
                   initialValue={initialValue}
                   clearInput={clearInput}

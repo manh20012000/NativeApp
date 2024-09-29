@@ -75,6 +75,7 @@ const Folowing=({ navigation})=> {
     setLeng(0);
     try {
       try {
+        
         const lim = 5; // Định nghĩa giá trị lim
         const { data } = await axios.post(
           `${path}/selectVideo`,

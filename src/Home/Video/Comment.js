@@ -76,46 +76,46 @@ const Comment = ({
   // const visibleItems = cmtChidren.slice(startIndex, startIndex + itemsPerPage);
   const [isLiked, setIsLiked] = useState(false);
   const [leng, setLeng] = useState(0);
-  const hanlderXemThem = async () => {
-    setLoading(true);
-    try {
-      const isChecked = await checkAndRefreshToken(dispatch, count);
-      if (!isChecked) {
-        console.log("Token hết hạn, cần đăng nhập lại");
-        // Thực hiện điều hướng về trang đăng nhập nếu cần
-        return null;
-      } else {
-        console.log(leng);
-        const { data } = await axios.get(
-          `${path}/api_CommentVideoGetChildrent/${Data._id}/${Skipcomemnt}`
-        );
-        setCmchildren((prevCmtChidren) => [
-          ...(prevCmtChidren || []),
-          ...data.data,
-        ]);
-        // dispatch(updateDataCommentChildrent(data.data));
-        // console.log(data.data)
-        statusLoad(true);
-        setLeng(leng + 3);
-      }
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-    } finally {
-      setLoading(false);
-      setComponent(true);
-      const maxleng = leng + 3;
-      if (qualityCommetShow < 3) {
-        setQualitycomemtShow(qualityCommetShow);
-        updateQualityComemnt(0, index, maxleng);
-      } else {
-        setQualitycomemtShow(qualityCommetShow - 3);
-        updateQualityComemnt(qualityCommetShow - 3, index, maxleng);
-      }
-      if (Data.SoluongCommentChildrent <= maxleng) {
-        setXemThem(false);
-      }
-    }
-  };
+  // const hanlderXemThem = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const isChecked = await checkAndRefreshToken(dispatch, count);
+  //     if (!isChecked) {
+  //       console.log("Token hết hạn, cần đăng nhập lại");
+  //       // Thực hiện điều hướng về trang đăng nhập nếu cần
+  //       return null;
+  //     } else {
+  //       console.log(leng);
+  //       const { data } = await axios.get(
+  //         `${path}/api_CommentVideoGetChildrent/${Data._id}/${Skipcomemnt}`
+  //       );
+  //       // setCmchildren((prevCmtChidren) => [
+  //       //   ...(prevCmtChidren || []),
+  //       //   ...data.data,
+  //       // ]);
+  //       // dispatch(updateDataCommentChildrent(data.data));
+  //       // console.log(data.data)
+  //       statusLoad(true);
+  //       setLeng(leng + 3);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching comments:", error);
+  //   } finally {
+  //     setLoading(false);
+  //     setComponent(true);
+  //     const maxleng = leng + 3;
+  //     if (qualityCommetShow < 3) {
+  //       setQualitycomemtShow(qualityCommetShow);
+  //       updateQualityComemnt(0, index, maxleng);
+  //     } else {
+  //       setQualitycomemtShow(qualityCommetShow - 3);
+  //       updateQualityComemnt(qualityCommetShow - 3, index, maxleng);
+  //     }
+  //     if (Data.SoluongCommentChildrent <= maxleng) {
+  //       setXemThem(false);
+  //     }
+  //   }
+  // };
   const [showOptions, setShowOptions] = useState(false);
   const [Item, setItem] = useState("");
   const handleLongPress = (selectedItem) => {

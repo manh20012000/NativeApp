@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import NewRecode from "../AddVideo/NewRecode.js";
 import Infor from "../Home/Information/Infor.js";
 import Login from "../Login/Login.js";
@@ -29,9 +30,10 @@ import UploadStory from "../Home/TrangChu/UploadStory.js";
 import { encode, decode } from "js-base64";
 import ViewCall from "../Home/TrangChu/MessApp/ViewCall.js";
 import ArticalDetail from "./ScreenDetail/ArticalDetail.js";
-
+// import { useSafeAreaInsets } from "react-native-safe-area-context";
 const Stack = createNativeStackNavigator();
 const Navigete = () => {
+  // const insets = useSafeAreaInsets();
   const dispath = useDispatch();
   const [loading, setLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -71,6 +73,7 @@ const Navigete = () => {
       <NavigationContainer
         style={{
           flex: 1,
+          // paddingTop: insets.top,
         }}
       >
         <Stack.Navigator

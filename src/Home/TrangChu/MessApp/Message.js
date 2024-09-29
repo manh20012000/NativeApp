@@ -20,6 +20,7 @@ import Chat from "./Chat";
 import axios from "axios";
 import path from "../../../confige/config";
 import { checkingToken } from "../../../confige/CheckingToken";
+import { checkAndRefreshToken } from "../../../confige/ComponencheckingToken";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../../Redex/Reducer/auth.slice";
 const bottonTad = createBottomTabNavigator();
@@ -29,23 +30,25 @@ const Message = ({ navigation }) => {
   const [dataUserChat, setDataUser] = useState([]);
   const SelectUserMessage = async () => {
     try {
-     const isChecked = await checkAndRefreshToken(dispath, userCurent);
-     if (!isChecked) {
-       console.log("Token hết hạn, cần đăng nhập lại");
-       // Thực hiện điều hướng về trang đăng nhập nếu cần
-       return null;
-     } else {
-       const { data } = await axios.get(`${path}/UserRouter/${isChecked._id}`, {
-         headers: {
-           "Content-Type": "application/json",
-           authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
-         },
-       });
-       // console.log(data, "data selector");
-       setDataUser(data);
-     }
+      const isChecked = await checkAndRefreshToken(dispath, userCurent);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        return null;
+      } else {
+        const { data } = await axios.get(
+          `${path}/UserRouter/${isChecked._id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        console.log(data, "data selector");
+        setDataUser(data);
+      }
     } catch (error) {
-      console.log(error, "lỗi nhânj với ");
+      console.log(error, "lỗi nhânj với UserRouter");
     } finally {
       // console.log(dataUserChat)
     }

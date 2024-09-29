@@ -53,7 +53,7 @@ const UploadStory = ({ navigation, route }) => {
   const [positionX, setPositionX] = useState(50);
   const [positionY, setPositionY] = useState(100);
   const [loading, setLoading] = useState(false);
-  
+
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true, // Kích hoạt khi có hành động kéo
@@ -83,7 +83,7 @@ const UploadStory = ({ navigation, route }) => {
     const formData = new FormData();
     let datetime = new Date();
     let datePostTimstemp = await datetime.toISOString().slice(0, -5);
-
+    console.log(typefile, fileName, "jasjdiasbbfhdsbchbdsh");
     formData.append("Height", heightV);
     formData.append("widthV", widthV);
     formData.append("datePost", datePostTimstemp);

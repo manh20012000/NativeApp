@@ -18,6 +18,7 @@ import { GiftedChat } from "react-native-gifted-chat";
 import { useSocket } from "../../../socket";
 import { checkingToken } from "../../../confige/CheckingToken.js";
 import { login } from "../../../Redex/Reducer/auth.slice.js";
+import { checkAndRefreshToken } from "../../../confige/ComponencheckingToken.js";
 const Chat = ({ navigation }) => {
   const { width, height } = useWindowDimensions();
   const dispath = useDispatch();
@@ -73,21 +74,24 @@ const Chat = ({ navigation }) => {
 
   const SelectUserMessage = async () => {
     try {
-     const isChecked = await checkAndRefreshToken(dispath, user);
-     if (!isChecked) {
-       console.log("Token hết hạn, cần đăng nhập lại");
-       // Thực hiện điều hướng về trang đăng nhập nếu cần
-       return null;
-     } else {
-       const { data } = await axios.get(`${path}/UserRouter/${isChecked._id}`, {
-         headers: {
-           "Content-Type": "application/json",
-           authorization: `Bearer ${isChecked.accessToken}`,
-         },
-       });
-
-       setFillter(data);
-     }
+      const isChecked = await checkAndRefreshToken(dispath, user);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { data } = await axios.get(
+          `${path}/UserRouter/${isChecked._id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`,
+            },
+          }
+        );
+        console.log(data);
+        setFillter(data);
+      }
     } catch (error) {
       console.log(error, "lỗi cho mỗi cuộc chat ");
     } finally {
@@ -123,9 +127,25 @@ const Chat = ({ navigation }) => {
   // useEffect(() => {
   //   const getPersionChat = async () => {
   //     try {
-  //       const { data } = await axios.post(`${path}/selectChatPersion`, {
-  //         _id: user._id,
-  //       });
+  //       const isChecked = await checkAndRefreshToken(dispath, user);
+  //       if (!isChecked) {
+  //         console.log("Token hết hạn, cần đăng nhập lại");
+  //         // Thực hiện điều hướng về trang đăng nhập nếu cần
+  //         return null;
+  //       } else {
+  //         const { data } = await axios.post(
+  //           `${path}/selectChatPersion`,
+  //           {
+  //             _id: user._id,
+  //           },
+  //           {
+  //             headers: {
+  //               "Content-Type": "application/json",
+  //               authorization: `Bearer ${isChecked.accessToken}`,
+  //             },
+  //           }
+  //         );
+  //       }
   //     } catch (error) {
   //       console.error("Error fetching comments:", error);
   //     } finally {
@@ -144,6 +164,7 @@ const Chat = ({ navigation }) => {
     setFillter(filterData);
   };
   const chatPersion = (item) => {
+    // console.log(item);
     navigation.navigate("PesionChat", {
       participants: item.participants,
       Messages: item.messages,
@@ -157,15 +178,14 @@ const Chat = ({ navigation }) => {
         // Thực hiện điều hướng về trang đăng nhập nếu cần
         return null;
       } else {
-        console.log("nảy bào đay");
         const { data } = await axios.get(`${path}/getMessage/${users._id}`, {
           headers: {
             "Content-Type": "application/json",
             authorization: `Bearer ${isChecked.accessToken}`,
           },
         });
-        // console.log(data, "dataatin nhan ");
-        if (data.length === 0) {
+        console.log(data, "dataatin nhan ");
+        if (data.data.length === 0) {
           navigation.navigate("PesionChat", {
             participants: users,
             Messages: [],
@@ -173,12 +193,12 @@ const Chat = ({ navigation }) => {
         } else {
           navigation.navigate("PesionChat", {
             participants: users,
-            Messages: data,
+            Messages: data.data,
           });
         }
       }
     } catch (error) {
-      console.log(error, "lỗi khi chuyen sang chat detail ");
+      console.log(error, "lỗi khi chuyen sang chat chat  ");
     } finally {
       // console.log(dataUserChat)
     }

@@ -40,7 +40,12 @@ import SkeletonApp from "../../Skeleton/SkeletonApp.js";
 import Skeleton from "../../Skeleton/Skeleton.js";
 import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 import { FFmpegKit, FFmpegKitConfig } from "ffmpeg-kit-react-native";
+// import {
+//   SafeAreaProvider,
+//   useSafeAreaInsets,
+// } from "react-native-safe-area-context";
 const TrangChu = ({ navigation }) => {
+  // const insets = useSafeAreaInsets();
   const dispath = useDispatch();
   const user = useSelector((state) => state.auth.value);
   // console.log(user);
@@ -63,12 +68,20 @@ const TrangChu = ({ navigation }) => {
         // Thực hiện điều hướng về trang đăng nhập nếu cần
         return null;
       } else {
-        const lim = 5; // Định nghĩa giá trị lim
-        const { data } = await axios.post(`${path}/selectStory`, {
-          limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-          skip: leng,
-        });
-        setLeng(leng + 3);
+        const { data } = await axios.post(
+          `${path}/selectStory`,
+          {
+            skip: leng,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+       
+        setLeng(leng + 5);
         // console.log(data.data)
         if (data.data != null && data.data.length > 0) {
           // setDataStory((prevData) => prevData.concat(data.data));
@@ -83,6 +96,7 @@ const TrangChu = ({ navigation }) => {
   };
   const [SakeIload, setSakeIload] = useState(false);
   const [isSakeIload, setSakecheck] = useState(true);
+  const [lengbaiviet, setLengbaiviet] = useState(0);
   const fetchdata = async () => {
     try {
       const isChecked = await checkAndRefreshToken(dispath, user);
@@ -91,8 +105,19 @@ const TrangChu = ({ navigation }) => {
         // Thực hiện điều hướng về trang đăng nhập nếu cần
         return null;
       } else {
-        const { data } = await axios.get(`${path}/selectBaiViet`);
-
+        const { data } = await axios.post(
+          `${path}/selectBaiViet`,
+          {
+            skip: lengbaiviet,
+          },
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        setLengbaiviet(lengbaiviet + 5);
         setData(data.data);
         setSakeIload(true);
       }
@@ -445,7 +470,20 @@ const TrangChu = ({ navigation }) => {
     );
   });
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          flex: 1,
+          justifyContent: "space-between",
+          alignItems: "center",
+          // paddingTop: insets.top,
+          // // paddingBottom: insets.bottom,
+          // paddingLeft: insets.left,
+          // paddingRight: insets.right,
+        },
+      ]}
+    >
       <LinearGradient
         colors={["red", "white", "purple"]}
         style={styles.linagradine}

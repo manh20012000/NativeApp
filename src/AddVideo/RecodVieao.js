@@ -25,6 +25,7 @@ import Swiper from "react-native-swiper";
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { Video, ResizeMode } from "expo-av";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
@@ -367,7 +368,7 @@ const RecodViedeo = ({ navigation }) => {
                   }}
                 >
                   <TouchableOpacity style={{ justifyContent: "space-between" }}>
-                    <AntDesign name="frown" size={26} color="white" />
+                    <AntDesign name="frown" size={24} color="white" />
                     <Text
                       style={{ fontSize: 13, color: "white", marginTop: 3 }}
                     >
@@ -429,7 +430,11 @@ const RecodViedeo = ({ navigation }) => {
                     onPress={pickImages}
                     style={{ justifyContent: "center", alignItems: "center" }}
                   >
-                    <AntDesign name="frown" size={26} color="white" />
+                    <MaterialIcons
+                      name="photo-library"
+                      size={24}
+                      color="white"
+                    />
                     <Text
                       style={{ fontSize: 13, color: "white", marginTop: 3 }}
                     >

@@ -56,28 +56,29 @@ const VideoTikTok = ({ navigation }) => {
 
   const handlerSelectVideo = async () => {
     try {
-      const lim = 5; // Định nghĩa giá trị lim
+      // Định nghĩa giá trị lim
       const isChecked = await checkAndRefreshToken(dispath, count);
       if (!isChecked) {
         console.log("Token hết hạn, cần đăng nhập lại");
         // Thực hiện điều hướng về trang đăng nhập nếu cần
         return null;
       } else {
+        console.log(leng);
         const { data } = await axios.post(
           `${path}/selectVideo`,
           {
-            limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
             skip: leng,
           },
           {
             headers: {
-              "Content-Type": "multipart/form-data",
+              "Content-Type": "application/json",
               authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
             },
           }
         );
-        setLeng(leng + 3);
+
         if (data.data != null && data.data.length > 0) {
+          setLeng(leng + 5);
           setData((prevData) => prevData.concat(data.data));
         }
       }
@@ -92,16 +93,29 @@ const VideoTikTok = ({ navigation }) => {
   }, []);
   const onRefresh = async () => {
     setRefreshing(true);
-    setLeng(0);
     try {
-      const lim = 3; // Định nghĩa giá trị lim
-
-      const { data } = await axios.post(`${path}/selectVideo`, {
-        limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-        skip: 0,
-      });
-      setData([]);
-      setData(data.data);
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { data } = await axios.post(
+          `${path}/selectVideo`,
+          {
+            skip: leng,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        setData([]);
+        setData(data.data);
+        setLeng(leng + 5);
+      }
     } catch (err) {
       console.log(err);
     } finally {
@@ -145,11 +159,14 @@ const VideoTikTok = ({ navigation }) => {
             setAction(index);
           }}
           showsVerticalScrollIndicator={false}
+          ListFooterComponent={
+            loading ? <Text style={{ color: "white" }}>Loading...</Text> : null
+          } // Hiển
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          onEndReached={handlerSelectVideo}
-          onEndReachedThreshold={1}
+          onEndReached={handlerSelectVideo} // Sự kiện cuộn đến cuối
+          onEndReachedThreshold={0.5} // Cuộn đến 50% cuối danh sách
         />
       )}
       {loading && <View style={{ flex: 1, backgroundColor: "black" }}></View>}

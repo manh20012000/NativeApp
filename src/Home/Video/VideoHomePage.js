@@ -6,7 +6,8 @@ import {
   FlatList,
   StatusBar,
   AppState,
-  RefreshControl, useWindowDimensions,
+  RefreshControl,
+  useWindowDimensions,
 } from "react-native";
 import { React, useState, useEffect, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
@@ -22,11 +23,20 @@ import Folowing from "./Folowing";
 import Friender from "./Friender.js";
 import VideoLocation from "./VideoLocation.js";
 import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const Tab = createMaterialTopTabNavigator();
 const VideoHomePage = () => {
+  const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   return (
-    <View style={{ flex: 1, position: "relative",backgroundColor:'black' }}>
+    <View
+      style={{
+        flex: 1,
+        position: "relative",
+        backgroundColor: "black",
+        paddingTop: insets.top,
+      }}
+    >
       <View
         style={{
           position: "absolute",
@@ -41,7 +51,7 @@ const VideoHomePage = () => {
         }}
       >
         <TouchableOpacity onPress={() => console.log("Pressed Live")}>
-          <Text style={{ color: "white", fontSize: 15, fontWeight: "bold" }}>
+          <Text style={{ color: "white", fontSize: 13, fontWeight: "bold" }}>
             Live
           </Text>
         </TouchableOpacity>
@@ -49,17 +59,16 @@ const VideoHomePage = () => {
           style={{ marginTop: 3, marginLeft: 2 }}
           onPress={() => console.log("Pressed Search")}
         >
-          <FontAwesome name="search" size={24} color="white" />
+          <FontAwesome name="search" size={22} color="white" />
         </TouchableOpacity>
       </View>
-
       <Tab.Navigator
         initialRouteName="Foryou"
         screenOptions={{
-          tabBarActiveTintColor: 'white',
-           tabBarInactiveTintColor: '#CCCCCC',
+          tabBarActiveTintColor: "white",
+          tabBarInactiveTintColor: "#CCCCCC",
           tabBarLabelStyle: {
-            fontSize: 15,
+            fontSize: 12,
             fontWeight: "bold",
             textTransform: "none",
           },
@@ -67,7 +76,7 @@ const VideoHomePage = () => {
             backgroundColor: "transparent",
             position: "absolute",
             top: -5,
-            left:width-350,
+            left: width - 350,
             right: 0,
             margin: 0,
           },
@@ -87,17 +96,15 @@ const VideoHomePage = () => {
             marginLeft: 30,
             height: 2,
             alignItems: "center",
-            top:40
+            top: 40,
           },
         }}
-     
       >
         <Tab.Screen
           name="VideoLocation"
           component={VideoLocation}
           options={{
             tabBarLabel: "Ha noi",
-            
           }}
         />
         <Tab.Screen
@@ -112,7 +119,6 @@ const VideoHomePage = () => {
           component={Folowing}
           options={{
             tabBarLabel: "Follow",
-           
           }}
         />
         <Tab.Screen
@@ -120,8 +126,6 @@ const VideoHomePage = () => {
           component={Foryou}
           options={{
             tabBarLabel: "Foryou",
-        
-           
           }}
         />
       </Tab.Navigator>

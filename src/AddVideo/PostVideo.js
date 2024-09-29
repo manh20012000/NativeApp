@@ -46,13 +46,22 @@ import path from "../confige/config.js";
 import ParsedText from "react-native-parsed-text";
 import { login } from "../Redex/Reducer/auth.slice.js";
 import { checkingToken } from "../confige/CheckingToken.js";
+import {
+  MentionInput,
+  MentionSuggestions,
+} from "react-native-controlled-mentions";
 const PostVideo = ({ navigation, route }) => {
   const dispath = useDispatch();
 
   const [dataUser, setData] = useState(
     useSelector((state) => state.auth.value)
   );
-
+  const users = [
+    { id: "1", name: "John Doe" },
+    { id: "2", name: "Jane Smith" },
+    { id: "3", name: "Alice Johnson" },
+    { id: "4", name: "Bob Brown" },
+  ];
   const data = route.params;
   const dataLocation = [
     { noidung: "cầu giấy" },
@@ -61,6 +70,7 @@ const PostVideo = ({ navigation, route }) => {
     { noidung: "xu hướng mới" },
     { noidung: "Sơn tây" },
   ];
+
   const [link, setLink] = useState(null);
   const [showOptions, setShowOptions] = useState(false);
   const handlerModal = () => {
@@ -124,6 +134,7 @@ const PostVideo = ({ navigation, route }) => {
       formData.append("userId", dataUser._id);
       formData.append("located", located);
       formData.append("nameMusic", dataUser.Hoten);
+      formData.append("videoConten", vConten);
       formData.append("Video", {
         uri: data.fileselect,
         // name: `Video${datePostTimstemp}.mp4`
@@ -171,28 +182,41 @@ const PostVideo = ({ navigation, route }) => {
     } finally {
     }
   };
-  // const handleUrlPress = (url, matchIndex /*: number*/) => {
-  //   LinkingIOS.openURL(url);
-  // };
-  // const handlePhonePress = (phone, matchIndex /*: number*/) => {
-  //   AlertIOS.alert(`${phone} has been pressed!`);
-  // };
+  const suggestions = [
+    { id: "1", name: "David Tabaka" },
+    { id: "2", name: "Mary" },
+    { id: "3", name: "Tony" },
+    { id: "4", name: "Mike" },
+    { id: "5", name: "Grey" },
+  ];
+  const handleChange = (text) => {
+    console.log("Input value:", text);
+    setVconten(text);
+  };
+  const renderSuggestions = ({ keyword, onSuggestionPress }) => {
+    console.log(keyword, onSuggestionPress);
+    if (keyword == null) {
+      return null;
+    }
 
-  // const handleNamePress = (name, matchIndex /*: number*/) => {
-  //   AlertIOS.alert(`Hello ${name}`);
-  // };
-
-  // const handleEmailPress = (email, matchIndex /*: number*/) => {
-  //   AlertIOS.alert(`send email to ${email}`);
-  // };
-
-  // const renderText = (matchingString, matches) => {
-  //   // matches => ["[@michel:5455345]", "@michel", "5455345"]
-  //   let pattern = /\[(@[^:]+):([^\]]+)\]/i;
-  //   let match = matchingString.match(pattern);
-  //   return `^^${match[1]}^^`;
-  // };
-
+    return (
+      <View>
+        {suggestions
+          .filter((one) =>
+            one.name.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())
+          )
+          .map((one) => (
+            <Pressable
+              key={one.id}
+              onPress={() => onSuggestionPress(one)}
+              style={{ padding: 12 }}
+            >
+              <Text>{one.name}</Text>
+            </Pressable>
+          ))}
+      </View>
+    );
+  };
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -293,7 +317,7 @@ const PostVideo = ({ navigation, route }) => {
               <Text style={{ fontWeight: "500" }}>video</Text>
             </TouchableOpacity>
           </View>
-          <View style={{}}>
+          <View style={{ zIndex: 1 }}>
             {/* <RichEditor
               multiline={true}
               placeholder="Nhập thông tin mô tả với hơn 4000 ký tự"
@@ -315,12 +339,27 @@ const PostVideo = ({ navigation, route }) => {
               textContent={"Đang tải..."}
               textStyle={{ color: "#FFF" }}
             />
+            {/* <MentionInput
+              value={vConten}
+              multiline={true} // state giá trị nhập
+              onChange={handleChange} // hàm xử lý khi nhập
+              partTypes={[
+                {
+                  trigger: "@",
+                  renderSuggestions: renderSuggestions,
+                  textStyle: { fontWeight: "bold", color: "blue" },
+                },
+              ]}
+              placeholder="Type here to mention someone..." // placeholder text
+              style={styles.input}
+            /> */}
             <TextInput
               placeholder="Nhập thông tin mô tả với hơn 4000 ký tự "
-              maxLength={4000}
+              maxLength={200}
               multiline={true}
               value={vConten}
               onChangeText={handlerChangerText}
+              placeholderTextColor={"red"}
             ></TextInput>
             <Text style={{ fontWeight: "600" }}>{mention}</Text>
           </View>
@@ -422,7 +461,6 @@ const PostVideo = ({ navigation, route }) => {
           <View style={{ flexDirection: "row" }}>
             <Ionicons name="add-sharp" size={24} color="#999999" />
             <Text style={{ fontWeight: "300", color: "#888888" }}>
-              {" "}
               Tag People
             </Text>
           </View>
@@ -697,5 +735,12 @@ const styles = StyleSheet.create({
     opacity: 0, // Ẩn TextInput nhưng vẫn cho phép nhập liệu
     fontSize: 16,
     lineHeight: 24,
+  },
+
+  suggestionItem: {
+    padding: 10,
+    backgroundColor: "#eee",
+    marginVertical: 5,
+    borderRadius: 4,
   },
 });

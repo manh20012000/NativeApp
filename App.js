@@ -20,10 +20,10 @@ import * as Device from "expo-device";
 import { SocketProvider } from "./src/socket";
 import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
-// import messaging from '@react-native-firebase/messaging';
-
-// import * as Device from "expo-device";
-// import * as Notifications from "expo-notifications";
+// import {
+//   SafeAreaProvider,
+//   useSafeAreaInsets,
+// } from "react-native-safe-area-context";
 
 import { HandlerNotification } from "./src/Home/Notification/HandlerNotification.js";
 Notifications.setNotificationHandler({
@@ -35,27 +35,10 @@ Notifications.setNotificationHandler({
 });
 
 export default function App() {
-  const [hidden, setHidden] = useState(false);
-  const [statusBarStyle, setStatusBarStyle] = useState(STYLES[0]);
-  const [statusBarTransition, setStatusBarTransition] = useState(
-    TRANSITIONS[0]
-  );
   const notificationListener = useRef();
   const responseListener = useRef();
   const [channels, setChannels] = useState([]);
-  const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
-  const [datas, setdata] = useState();
-  async function schedulePushNotification() {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "You've got mail! 📬",
-        body: "Here is the notification body",
-        data: { data: "goes here", test: { test1: "more data" } },
-      },
-      trigger: { seconds: 2 },
-    });
-  }
 
   async function registerForPushNotificationsAsync() {
     if (Platform.OS === "android") {
@@ -97,7 +80,7 @@ export default function App() {
     // Listener khi người dùng tương tác với thông báo
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response,'responted app.js');
+        console.log(response, "responted app.js");
       });
 
     return () => {
@@ -112,12 +95,22 @@ export default function App() {
   // const { onlineUser } = useSocket();
   return (
     <Provider store={store}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar animated={true} backgroundColor="black" hidden={hidden} />
-        <SocketProvider>
-          <Navigete />
-        </SocketProvider>
-      </SafeAreaView>
+      <StatusBar
+        animated={true}
+        backgroundColor="black"
+        hidden={false}
+        showHideTransition={true}
+      />
+      {/* <StatusBar
+        animated={true}
+        translucent={true}
+        backgroundColor="transparent"
+      /> */}
+      <SocketProvider>
+        {/* <SafeAreaProvider> */}
+        <Navigete />
+        {/* </SafeAreaProvider> */}
+      </SocketProvider>
     </Provider>
   );
 }

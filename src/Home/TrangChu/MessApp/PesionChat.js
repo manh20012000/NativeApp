@@ -67,7 +67,7 @@ const PesionChat = ({ route, navigation }) => {
   const [groupName, setGroupName] = useState("");
   const socket = useSocket();
   const { participants, Messages } = route.params;
-
+  console.log(Messages);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [chooseLibrary, setchooseLibrary] = useState(true);
   const [textIcon, setText] = useState("");
@@ -76,21 +76,21 @@ const PesionChat = ({ route, navigation }) => {
   const videoRef = useRef(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   // console.log(status,participants._id)
-  useEffect(() => {
-    setchooseLibrary(true);
-    socket?.on("newMessage", (data) => {
-      console.log(data, "new messsage");
-      setMessages((previousMessages) =>
-        GiftedChat.append(previousMessages, {
-          ...data,
-          createdAt: new Date(data.createdAt),
-        })
-      );
-    });
-    return () => {
-      socket?.off("newMessage");
-    };
-  }, []);
+  // useEffect(() => {
+  //   setchooseLibrary(true);
+  //   socket?.on("newMessage", (data) => {
+  //     console.log(data, "new messsage");
+  //     setMessages((previousMessages) =>
+  //       GiftedChat.append(previousMessages, {
+  //         ...data,
+  //         createdAt: new Date(data.createdAt),
+  //       })
+  //     );
+  //   });
+  //   return () => {
+  //     socket?.off("newMessage");
+  //   };
+  // }, []);
   const XoaAnh = (image, index) => {
     // console.log(image,index)
     const newImages = [...selectedImages];
@@ -121,22 +121,32 @@ const PesionChat = ({ route, navigation }) => {
       // console.log(messages, "messagaahdj");
       // sendMessage(messages);
       // Gửi tin nhắn lên server sử dụng Axios
- const isChecked = await checkAndRefreshToken(dispath, user);
+      const isChecked = await checkAndRefreshToken(dispath, user);
       if (!isChecked) {
         console.log("Token hết hạn, cần đăng nhập lại");
         // Thực hiện điều hướng về trang đăng nhập nếu cần
         return null;
       } else {
-        const response = await axios.post(`${path}/send/${participants._id}`, {
-          message: messages[0],
-          // Các thông tin khác nếu cần
-        });
-        // if (response.data) {
-        //   socket.emit("sendMessage", {
-        //     ...messages[0],
-        //     receiverId: participants._id,
-        //   });
-        // }
+        const response = await axios.post(
+          `${path}/send/${participants._id}`,
+          {
+            message: messages[0],
+            // Các thông tin khác nếu cần
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`,
+            },
+          }
+        );
+        if (response.data) {
+          console.log(response.data);
+          // socket.emit("sendMessage", {
+          //   ...messages[0],
+          //   receiverId: participants._id,
+          // });
+        }
         // Cập nhật state để hiển thị tin nhắn trong GiftedChat
 
         // Hiển thị hoặc ẩn component nếu cần
@@ -230,69 +240,69 @@ const PesionChat = ({ route, navigation }) => {
       GiftedChat.append(previousMessages, messages)
     );
     try {
-     const isChecked = await checkAndRefreshToken(dispath, user);
-     if (!isChecked) {
-       console.log("Token hết hạn, cần đăng nhập lại");
-       // Thực hiện điều hướng về trang đăng nhập nếu cần
-       return null;
-     } else {
-       const message = new FormData();
-       setchooseLibrary(true);
-       if (typefile == "image") {
-         let datetime = new Date();
-         let datePostTimstemp = await datetime.toISOString().slice(0, -5);
-         for (let i = 0; i < selectedImages.length; i++) {
-           message.append("ArayImages", {
-             uri: selectedImages[i],
-             name: `image_${i}.jpeg`,
-             type: "image/jpeg",
-           });
-         }
-         message.append("createdAt", datePostTimstemp);
-         message.append("text", null);
-         message.append("video", null);
-         message.append("userId", user._id);
-         message.append("username", user.Hoten);
-         message.append("avatar", user.Avatar);
-         const response = await axios.post(
-           `${path}/ChatImage/${participants._id}`,
-           message,
-           {
-             headers: {
-               "Content-Type": "multipart/form-data",
-               authorization: `Bearer ${isChecked.accessToken}`,
-             },
-           }
-         );
-       } else if (typefile == "video") {
-         let datetime = new Date();
-         let datePostTimstemp = await datetime.toISOString().slice(0, -5);
-         message.append("Video", {
-           uri: selectedVideo,
-           name: `Video${datePostTimstemp}.mp4`,
-           type: "video/mp4",
-         });
-         message.append("createdAt", datePostTimstemp);
-         message.append("text", null);
-         message.append("image", null);
-         message.append("userId", user._id);
-         message.append("username", user.Hoten);
-         message.append("avatar", user.Avatar);
-         const response = await axios.post(
-           `${path}/ChatVideo/${participants._id}`,
+      const isChecked = await checkAndRefreshToken(dispath, user);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const message = new FormData();
+        setchooseLibrary(true);
+        if (typefile == "image") {
+          let datetime = new Date();
+          let datePostTimstemp = await datetime.toISOString().slice(0, -5);
+          for (let i = 0; i < selectedImages.length; i++) {
+            message.append("ArayImages", {
+              uri: selectedImages[i],
+              name: `image_${i}.jpeg`,
+              type: "image/jpeg",
+            });
+          }
+          message.append("createdAt", datePostTimstemp);
+          message.append("text", null);
+          message.append("video", null);
+          message.append("userId", user._id);
+          message.append("username", user.Hoten);
+          message.append("avatar", user.Avatar);
+          const response = await axios.post(
+            `${path}/ChatImage/${participants._id}`,
+            message,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                authorization: `Bearer ${isChecked.accessToken}`,
+              },
+            }
+          );
+        } else if (typefile == "video") {
+          let datetime = new Date();
+          let datePostTimstemp = await datetime.toISOString().slice(0, -5);
+          message.append("Video", {
+            uri: selectedVideo,
+            name: `Video${datePostTimstemp}.mp4`,
+            type: "video/mp4",
+          });
+          message.append("createdAt", datePostTimstemp);
+          message.append("text", null);
+          message.append("image", null);
+          message.append("userId", user._id);
+          message.append("username", user.Hoten);
+          message.append("avatar", user.Avatar);
+          const response = await axios.post(
+            `${path}/ChatVideo/${participants._id}`,
 
-           message,
+            message,
 
-           {
-             headers: {
-               "Content-Type": "multipart/form-data",
-               authorization: `Bearer ${isChecked.accessToken}`,
-             },
-           }
-         );
-       }
-       setVisible(true);
-     }
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                authorization: `Bearer ${isChecked.accessToken}`,
+              },
+            }
+          );
+        }
+        setVisible(true);
+      }
     } catch (error) {
       console.error("Error sending message to server:", error.message);
     }
@@ -668,7 +678,7 @@ const PesionChat = ({ route, navigation }) => {
               borderRadius: 22,
               marginHorizontal: 18,
               paddingHorizontal: 16,
-              backgroundColor: "#666666",
+              backgroundColor: "#fff",
             }}
             isCustomViewBottom={true}
             onInputTextChanged={handleInputTextChanged}

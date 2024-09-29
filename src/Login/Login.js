@@ -92,6 +92,7 @@ const Login = ({ navigation }) => {
   const sigin = () => {
     navigation.navigate("InforLogin");
   };
+ 
 
   return (
     <View style={styles.container}>

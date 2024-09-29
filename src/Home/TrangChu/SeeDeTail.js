@@ -53,15 +53,17 @@ const SeeDeTail = ({ route, navigation }) => {
           }
         );
         console.log(data, "dataatin nhan ");
-        if (data.length === 0) {
+        if (data.data.length === 0) {
+          console.log("tin nhắn rôngz");
           navigation.navigate("PesionChat", {
             participants: dataRoute,
             Messages: [],
           });
         } else {
+          console.log("tin nhắn khongo rỗn");
           navigation.navigate("PesionChat", {
             participants: dataRoute,
-            Messages: data,
+            Messages: data.data,
           });
         }
       }

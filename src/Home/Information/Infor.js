@@ -21,9 +21,9 @@ import FlatItem from "../TrangChu/FlatItem.js";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import path from "../../confige/config.js";
-import { login,logout } from "../../Redex/Reducer/auth.slice.js";
+import { login, logout } from "../../Redex/Reducer/auth.slice.js";
 import { HandlerNotification } from "../../confige/Util_handlerNotification.js";
-import { checkingToken } from "../../confige/CheckingToken.js";
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 const Infor = ({ navigation, route }) => {
   const count = useSelector((state) => state.auth.value);
   // console.log(count,'usser counet')
@@ -49,29 +49,29 @@ const Infor = ({ navigation, route }) => {
   );
   const selectUser = async () => {
     try {
-     const isChecked = await checkAndRefreshToken(dispath, count);
-     if (!isChecked) {
-       console.log("Token hết hạn, cần đăng nhập lại");
-       // Thực hiện điều hướng về trang đăng nhập nếu cần
-       return null;
-     } else {
-       const { data } = await axios.post(
-         `${path}/userInfor`,
-         {
-           _id: isChecked._id,
-         },
-         {
-           headers: {
-             "Content-Type": "application/json",
-             authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
-           },
-         }
-       );
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const { data } = await axios.post(
+          `${path}/userInfor`,
+          {
+            _id: isChecked._id,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
 
-       setUserInfor(data.data);
+        setUserInfor(data.data);
 
-       // console.log("user", data.data);
-     }
+        // console.log("user", data.data);
+      }
     } catch (err) {
       console.log(err, " lỗi với màn hình inforjs");
     }
@@ -79,7 +79,7 @@ const Infor = ({ navigation, route }) => {
   useEffect(() => {
     setAction(currentTabIndex);
   }, [currentTabIndex]);
-  const [leng, setLeng] = useState(0);
+  const [leng, setLeng] = useState(5);
 
   const handlerSelectVideo = async () => {
     try {
@@ -89,7 +89,40 @@ const Infor = ({ navigation, route }) => {
         // Thực hiện điều hướng về trang đăng nhập nếu cần
         return null;
       } else {
-        const lim = 15; // Định nghĩa giá trị lim
+        const { data } = await axios.post(
+          `${path}/selectedVideoId`,
+          {
+            skip: leng,
+            id: count._id,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+            },
+          }
+        );
+        setLeng(leng + 5);
+        setDataVideo((prevData) => prevData.concat(data.data));
+      }
+    } catch (err) {
+      console.log(err, "log loi infor user222");
+    }
+  };
+  useEffect(() => {
+    handlerSelectVideo();
+    selectUser();
+  }, []);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const isChecked = await checkAndRefreshToken(dispath, count);
+      if (!isChecked) {
+        console.log("Token hết hạn, cần đăng nhập lại");
+        // Thực hiện điều hướng về trang đăng nhập nếu cần
+        return null;
+      } else {
+        const lim = 9; // Định nghĩa giá trị lim
         const { data } = await axios.post(
           `${path}/selectedVideoId`,
           {
@@ -107,41 +140,6 @@ const Infor = ({ navigation, route }) => {
         setLeng(leng + 3);
         setDataVideo((prevData) => prevData.concat(data.data));
       }
-    } catch (err) {
-      console.log(err, "log loi infor user222");
-    }
-  };
-  useEffect(() => {
-    handlerSelectVideo();
-    selectUser();
-  }, []);
-  const onRefresh = async () => {
-    setRefreshing(true);
-    try {
-       const isChecked = await checkAndRefreshToken(dispath, count);
-       if (!isChecked) {
-         console.log("Token hết hạn, cần đăng nhập lại");
-         // Thực hiện điều hướng về trang đăng nhập nếu cần
-         return null;
-       } else {
-         const lim = 9; // Định nghĩa giá trị lim
-         const { data } = await axios.post(
-           `${path}/selectedVideoId`,
-           {
-             limiteds: lim, // Gửi dữ liệu với key là 'limiteds'
-             skip: leng,
-             id: count._id,
-           },
-           {
-             headers: {
-               "Content-Type": "application/json",
-               authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
-             },
-           }
-         );
-         setLeng(leng + 3);
-         setDataVideo((prevData) => prevData.concat(data.data));
-       }
     } catch (err) {
       console.log(err, "loi vưới selectedVideoId");
     }
@@ -166,28 +164,28 @@ const Infor = ({ navigation, route }) => {
   useEffect(() => {
     const selectPostUser = async () => {
       try {
-         const isChecked = await checkAndRefreshToken(dispath, count);
-         if (!isChecked) {
-           console.log("Token hết hạn, cần đăng nhập lại");
-           // Thực hiện điều hướng về trang đăng nhập nếu cần
-           return null;
-         } else {
-           const { data } = await axios.post(
-             `${path}/selectPost_inUser`,
-             {
-               userId: isChecked._id,
-             },
-             {
-               headers: {
-                 "Content-Type": "application/json",
-                 authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
-               },
-             }
-           );
-           // console.log(data, "trang thái");
-           // setIsFriend(data.trangthai);
-           setDataBaiviet(data.data);
-         }
+        const isChecked = await checkAndRefreshToken(dispath, count);
+        if (!isChecked) {
+          console.log("Token hết hạn, cần đăng nhập lại");
+          // Thực hiện điều hướng về trang đăng nhập nếu cần
+          return null;
+        } else {
+          const { data } = await axios.post(
+            `${path}/selectPost_inUser`,
+            {
+              userId: isChecked._id,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+              },
+            }
+          );
+          // console.log(data, "trang thái");
+          // setIsFriend(data.trangthai);
+          setDataBaiviet(data.data);
+        }
       } catch (err) {
         console.log(err, "lỗi vơis lấy dữ luêuj ra màn seedetail ");
       }
