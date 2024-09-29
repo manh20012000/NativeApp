@@ -33,7 +33,7 @@
     "@rneui/base": "^4.0.0-rc.7",
     "@rneui/themed": "^4.0.0-rc.8",
     "@szhsin/react-menu": "^4.0.3",
-    "axios": "^1.5.0",
+    "axios": "^1.7.7",
     "base64-js": "^1.5.1",
     "draft-convert": "^2.1.13",
     "draft-js": "^0.11.7",
