@@ -105,12 +105,13 @@ const NotificationComponent = (props) => {
       }
 
       lastIndex = match.index + match[0].length;
+      if (lastIndex < text.length) {
+        parts.push({ text: text.slice(lastIndex), user: null, link: null });
+      }
     }
 
     // Thêm phần cuối nếu có
-    if (lastIndex < text.length) {
-      parts.push({ text: text.slice(lastIndex), user: null, link: null });
-    }
+
 
     return parts;
   };
@@ -125,39 +126,39 @@ const NotificationComponent = (props) => {
               <Text
                 style={{ color: "white", fontSize: 15, fontWeight: "bold" }}
                 key={index}
-                // onPress={async () => {
-                //   try {
-                //     // console.log("nahfy van", userCurent.accessToken, userCurent.refreshToken);
-                //     const isChecked = await checkingToken.checking(userCurent);
-                //     if (typeof isChecked === "object" && isChecked !== null) {
-                //       dispath(login(isChecked));
-                //       const { data } = await axios.post(
-                //         `${path}/userfind`,
-                //         {
-                //           _id: part.user,
-                //         },
+              // onPress={async () => {
+              //   try {
+              //     // console.log("nahfy van", userCurent.accessToken, userCurent.refreshToken);
+              //     const isChecked = await checkingToken.checking(userCurent);
+              //     if (typeof isChecked === "object" && isChecked !== null) {
+              //       dispath(login(isChecked));
+              //       const { data } = await axios.post(
+              //         `${path}/userfind`,
+              //         {
+              //           _id: part.user,
+              //         },
 
-                //         {
-                //           headers: {
-                //             "Content-Type": "application/json",
-                //             authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
-                //           },
-                //         }
-                //       );
-                //       // console.log(data);
-                //       props.navigation.navigate("SeeDeTail", data.data);
-                //     }
-                //   } catch (err) {
-                //     if (err.response) {
-                //       console.log(
-                //         "loi voiws xoa bai viet",
-                //         err.response.status
-                //       );
-                //     } else {
-                //       console.log("loi voiws xoa bai viet", err);
-                //     }
-                //   }
-                // }}
+              //         {
+              //           headers: {
+              //             "Content-Type": "application/json",
+              //             authorization: `Bearer ${isChecked.accessToken}`, // Đảm bảo accessToken được truyền chính xác
+              //           },
+              //         }
+              //       );
+              //       // console.log(data);
+              //       props.navigation.navigate("SeeDeTail", data.data);
+              //     }
+              //   } catch (err) {
+              //     if (err.response) {
+              //       console.log(
+              //         "loi voiws xoa bai viet",
+              //         err.response.status
+              //       );
+              //     } else {
+              //       console.log("loi voiws xoa bai viet", err);
+              //     }
+              //   }
+              // }}
               >
                 {part.text}
               </Text>
@@ -186,17 +187,15 @@ const NotificationComponent = (props) => {
           alignItems: "center",
         }}
         onPress={() => {
-          if (props.item.title === "SeeDeTail") {
+          console.log(props.item.title)
+          if (props.item.title === "Bình luận bài viết") {
             handler_Tranfer_Navigation(props.item.sendId);
           } else {
-            props.navigation.navigate(props.item.title, props.item);
+            // màn hình video 
+            props.navigation.navigate('VideoItem', props.item);
           }
           setIsred(true);
-          console.log(
-            props.item.title,
-            "vhasdbsabdj thông báo->>>",
-            props.item
-          );
+
         }}
       >
         <Image

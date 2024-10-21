@@ -354,7 +354,7 @@ const VideoItem = ({ item, index, action, navigation }) => {
             }
           );
           if (data.data !== null) {
-            console.log(data.data, "commen ssau ");
+
             setComment(data.data);
             setLeng(leng + 15);
           }
@@ -395,7 +395,7 @@ const VideoItem = ({ item, index, action, navigation }) => {
             }
           );
           if (data.data !== null) {
-            console.log(data.data, "commen ssau ");
+
             setComment(data.data);
             setLeng(0);
           }
@@ -466,9 +466,9 @@ const VideoItem = ({ item, index, action, navigation }) => {
             prevBinhLuan.map((comment) =>
               comment._id === parentId
                 ? {
-                    ...comment,
-                    comments: [...comment.comments, newComment],
-                  }
+                  ...comment,
+                  comments: [...comment.comments, newComment],
+                }
                 : comment
             )
           );
@@ -490,7 +490,7 @@ const VideoItem = ({ item, index, action, navigation }) => {
             nameComemnt: count.Hoten,
             avatarSend: count.Avatar,
             title: "Bình luận video",
-            messagenotif: `@[${count.Hoten}](id:${count._id}) bình luận video của bạn`,
+            messagenotifi: `@[${count.Hoten}](id:${count._id}) bình luận video của bạn`,
           },
           {
             headers: {
@@ -787,8 +787,8 @@ const VideoItem = ({ item, index, action, navigation }) => {
                           QualityComment={soluongCmt}
                           updateQualityComemnt={updateQualityComemnt}
                           Skipcomemnt={Skipcomemnt}
-                          // setCommentArr={handleSetCommentArr}
-                          // handleComemntData={handleComemntData}
+                        // setCommentArr={handleSetCommentArr}
+                        // handleComemntData={handleComemntData}
                         />
                       );
                     }}
