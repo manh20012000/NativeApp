@@ -125,6 +125,7 @@ const Notifices = ({ navigation }) => {
           data={dataNotif}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => {
+         
             return (
               <NotificationComponent
                 item={item}
@@ -134,7 +135,7 @@ const Notifices = ({ navigation }) => {
               />
             );
           }}
-          // extraData={dataNotif}
+          extraData={dataNotif}
           onEndReached={handleLoadMore} // Sự kiện cuộn đến cuối
           onEndReachedThreshold={0.5} // Cuộn đến 50% cuối danh sách
           ListFooterComponent={

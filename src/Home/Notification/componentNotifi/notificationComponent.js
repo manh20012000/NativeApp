@@ -188,11 +188,12 @@ const NotificationComponent = (props) => {
         }}
         onPress={() => {
           console.log(props.item.title)
-          if (props.item.title === "Bình luận bài viết") {
+          if (props.item.title === "bài viết") {
             handler_Tranfer_Navigation(props.item.sendId);
           } else {
             // màn hình video 
-            props.navigation.navigate('VideoItem', props.item);
+          
+            props.navigation.navigate('Videodetail', props.item);
           }
           setIsred(true);
 

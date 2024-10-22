@@ -8,7 +8,7 @@ import {
   ScrollView,
   StatusBar,
   SafeAreaView,
-  Modal,
+  Modal,useWindowDimensions
 } from "react-native";
 import { React, useState, useEffect, useRef } from "react";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -28,19 +28,19 @@ import {
 } from "@react-navigation/bottom-tabs";
 const ViewVideo = ({ item,navigation,index,dataVideo}) => {
 
-
+   const {width,height} = useWindowDimensions()
   const [modalVisible, setModalVisible] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   return (
-    <View>
+    <View style={{width:width/3,alignSelf:"center"}}>
       <TouchableOpacity
         onPress={() => {
           setIsViewerOpen(true);
-          navigation.navigate("SeemVideo",{ selectedVideo: item, dataVideo,index:index });
+          navigation.navigate("SeemVideo",{ selectedVideo: item, dataVideo:dataVideo,index:index });
         }}
         style={{
-          width: 130,
-          height: 150,
+          width: width/3,
+          height: width/2,
           borderWidth: 1,
           position: "relative",
 

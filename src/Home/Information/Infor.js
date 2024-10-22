@@ -79,7 +79,7 @@ const Infor = ({ navigation, route }) => {
   useEffect(() => {
     setAction(currentTabIndex);
   }, [currentTabIndex]);
-  const [leng, setLeng] = useState(5);
+  const [leng, setLeng] = useState(0);
 
   const handlerSelectVideo = async () => {
     try {
@@ -110,7 +110,6 @@ const Infor = ({ navigation, route }) => {
     }
   };
   useEffect(() => {
-    handlerSelectVideo();
     selectUser();
   }, []);
   const onRefresh = async () => {
@@ -257,8 +256,16 @@ const Infor = ({ navigation, route }) => {
   };
   return (
     <View style={{ flex: 1, position: "relative" }}>
-      <Tabs.Container renderHeader={InforHeader}>
-        <Tabs.Tab name="BaiViet">
+      <Tabs.Container renderHeader={InforHeader}
+         onTabChange={(index)=>{
+          console.log('',index)
+          if(index.index===1){
+            console.log('call dữ liệu video')
+            handlerSelectVideo();
+          }
+         }}
+      >
+        <Tabs.Tab name="Article">
           <Tabs.FlatList
             removeClippedSubviews={true}
             keyExtractor={(item, index) => index.toString()}
@@ -274,8 +281,10 @@ const Infor = ({ navigation, route }) => {
             keyExtractor={(item, index) => index.toString()}
             data={dataVideo}
             renderItem={({ item, index }) => {
+
               return (
                 <ViewVideo
+                style={{width: '100%', height: '100%'}}
                   item={item}
                   index={index}
                   dataVideo={dataVideo}

@@ -30,7 +30,7 @@ import UploadStory from "../Home/TrangChu/UploadStory.js";
 import { encode, decode } from "js-base64";
 import ViewCall from "../Home/TrangChu/MessApp/ViewCall.js";
 import ArticalDetail from "./ScreenDetail/ArticalDetail.js";
-// import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Videodetail from "./ScreenDetail/Videodetail.js";
 const Stack = createNativeStackNavigator();
 const Navigete = () => {
   // const insets = useSafeAreaInsets();
@@ -102,6 +102,7 @@ const Navigete = () => {
           <Stack.Screen name="ViewCall" component={ViewCall} />
           <Stack.Screen name="Article" component={ArticalDetail} />
           <Stack.Screen name="UploadStory" component={UploadStory} />
+          <Stack.Screen name="Videodetail" component={Videodetail} />
           {/* <Stack.Screen
         name='PostWithCamera'
         component={PostWithCamera}

@@ -110,7 +110,7 @@ const FlatItem = (props) => {
             Trangthai: Liked, // trạng thái đã like hay chưa
             nameLike: dataContenpost.User.Hoten,
             avatarSend: userCurent.Avatar,
-            title: "Thích bài viết ",
+            title: "bài viết",
             messagenotifi: `@[${userCurent.Hoten}](id:${userCurent._id}) thích bài viết của bạn`,
           },
           {
@@ -341,7 +341,7 @@ const FlatItem = (props) => {
       formData.append("parentId", JSON.stringify(parentId));
       formData.append("nameComemnt", userCurent.Hoten);
       formData.append("avatarSend", userCurent.Avatar);
-      formData.append("title", "Bình luận bài viết");
+      formData.append("title", "bài viết");
       formData.append(
         "messagenotifi",
         `@[${userCurent.Hoten}](id:${userCurent._id}) bình luận bài viết của bạn`

@@ -220,7 +220,7 @@ const VideoItem = ({ item, index, action, navigation }) => {
             Soluong: soluongTim,
             nameComemnt: count.Hoten,
             avatarSend: count.Avatar,
-            title: "thích video ",
+            title: "video",
             messagenotifi: `@[${count.Hoten}](id:${count._id}) thích video của bạn`,
           },
           {
@@ -489,7 +489,7 @@ const VideoItem = ({ item, index, action, navigation }) => {
             idParentComment: parentId,
             nameComemnt: count.Hoten,
             avatarSend: count.Avatar,
-            title: "Bình luận video",
+            title: "video",
             messagenotifi: `@[${count.Hoten}](id:${count._id}) bình luận video của bạn`,
           },
           {

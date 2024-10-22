@@ -24,8 +24,10 @@ import { useSelector, useDispatch } from "react-redux";
 //   createBottomTabNavigator,
 //   useBottomTabBarHeight,
 // } from "@react-navigation/bottom-tabs";
+import { checkAndRefreshToken } from "../../confige/ComponencheckingToken.js";
 import VideoItem from "../Video/VideoItem";
 const SeemVideo = ({ navigation, route }) => {
+
   const count = useSelector((state) => state.auth.value);
   const dispath = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
@@ -35,14 +37,7 @@ const SeemVideo = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [action, setAction] = useState(false);
   const { selectedVideo, dataVideo, index } = route.params;
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    const addVideo = () => {
-      console.log("hjajaja");
-      setData((prevData) => [...prevData, selectedVideo]);
-    };
-    addVideo();
-  }, []);
+  const [data, setData] = useState(route.params.dataVideo);
   useFocusEffect(
     useCallback(() => {
       console.log(data, "data", selectedVideo);
@@ -81,9 +76,7 @@ const SeemVideo = ({ navigation, route }) => {
       console.log(err, "màn hình video seemVideo");
     }
   };
-  useEffect(() => {
-    handlerSelectVideo();
-  }, []);
+ 
   const onRefresh = () => {
     setRefreshing(true);
     handlerSelectVideo();
@@ -160,6 +153,11 @@ const SeemVideo = ({ navigation, route }) => {
         initialNumToRender={4}
         keyExtractor={(item, index) => index.toString()}
         maxToRenderPerBatch={5}
+        // initialScrollIndex={1}  getItemLayout={(data, index) => ({
+        //   length:700,           // Chiều cao mỗi item
+        //   offset: 70 * index,    // Offset của mỗi item tính theo chiều cao nhân index
+        //   index
+        // })}
         renderItem={({ item, index }) => {
           return (
             <VideoItem
