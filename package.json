@@ -11,7 +11,7 @@
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",
     "@firebase/firestore": "^4.5.1",
-    "@firebase/storage": "^0.12.3",
+    "@firebase/storage": "^0.13.1",
     "@gorhom/bottom-sheet": "^4.6.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.0.1",
