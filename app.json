@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "scheme": "NativeApp",
+    "name": "NativeApp",
+    "sdkVersion": "54.0.0",
+    "newArchEnabled": true,
+    "slug": "NativeApp",
+    "version": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "d3b46c22-50d6-46ef-b4b5-05e7ff29d2bb"
+      }
+    },
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "googleServicesFile": "./android/app/google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anonymous.NativeApp",
+      "versionCode": 1,
+      "compileSdkVersion": 34
+    },
+    "permissions": [
+      "CAMERA"
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/crashlytics",
+      "expo-build-properties",
+      "@react-native-google-signin/google-signin",
+      "expo-camera",
+      "expo-video"
+    ]
+  }
+}
